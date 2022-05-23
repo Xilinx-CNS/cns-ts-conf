@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
 # This file is not intended for standalone use.
-# It should be used with af_xdp or af_xdp_single options
+# It should be used with af_xdp or af_xdp_no_filters options
 # to test AF_XDP in the ZC mode.
 
 export EF_AF_XDP_ZEROCOPY=1
