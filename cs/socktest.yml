@@ -35,6 +35,7 @@
     - cm_tc.yml
     - cm_aggregation.yml
     - cm_l4_port.yml
+    - cm_keys.yml
 
 - cond:
     if: ${TE_LOG_LISTENER} != ""
