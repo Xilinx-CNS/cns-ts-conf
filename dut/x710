@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+
+# OL-Redmine-Id 11976: i40e does not support different types of filters
+# simultaneously, so we always set only 3-tuples.
+export SFC_RESOURCE_ENABLE_AF_XDP_5TUPLE_FILTERS=0

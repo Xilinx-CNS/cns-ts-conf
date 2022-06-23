@@ -16,3 +16,6 @@
     - if: ${SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS} != ""
       oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/parameter:enable_af_xdp_flow_filters"
       value: "${SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS}"
+    - if: ${SFC_RESOURCE_ENABLE_AF_XDP_5TUPLE_FILTERS} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/parameter:enable_af_xdp_5tuple_filters"
+      value: "${SFC_RESOURCE_ENABLE_AF_XDP_5TUPLE_FILTERS}"
