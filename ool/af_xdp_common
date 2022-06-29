@@ -3,10 +3,6 @@
 # This file is not intended for standalone use.
 # It should be included from other configuration files.
 
-# Set oof_shared_keep_thresh=0 to keep using a wild
-# filter for passively accepted TCP sockets.
-export ONLOAD_OOF_SHARED_KEEP_THRESH=0
-
 # AF_XDP doesn't work with enabled huge pages. ON-12249.
 export EF_USE_HUGE_PAGES=0
 
@@ -22,11 +18,6 @@ TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND_USER_BUF"
 
 # Multicast tests have problems with AF_XDP. ON-12484
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTICAST_RECV"
-
-# AF_XDP-Onload allows to insert 2 duplicate filters,
-# and one of the sockets does not work properly.
-# So, SO_REUSEADDR should be disabled. ON-12491
-TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEADDR"
 
 # PIO is not available in this mode. ON-12578.
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_TEMPLATE_SEND"
