@@ -16,6 +16,10 @@
     - if: ${SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS} != ""
       oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/parameter:enable_af_xdp_flow_filters"
       value: "${SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS}"
+      # The enable_af_xdp_5tuple_filters parameter can be set only if AF_XDP
+      # device is unregisted. Otherwise its setting fails with EBUSY.
+      # We leave it here considering that required value has already been set
+      # before.
     - if: ${SFC_RESOURCE_ENABLE_AF_XDP_5TUPLE_FILTERS} != ""
       oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/parameter:enable_af_xdp_5tuple_filters"
       value: "${SFC_RESOURCE_ENABLE_AF_XDP_5TUPLE_FILTERS}"
