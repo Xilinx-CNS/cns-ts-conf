@@ -1,0 +1,152 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: ${TE_IUT_TST1_S1} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/aggregation:${SOCKAPI_TS_BOND_NAME}"
+          value: "${SOCKAPI_TS_BOND}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/aggregation:${SOCKAPI_TS_BOND_NAME}"
+          value: "${SOCKAPI_TS_BOND}"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/rsrc:${SOCKAPI_TS_BOND_NAME}"
+          value: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${SOCKAPI_TS_BOND_NAME}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}"
+
+# Enslave the first IUT interface
+- cond:
+    if: ${TE_IUT_TST1_S1} != ""
+    then:
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S1}/status:"
+          value: "0"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S1}/status:"
+          value: "0"
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_IUT_TST1_S1}"
+        - oid: "/agent:${TE_TST1_TA_NAME}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_TST1_IUT_S1}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}/parent:0"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S1}"
+
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}/parent:0"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S1}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S1}/status:"
+          value: "1"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S1}/status:"
+          value: "1"
+
+# Enslave the second IUT interface
+- cond:
+    if: ${TE_IUT_TST1_S2} != ""
+    then:
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S2}/status:"
+          value: "0"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S2}/status:"
+          value: "0"
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_IUT_TST1_S2}"
+        - oid: "/agent:${TE_TST1_TA_NAME}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_TST1_IUT_S2}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}/parent:1"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S2}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}/parent:1"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S2}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S2}/status:"
+          value: "1"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S2}/status:"
+          value: "1"
+
+# Enslave the third IUT interface
+- cond:
+    if: ${TE_IUT_TST1_S3} != ""
+    then:
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S3}/status:"
+          value: "0"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S3}/status:"
+          value: "0"
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_IUT_TST1_S3}"
+        - oid: "/agent:${TE_TST1_TA_NAME}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_TST1_IUT_S3}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}/parent:2"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S3}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}/parent:2"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S3}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S3}/status:"
+          value: "1"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S3}/status:"
+          value: "1"
+
+# Enslave the fourth IUT interface
+- cond:
+    if: ${TE_IUT_TST1_S4} != ""
+    then:
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S4}/status:"
+          value: "0"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S4}/status:"
+          value: "0"
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_IUT_TST1_S4}"
+        - oid: "/agent:${TE_TST1_TA_NAME}/aggregation:${SOCKAPI_TS_BOND_NAME}/member:${TE_TST1_IUT_S4}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}/parent:3"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S4}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}/parent:3"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S4}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_S4}/status:"
+          value: "1"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_S4}/status:"
+          value: "1"
+
+# Add VLAN interface
+- cond:
+    if: ${SOCKAPI_TS_BOND_VLAN} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}/vlans:${SOCKAPI_TS_BOND_VLAN}"
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}/vlans:${SOCKAPI_TS_BOND_VLAN}"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/rsrc:${TE_IUT_TST1_IUT}"
+          value: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_TST1_IUT_IUT}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT}"
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT}/parent:0"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}"
+
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT}/parent:0"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${SOCKAPI_TS_BOND_NAME}/status:"
+          value: "1"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${SOCKAPI_TS_BOND_NAME}/status:"
+          value: "1"

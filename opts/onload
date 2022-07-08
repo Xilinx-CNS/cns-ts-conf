@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+--trc-tag=l5-nic
+--script=scripts/l5_run
+
+# bug8383
+--trc-tag=v5:1
+
+# Onload does not support AIO
+--tester-req=!AIO
+--trc-tag=no-aio
+--trc-tag=no-aio-dgram

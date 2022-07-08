@@ -1,0 +1,90 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Auxiliary functions to make sure that all test requirements
+# are correctly set depending on the branches.
+# Functions from this file can only be used in the ool/config/branch_*.
+
+. ${SF_TS_CONFDIR}/scripts/zf_update
+
+# Support of active fd caching without rss scalable mode was
+# implemented after the release ool1811, such as onload-7.0.
+active_cache_check() {
+    local tester_opts=${@:1}
+
+    if test "x${tester_opts}" != "x${tester_opts/socket_cache/}" -a \
+            "x${tester_opts}" == "x${tester_opts/rss_scalable_active_passive/}"  ; then
+        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!(FD_CACHING&TCP_ACTIVE)"
+    fi
+}
+
+# Exclude tests which can fail due to disabled kernel packet injection
+# feature when scalable filtering is used.
+# Support of kernel packet injection for scalable was implemented
+# after the release ool1710, such as eol6.
+kernel_pkt_injection_check() {
+    local tester_opts=${@:1}
+
+    if test "x${tester_opts}" != "x${tester_opts/scalable/}" ; then
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RECV_IP_FRAG"
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_NONACCEL"
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_FULL --tester-req=!IP6 --tester-req=!IP6_IP4MAPPED --trc-tag=no-ip6-full"
+    fi
+}
+
+# Delegated send API for Zetaferno was implemented after
+# the release ool1710, such as eol6.
+zf_ods_check() {
+    local tester_opts=${@:1}
+
+    if test "x${tester_opts}" != "x${tester_opts/zf_shim/}" ; then
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_ODS"
+    fi
+}
+
+# Zetaferno has a separate repo after onload-8.0 release.
+# Update links and environment if it's necessary.
+zf_one_repo_check() {
+    local tester_opts=${@:1}
+
+    if test "x${tester_opts}" != "x${tester_opts/zf_shim/}" ; then
+        export SFC_SOCKAPI_LIB_IUT="${SFC_ONLOAD_GNU}/lib/zf/libzf_sockets.so"
+        unset SFC_ZETAFERNO_GNU
+    fi
+
+    if test "x${tester_opts}" != "x${tester_opts/zetaferno-ts/}" ; then
+        setup_zf_one_repo
+    fi
+}
+
+# BPF is not supported on old branches - eol5 and eol6.
+bpf_disable() {
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BPF"
+}
+
+# Support of overlapped receive was implemented after the
+# release onload-7.0
+pftf_recv_disable() {
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PFTF_RECV"
+}
+
+# Socket caching and rss scalable mode are conditions under which
+# a OS socket will not be created for TCP sockets.
+# Accepted sockets have no backing socket also.
+# Bad-and-boundary-values checking for these cases is implemented
+# on onload-7.2 branch.
+bnb_check() {
+    local tester_opts=${@:1}
+
+    if test "x${tester_opts}" != "x${tester_opts/socket_cache/}" -o \
+            "x${tester_opts}" != "x${tester_opts/rss_scalable_active_passive/}"  ; then
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BNB_PARAM_CHECK"
+    fi
+
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BNB_PARAM_CHECK_ACCEPT"
+}
+
+# This provokes packet leak and kernel bug on branches (up to onload-7.1),
+# see ON-11776
+onload_zc_release_os_inline_disable() {
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_RELEASE_OS_INLINE"
+}

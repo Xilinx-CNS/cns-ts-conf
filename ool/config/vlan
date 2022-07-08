@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --opts=opts/vlan"
+# Bug 85701. Disabled for Linux<=3.16
+if test -n "$TE_IUT_TST1_MV" -a ${IUT_KERNEL_VERSION_NUM} -le 316 ; then
+    echo "Do not test vlan+macvlan on kernels older or equal to 3.16"
+    exit 1
+fi

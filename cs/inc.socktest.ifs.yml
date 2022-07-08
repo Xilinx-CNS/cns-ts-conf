@@ -1,0 +1,17 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Interfaces configuration - grab interface resources, adding vlan,
+# macvlan, ipvlan, bonding or teaming interfaces.
+#
+- cond:
+    if: ${SOCKAPI_TS_BOND} != ""
+    then:
+      - include:
+        - inc.socktest.aggregation.yml
+
+- include:
+    - inc.socktest.mac-or-ip-vlan-over-vlan.yml
+    - inc.socktest.vlan-over-mac-or-ip-vlan.yml

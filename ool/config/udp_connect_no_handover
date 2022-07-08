@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_UDP_CONNECT_HANDOVER=0
+
+TE_EXTRA_OPTS="--trc-tag=udp_connect_no_handover"
+
+# Tests from out_of_resources package count the number of
+# accelerated sockets to check out-of-resources condition.
+# When EF_UDP_CONNECT_HANDOVER option is disabled UDP sockets remain
+# under the control of Onload even if we've run out of h/w filters.
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!ONLOAD_UDP_OUT_OF_RESOURCES"

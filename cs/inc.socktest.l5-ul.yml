@@ -1,0 +1,33 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Both L5_SOCKAPI_LIB and L5_SOCKAPI_LIBDIR environment variables
+# may be overriden in env/<host> file using values from
+# L5_SOCKAPI_LIB_<host> and L5_SOCKAPI_LIBDIR_<host>
+# correspondingly.
+#
+
+- cond:
+    if: ${SFC_SOCKAPI_LIB_IUT} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_IUT_TA_NAME_NS}/socklib:"
+          value: "${SFC_SOCKAPI_LIB_IUT}"
+
+        - oid: "/local:${TE_TST1_TA_NAME}/socklib:"
+          value: "${L5_SOCKAPI_LIB_TST1}"
+
+        - oid: "/local:${TE_TST2_TA_NAME}/socklib:"
+          value: "${L5_SOCKAPI_LIB_TST2}"
+
+      - add:
+        - oid: "/local:${TE_IUT_TA_NAME_NS}/libdir:"
+          value: "${L5_SOCKAPI_LIBDIR:-/usr/lib}"
+
+        - oid: "/local:${TE_TST1_TA_NAME}/libdir:"
+          value: "${L5_SOCKAPI_LIBDIR_TST1:-/usr/lib}"
+
+        - oid: "/local:${TE_TST2_TA_NAME}/libdir:"
+          value: "${L5_SOCKAPI_LIBDIR_TST2:-/usr/lib}"

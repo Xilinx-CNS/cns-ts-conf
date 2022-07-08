@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Onload does not use huge pages for packet buffers (which is default), but
+# uses huge-sized large compound pages.
+export EF_USE_HUGE_PAGES=0
+TE_EXTRA_OPTS="--trc-tag=pkt_nohuge --trc-tag=pkt_largecomp"

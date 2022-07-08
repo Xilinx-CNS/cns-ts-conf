@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+if test "${ST_RUN_TS_NO_SFPTPD}" = "1" ; then
+    unset SFC_ONLOAD_SFPTPD
+elif test -z "${SFC_ONLOAD_SFPTPD}" ; then
+    echo "WARNING! SFC_ONLOAD_SFPTPD is empty. Timestamps testing won't be enabled."
+    unset SFC_ONLOAD_SFPTPD
+    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SFC_SFPTPD"
+else
+    if test -z "${SFC_ONLOAD_SFPTPD_CFG}" ; then
+        export SFC_ONLOAD_SFPTPD_CFG=${SF_TS_CONFDIR}/st-sfptpd.cfg
+    fi
+fi

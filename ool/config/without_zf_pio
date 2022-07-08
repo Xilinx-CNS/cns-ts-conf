@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Common scripts/to fix set of Zetaferno attributes in the case of
+# a branch doesn't support pio.
+# This file should be included only from ool/config/branch_*
+
+ZF_ATTR_ADD=${SFC_ZF_ATTR_ADD/pio=[[:digit:]]/}
+
+if test "x${ZF_ATTR_ADD}" != "x" ; then
+    export SFC_ZF_ATTR_ADD=${ZF_ATTR_ADD%?}
+else
+    unset SFC_ZF_ATTR_ADD
+fi

@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# This config option MUST BE used with
+# single queue mode only.
+# Use rss_cpus=1 during loading drivers to configure
+# single queue mode.
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/af_xdp_common"
+
+# Multiple stacks are not supported with single queue mode as
+# AF_XDP supports only one stack per one queue. See ST-2164.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FEW_ACCEL_PROCESSES"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FORK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_REUSE_STACK"
+
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=af_xdp_single"
+
+# Exclude AF_XDP single queue incompatible tests.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_AF_XDP_SINGLE"
+
+# We should set module option enable_af_xdp_flow_filters to 0 in af_xdp_single
+# mode. See ON-13897.
+export SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS=0

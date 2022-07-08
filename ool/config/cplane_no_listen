@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# When we use --no-listen cplane parameter, we have to ensure thay periodic
+# dumps are frequent enaugh.  Periodic dumps have 3s period by default; we
+# set it to 1.
+export SFC_CPLANE_SERVER_PARAMS="$SFC_CPLANE_SERVER_PARAMS --no-listen -s 1"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=cplane_no_listen"
+# SF bug 73367
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEPORT"

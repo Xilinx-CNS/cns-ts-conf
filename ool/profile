@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+# onload_set() and onload_import() are normally defined in the "onload"
+# scripts, and these functions are in use for the profile scripts.
+function onload_set()
+{
+  eval export $1=$2
+}
+function onload_import()
+{
+    local profile="${SFC_PROFILE_DIR}/$1"
+    local pf1="$profile.opf"
+    # *.opf-fragment files are searched only for secondary imports
+    local pf_frag="$profile.opf-fragment"
+    local pf="$pf1"
+
+    $toplevelimport || [ -f "$pf" ] || pf="$pf_frag"
+    if ! [ -f "$pf" ]; then
+        echo "onload_import-ERROR: cannot find profile '$pf'" >&2
+        exit 1
+    fi
+    toplevelimport=false
+    . "$pf"
+    echo "onload_import-done: '$pf'"
+}
+
+toplevelimport=true
+ool_profile="${script_opts/ /}"
+onload_import "$ool_profile"

@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+SSH="ssh -qxTn -o BatchMode=yes -o StrictHostKeyChecking=no"
+
+discover_host()
+{
+    local host_var="${1}"
+    local host_local_var="${host_var}_BUILD"
+    local host="${!host_var}"
+    local host_local="${!host_local_var}"
+    local on_host=eval
+
+    if test -z "${host}"; then
+        test "${host_local}" = "local" || return
+    else
+        on_host="$SSH $host"
+    fi
+
+    local total="$($on_host '/sbin/sysctl -n vm.nr_hugepages')"
+
+    test -z "${total}" || export ${host_var}_TOTAL_HUGEPAGES="${total}"
+}
+
+for host in TE_IUT TE_TST1 TE_TST2 ; do
+    discover_host "${host}"
+done

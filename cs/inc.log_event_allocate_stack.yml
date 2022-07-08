@@ -1,0 +1,31 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Add 'Failed to allocate stack' event to iut parsers
+#
+# Note: see description for HWSIM and TE_LOG_LISTENER_NETCONSOLE_* variables
+# in the cs/inc.log_listener.yml file
+#
+
+- cond:
+    if: ${HWSIM} = "" | ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    then:
+      - add:
+          - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:allocate_stack"
+            value: "Failed to allocate stack"
+
+          - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:allocate_stack/pattern:1"
+            value: "Failed to allocate stack"
+
+- add:
+    - oid: "/local:/tester:/event:allocate_stack"
+
+    - oid: "/local:/tester:/event:allocate_stack/handler:internal_handler"
+
+- set:
+    - oid: "/local:/tester:/event:allocate_stack/handler:internal_handler/internal:"
+      value: "1"
+
+    - oid: "/local:/tester:/event:allocate_stack/handler:internal_handler/signal:"
+      value: "SIGUSR2"

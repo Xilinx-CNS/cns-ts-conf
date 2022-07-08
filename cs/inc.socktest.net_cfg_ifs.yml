@@ -1,0 +1,89 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: ${TE_IUT_TST1} != ""
+    then:
+        - add:
+            - oid: "/net:net1"
+            - oid: "/net:net1/node:A"
+              value: "/agent:${TE_IUT_TA_NAME_NS}/interface:${TE_IUT_TST1}"
+
+            - oid: "/net:net1/node:B"
+              value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT}"
+        - set:
+            - oid: "/net:net1/node:A/type:"
+              value: "1"
+
+            - oid: "/net:net1/node:B/type:"
+              value: "${TE_TST1_IS_IUT:-0}"
+
+- cond:
+    if: ${TE_IUT_TST1_IUT} != ""
+    then:
+        - add:
+            - oid: "/net:net1a"
+            - oid: "/net:net1a/node:A"
+              value: "/agent:${TE_IUT_TA_NAME_NS}/interface:${TE_IUT_TST1_IUT}"
+
+            - oid: "/net:net1a/node:B"
+              value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT}"
+        - set:
+            - oid: "/net:net1a/node:A/type:"
+              value: "1"
+
+            - oid: "/net:net1a/node:B/type:"
+              value: "${TE_TST1_IS_IUT:-0}"
+
+- cond:
+    if: ${TE_IUT_TST2_TST} != ""
+    then:
+        - add:
+            - oid: "/net:net2"
+
+            - oid: "/net:net2/node:A"
+              value: "/agent:${TE_IUT_TA_NAME_NS}/interface:${TE_IUT_TST2_TST}"
+
+            - oid: "/net:net2/node:B"
+              value: "/agent:Agt_C/interface:${TE_TST2_IUT_TST}"
+        - set:
+            - oid: "/net:net2/node:A/type:"
+              value: "0"
+
+            - oid: "/net:net2/node:B/type:"
+              value: "0"
+
+- cond:
+    if: ${TE_TST1_TST2} != ""
+    then:
+        - add:
+            - oid: "/net:net3"
+            - oid: "/net:net3/node:A"
+              value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_TST2}"
+
+            - oid: "/net:net3/node:B"
+              value: "/agent:Agt_C/interface:${TE_TST2_TST1}"
+        - set:
+            - oid: "/net:net3/node:A/type:"
+              value: "0"
+
+            - oid: "/net:net3/node:B/type:"
+              value: "0"
+
+- cond:
+    if: ${TE_IUT_TST2} != ""
+    then:
+        - add:
+            - oid: "/net:net4"
+            - oid: "/net:net4/node:A"
+              value: "/agent:${TE_IUT_TA_NAME_NS}/interface:${TE_IUT_TST2}"
+
+            - oid: "/net:net4/node:B"
+              value: "/agent:Agt_C/interface:${TE_TST2_IUT}"
+        - set:
+            - oid: "/net:net4/node:A/type:"
+              value: "1"
+
+            - oid: "/net:net4/node:B/type:"
+              value: "${TE_TST2_IS_IUT:-0}"

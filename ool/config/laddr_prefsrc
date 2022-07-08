@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Tell Onload to use all preferred sources of onloaded routes as SFC
+# addresses, instead of using the addresses from the SFC interfaces only.
+# In a sense this is a subset of --ool=laddr_all
+export SFC_PREFSRC_AS_LOCAL=1
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=laddr_prefsrc"

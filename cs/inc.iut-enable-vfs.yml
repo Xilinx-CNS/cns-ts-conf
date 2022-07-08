@@ -1,0 +1,134 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Prepare for running tests on VF.
+# Load required kernel modules and create VFs on the physical function.
+#
+
+# Grab exclusive access to net driver module to reload it and make sure we're
+# running the up-to-date version
+- add:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:${TE_ENV_IUT_NET_MODULE}"
+      value: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}"
+
+- set:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:${TE_ENV_IUT_NET_MODULE}/shared:"
+      value: 0
+
+- add:
+    - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}"
+
+- get:
+    - oid: "/agent:${TE_IUT_TA_NAME}/dir:"
+      value: "TE_IUT_TA_DIR"
+
+- cond:
+    if: ${TE_IUT_NET_DRIVER_LOADED} = 1
+    then:
+      - set:
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/unload_holders:"
+            value: 1
+
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/loaded:"
+            value: 0
+
+# The sfc module depends on sfc_driverlink and virtual_bus modules.
+# The vdpa module may be required depending on the host
+- cond:
+    if: ${TE_ENV_IUT_NET_MODULE} = "sfc"
+    then:
+      - add:
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink"
+            value: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
+
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:virtual_bus"
+            value: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus"
+
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:vdpa"
+            value: "/agent:${TE_IUT_TA_NAME}/module:vdpa"
+
+      - set:
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink/shared:"
+            value: 0
+
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:virtual_bus/shared:"
+            value: 0
+
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:vdpa/shared:"
+            value: 0
+
+      - add:
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus"
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:vdpa"
+
+      - set:
+          - if: ${TE_IUT_MOD_SFC_DRIVERLINK_LOADED} = 1
+            oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/unload_holders:"
+            value: 1
+          - if: ${TE_IUT_MOD_SFC_DRIVERLINK_LOADED} = 1
+            oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
+            value: 0
+
+          - if: ${TE_IUT_MOD_VIRTUAL_BUS_LOADED} = 1
+            oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/unload_holders:"
+            value: 1
+          - if: ${TE_IUT_MOD_VIRTUAL_BUS_LOADED} = 1
+            oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/loaded:"
+            value: 0
+
+      - set:
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/filename:"
+            value: "${TE_IUT_TA_DIR}/sfc_driverlink.ko"
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
+            value: 1
+
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/filename:"
+            value: "${TE_IUT_TA_DIR}/virtual_bus.ko"
+          - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/loaded:"
+            value: 1
+
+          - if: ${TE_IUT_MOD_VDPA_REQUIRED} = 1
+            oid: "/agent:${TE_IUT_TA_NAME}/module:vdpa/loaded:"
+            value: 1
+
+- set:
+    - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/filename:"
+      value: "${TE_IUT_TA_DIR}/${TE_ENV_IUT_NET_MODULE}.ko"
+
+    - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/loaded:"
+      value: 1
+
+# Grab exclusive access to PF, create VFs
+- add:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:pci_fn:${TE_PCI_VENDOR_IUT_TST1}:${TE_PCI_DEVICE_PF_IUT_TST1}:${TE_PCI_INSTANCE_PF_IUT_TST1}"
+      value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_PF_IUT_TST1}/instance:${TE_PCI_INSTANCE_PF_IUT_TST1}"
+
+- get:
+    - oid: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_PF_IUT_TST1}/instance:${TE_PCI_INSTANCE_PF_IUT_TST1}"
+      value: "TE_IUT_PF_OID"
+
+    - if: ${TE_IUT_PF_MAX_VFS} = ""
+      oid: "${TE_IUT_PF_OID}/sriov:"
+      value: "TE_IUT_PF_MAX_VFS"
+
+- set:
+    - oid: "${TE_IUT_PF_OID}/sriov:/num_vfs:"
+      value: "${TE_IUT_PF_MAX_VFS}"
+
+# Configure PF interface
+- get:
+    - oid: "${TE_IUT_PF_OID}/net:/"
+      value: "TE_IUT_PF_NET_IF"
+
+- add:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_IUT_PF_NET_IF}"
+      value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}"
+
+- set:
+    - oid: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}/mtu:"
+      value: 9216
+
+    - oid: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}/status:"
+      value: 1

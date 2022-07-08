@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Sasha: if we ever use it for night tests, we have to add a trc tag.
+export SFC_CPLANE_SERVER_PARAMS="$SFC_CPLANE_SERVER_PARAMS --verify-routes"

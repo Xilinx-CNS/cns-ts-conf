@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Add function to prevent warning from nginx_reverse_proxy.opf
+function log()
+{
+    echo "$@"
+}
+
+# nginx_reverse_proxy profile needs NGINX_NUM_WORKERS or nginx config
+# to parse
+export NGINX_NUM_WORKERS=${NGINX_NUM_WORKERS:-2}
+TE_EXTRA_OPTS="--script=ool/profile:nginx_reverse_proxy --trc-tag=nginx_reverse_proxy_profile"
+
+# From ool/config/epoll3
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=ool_epoll:3 --tester-req=!NO_EF_UL_EPOLL_THREE --tester-req=!FORK_EPOLL --tester-req=!EPOLL_MULTI_LEVEL"
+# From ool/config/epoll_mt_safe
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_NON_MT_SAFE --trc-tag=epoll_mt_safe"
+
+# EF_CLUSTER_NAME is something the same as EF_NAME. See bug 77080#c8
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_REUSE_STACK"
+# bug 77221
+export EF_NETIF_DTOR=0
+
+# From ool/config/scalable_active_passive
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=scalable_active --trc-tag=scalable_passive --tester-req=!RECV_IP_FRAG"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_SCALABLE"
+export SF_V5_KILL_ZOMBIE_STACKS="yes"
+if test "x$EF_IUT_EF10" != "xtrue" ; then
+    echo "We can test scalable filters only on EF10"
+    exit 1
+fi
+
+# Bug 76878. In real nginx_reverse_proxy profile value is 2
+export EF_SCALABLE_FILTERS_ENABLE=1
+# Bug 76878. In real nginx_reverse_proxy profile value is 32000
+export EF_TCP_SHARED_LOCAL_PORTS=100
+# From ool/config/tcp_shared_ports
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=ool_tcp_shared_ports"
+
+# Support lots of sockets and enable socket caching.
+export TE_TA_RLIMIT_NOFILE=404096
+export TE_TEST_BEHAVIOUR_CLEANUP_FD_LEAK_CHECK=0
+# From ool/config/socket_cache
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FDS_NON_MT_SAFE --tester-req=!FORK_ACCEPT --trc-tag=socket_cache"
+
+# From ool/config/small_spin
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=ool_spin --trc-tag=small_spin --tester-req=!NO_SPIN"
+
+# The value of EF_PIPE is 1 by default in Socket tester but 2 in onload
+
+# Timestamps were swithed off for this config. See bug 76883
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!HW_PTP_RX_TIMESTAMP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!HW_PTP_TX_TIMESTAMP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_WODA"

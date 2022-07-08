@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ZF_SPECIFIC"
+
+# TCP loopback iterations + onload_zc_send() with user buffer are disabled
+# because of bug ON-11571 (see also comments in ON-11600).
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND_USER_BUF|!(SOCK_STREAM&ENV-LOOPBACK)"
+
+# Do not run delegated send iterations with IPv6 until ON-10167 is fixed
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=(!SF_ODS|!IP6)"

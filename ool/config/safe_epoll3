@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="--script=ool/profile:safe --trc-tag=ool_iomux_no_fast --tester-req=!NO_SAFE --trc-tag=safe_profile --script=ool/config/epoll3"

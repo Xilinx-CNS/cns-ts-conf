@@ -1,0 +1,30 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Add onload banners events to iut parser
+#
+
+- add:
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:onload_banners"
+      value: "onload_banners"
+
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:onload_banners/pattern:1"
+      value: "Using Onload"
+
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:onload_banners/pattern:2"
+      value: "Sharing Onload"
+
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:onload_banners/pattern:3"
+      value: "Importing Onload"
+
+    - oid: "/local:/tester:/event:onload_banners"
+
+    - oid: "/local:/tester:/event:onload_banners/handler:internal_handler"
+
+- set:
+    - oid: "/local:/tester:/event:onload_banners/handler:internal_handler/internal:"
+      value: "1"
+
+    - oid: "/local:/tester:/event:onload_banners/handler:internal_handler/signal:"
+      value: "none"

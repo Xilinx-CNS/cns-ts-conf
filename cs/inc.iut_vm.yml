@@ -1,0 +1,73 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1"
+
+- cond:
+    if: |
+        ${TE_HYPERVISOR_TOTAL_HUGEPAGES} != "" &
+        ${TE_HYPERVISOR_TOTAL_HUGEPAGES} > 0
+    then:
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/path:"
+            value: /dev/hugepages
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/prealloc:"
+            value: 1
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/cpu:/num:"
+      value: "2"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/size:"
+      value: "1536"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root/file:"
+      value: "${TE_IUT_VM_DRIVE:-${TE_VM_DRIVE}}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root/snapshot:"
+      value: "1"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/type:"
+      value: "tap"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/type_spec:"
+      value: "${TE_HYPERVISOR_IUT}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/status:"
+      value: "1"
+
+- get:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/ssh_port:/host:"
+      value: "TE_IUT_SSH_PORT"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/rcf_port:"
+      value: "TE_IUT_PORT"
+
+- add:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}"
+      value: "${TE_HYPERVISOR_TA_TYPE}"
+
+- set:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/vm:"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/rebootable:"
+      value: "1"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/rcflib:"
+      value: "rcfunix"
+
+- add:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:host"
+      value: "${TE_IUT:-127.0.0.1}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:port"
+      value: "${TE_IUT_PORT}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:user"
+      value: "${TE_IUT_SSH_USER}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:key"
+      value: "${TE_IUT_SSH_KEY}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:ssh_proxy"
+      value: "${TE_HYPERVISOR}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:ssh_port"
+      value: "${TE_IUT_SSH_PORT}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:copy_tries"
+      value: "10"
+
+- set:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/status:"
+      value: "1"

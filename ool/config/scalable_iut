@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export SOCKAPI_TS_SCALABLE_IF=${TE_IUT_TST1}
+TE_EXTRA_OPTS="--tester-req=!NO_SCALABLE_IUT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=scalable_iut"

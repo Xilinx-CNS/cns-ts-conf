@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Some tests explicitly disable RPC calls logging by setting
+# silent or silent_pass properties of RPC server. However
+# for debugging it may be necessary to print all the logs,
+# and it is more convenient to pass an option in command
+# line than to change test code for that purpose.
+
+export TE_TEST_BEHAVIOUR_LOG_ALL_RPC=1

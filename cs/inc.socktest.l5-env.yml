@@ -1,0 +1,20 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Level5 specific configuration objects
+#
+
+- add:
+    - oid: "/conf_delay:neigh_static"
+      value: "/agent/interface/neigh_static"
+
+    - oid: "/conf_delay:neigh_static/ta:"
+      value: "${TE_ARP_SYNC:-2000}"
+
+    - oid: "/conf_delay:neigh_dynamic"
+      value: "/agent/interface/neigh_dynamic"
+
+    - oid: "/conf_delay:neigh_dynamic/ta:"
+      value: "${TE_ARP_SYNC:-1500}"

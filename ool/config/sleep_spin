@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# It modifies epoll behaviour only, and nothing more
+# It implies epoll3 and any spin config (spin/small_spin/int_spin)
+
+export EF_SLEEP_SPIN_USEC=50
+
+TE_EXTRA_OPTS="--trc-tag=ool_sleep_spin"
+
+# Bug 80473
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_NON_MT_SAFE"

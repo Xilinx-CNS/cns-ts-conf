@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_RPC_ZF_HAS_PENDING_THREADS_ENABLED=true
+
+TE_EXTRA_OPTS="--trc-tag=zf_has_pending_threads"
+
+# This option prevents tests from processing
+# the ZF_EPOLLIN_OVERLAPPED event correctly.
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!PFTF_RECV"
+

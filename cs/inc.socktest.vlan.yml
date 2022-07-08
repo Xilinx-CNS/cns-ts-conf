@@ -1,0 +1,65 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: ${TE_IUT_TST1_P} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_P}/vlans:${TE_IUT_TST1_VLAN}"
+          value: "${TE_IUT_TST1_VLAN_NAME}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_P}/vlans:${TE_IUT_TST1_VLAN}"
+          value: "${TE_TST1_IUT_VLAN_NAME}"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/rsrc:${TE_IUT_TST1_VLAN_NAME}"
+          value: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_VLAN_NAME}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_TST1_IUT_VLAN_NAME}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_VLAN_NAME}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_VLAN_NAME}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_VLAN_NAME}"
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_VLAN_NAME}/parent:0"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_P}"
+
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_VLAN_NAME}/parent:0"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_P}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_P}/status:"
+          value: "1"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_P}/status:"
+          value: "1"
+
+- cond:
+    if: ${TE_IUT_TST1_IUT_P} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_P}/vlans:${TE_IUT_TST1_IUT_VLAN}"
+          value: "${TE_IUT_TST1_IUT_VLAN_NAME}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT_P}/vlans:${TE_IUT_TST1_IUT_VLAN}"
+          value: "${TE_TST1_IUT_IUT_VLAN_NAME}"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/rsrc:${TE_IUT_TST1_IUT_VLAN_NAME}"
+          value: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_VLAN_NAME}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_TST1_IUT_IUT_VLAN_NAME}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT_VLAN_NAME}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_VLAN_NAME}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT_VLAN_NAME}"
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_VLAN_NAME}/parent:0"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_P}"
+
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT_VLAN_NAME}/parent:0"
+          value: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT_P}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_P}/status:"
+          value: "1"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_IUT_IUT_P}/status:"
+          value: "1"

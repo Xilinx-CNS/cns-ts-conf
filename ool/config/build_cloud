@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Do not test multicast with IPv6 (bug 84313)
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!(MULTICAST&IP6)"
+
+# build_ip6 and build_bpf tags are legacy, use build_cloud tag for TRC
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=build_ip6 --trc-tag=build_bpf"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=build_cloud"

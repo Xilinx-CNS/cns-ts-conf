@@ -1,0 +1,21 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Exablaze specific configuration
+#
+
+- include:
+    - cs/inc.socktest.common.yml
+
+- set:
+    - oid: "/local:Agt_A/socklib:"
+      value: "${EXASOCK_LIB}"
+
+- add:
+    - oid: "/local:/iut_errno_change_no_check:"
+      value: "${TE_ERRNO_CHANGE_NO_CHECK:-0}"
+
+    - oid: "/local:Agt_A/env:EXASOCK_DEBUG"
+      value: "${EXASOCK_DEBUG}"

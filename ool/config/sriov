@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Run "sudo sfboot sriov=enabled vf-count=3 vf-msix-limit=1"
+export EF_PACKET_BUFFER_MODE=3
+export ONLOAD_PHYS_MODE_GID=-1
+
+TE_EXTRA_OPTS="--trc-tag=ool_sriov --trc-tag=ool_phys_mode"
+# Bug 58889
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEPORT"

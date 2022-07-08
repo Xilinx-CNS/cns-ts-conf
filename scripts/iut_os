@@ -1,0 +1,520 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# The file has to be used after configuration specific settings.
+# It does nothing for IUT, if TE_IUT_TA_TYPE is not empty.
+# It uses TE_IUT variable value and SSH to guess OS dependent settings.
+# It manages 32-bit and 64-bit settings well.
+#
+
+export TE_IUT_TA_NAME=Agt_A
+# Agent name which is used as IUT (changed if namespaces are used).
+export TE_IUT_TA_NAME_NS=$TE_IUT_TA_NAME
+# Agent name where interace chains are configured (bond, vlan, macvlan).
+export TE_IUT_TA_NAME_IFS=$TE_IUT_TA_NAME
+
+# Extend the TA signatures with the kernel version that was used to build libc and
+# the version of installed Linux headers
+export TE_TA_SIGNATURE_FIELDS="os-version gcc-target libc-version header-version"
+
+export TE_TST1_TA_NAME=Agt_B
+test -n "$TE_TST2" && export TE_TST2_TA_NAME=Agt_C
+test -n "$TE_HYPERVISOR" && export TE_HYPERVISOR_TA_NAME=Agt_HV
+test -n "$TE_LOG_LISTENER" && export TE_LOG_LISTENER_TA_NAME=LogListener
+export TE_POWER_TA_NAME=Agt_Power
+
+# Save original testing interfaces names.
+export TE_ORIG_IUT_TST1=$TE_IUT_TST1
+test -n "$TE_IUT_TST1_IUT" && export TE_ORIG_IUT_TST1_IUT=$TE_IUT_TST1_IUT
+test -n "$TE_IUT_TST1_IUT2" && export TE_ORIG_IUT_TST1_IUT2=$TE_IUT_TST1_IUT2
+test -n "$TE_IUT_TST1_IUT3" && export TE_ORIG_IUT_TST1_IUT3=$TE_IUT_TST1_IUT3
+test -n "$TE_IUT_TST2_TST" && export TE_ORIG_IUT_TST2_TST=$TE_IUT_TST2_TST
+
+test -n "$TE_TST1_IUT" && export TE_ORIG_TST1_IUT=$TE_TST1_IUT
+test -n "$TE_TST1_IUT_IUT" && export TE_ORIG_TST1_IUT_IUT=$TE_TST1_IUT_IUT
+test -n "$TE_TST1_IUT_IUT2" && export TE_ORIG_TST1_IUT_IUT2=$TE_TST1_IUT_IUT2
+test -n "$TE_TST1_IUT_IUT3" && export TE_ORIG_TST1_IUT_IUT3=$TE_TST1_IUT_IUT3
+
+# Export a 'safe' env PATH.
+# Presence of NFS entries in PATH can cause errors like that:
+#   Too many levels of symbolic links
+# See bug 74407 for details.
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+export SSH="ssh -qxTn -o BatchMode=yes -o StrictHostKeyChecking=no"
+
+ta_ssh_args()
+{
+    local ta="$1"
+    local ssh_args=
+    local ssh_key_var=${ta}_SSH_KEY
+    local ssh_key=${!ssh_key_var:-${TE_SSH_KEY}}
+    local ssh_user_var=${ta}_SSH_USER
+    local ssh_user=${!ssh_user_var:-${TE_SSH_USER}}
+    local ssh_port_var=${ta}_SSH_PORT
+    local ssh_port=${!ssh_port_var:-${TE_SSH_PORT}}
+
+    test -z "${ssh_key}" || ssh_args="${ssh_args} -i ${ssh_key}"
+    test -z "${ssh_user}" || ssh_args="${ssh_args} -l ${ssh_user}"
+    test -z "${ssh_port}" || ssh_args="${ssh_args} -p ${ssh_port}"
+
+    SSH_ARGS="${ssh_args} ${!ta}"
+}
+
+ta_ssh()
+{
+    local ta="$1" ; shift
+    local ta_build_var="${ta}_BUILD"
+    local ta_build="${!ta_build_var}"
+
+    if test "${ta_build}" = local ; then
+        exec $*
+    else
+        ta_ssh_args ${ta}
+
+        $SSH ${SSH_ARGS} $*
+    fi
+}
+
+#
+# Detect the bitness in userspace.
+#
+# @note Print bitness on stdout
+#
+detect_ul_bitness()
+{
+    case "$TE_OOL_UL" in
+        m32 ) echo 32 ;;
+        m64 ) echo 64 ;;
+        * )   ta_ssh TE_IUT getconf LONG_BIT ;;
+    esac
+}
+
+if test \( -n "${TE_IUT}" -o "${TE_IUT_BUILD}" = local \) -a -z "${TE_IUT_TA_TYPE}" ; then
+    kname="$(ta_ssh TE_IUT uname -s)"
+    export IUT_KERNEL_NAME="$kname"
+
+    if [ "$(detect_ul_bitness)" == "64" ] ; then
+        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=ul-64 --tester-req=!UL_32"
+    else
+        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=ul-32 --tester-req=!UL_64"
+        # PIO requires 64-bit UL:
+        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SF_TEMPLATE_SEND"
+    fi
+
+    case "$kname" in
+        Linux )
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --opts=opts/linux"
+            machine="$(ta_ssh TE_IUT uname -m)"
+            case "$machine" in
+                i?86 )
+                    TE_IUT_TA_TYPE=linux
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=kernel-32"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!KERNEL_64"
+                    ;;
+                x86_64 )
+                    if [ "$(detect_ul_bitness)" == "64" ] ; then
+                        TE_IUT_TA_TYPE=linux64
+                    else
+                        TE_IUT_TA_TYPE=linux
+                    fi
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=kernel-64"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!KERNEL_32"
+                    ;;
+                ppc64 )
+                    export PATH=$PATH:/opt/ppc64_toolchain/bin
+                    export PPC64_HOME=/opt/ppc64_toolchain/powerpc64-unknown-linux-gnu
+                    export PATH=$PATH:/opt/ppc32_toolchain/bin
+                    export PPC32_HOME=/opt/ppc32_toolchain/powerpc-unknown-linux-gnu
+                    if [ "$(detect_ul_bitness)" == "64" -a "x$TE_USE_PPC32_TA" == "x" ] ; then
+                        if [ "x$TE_USE_IBM_AT_TA" == "x" ] ; then
+                            TE_IUT_TA_TYPE=ppc64
+                        else
+                            TE_IUT_TA_TYPE=ppc64_at
+                        fi
+                    else
+                        if [ "x$TE_USE_IBM_AT_TA" == "x" ] ; then
+                            TE_IUT_TA_TYPE=ppc32
+                        else
+                            TE_IUT_TA_TYPE=ppc32_at
+                        fi
+                    fi
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=kernel-64"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!KERNEL_32"
+                    ;;
+                aarch64 )
+                    TE_IUT_TA_TYPE=aarch64_linux
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=kernel-64"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=aarch64"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!KERNEL_32"
+                    ;;
+
+                * ) echo "Unknown machine $machine on $TE_IUT" >&2
+                    exit 1 ;;
+            esac
+
+            libc_version="$(ta_ssh TE_IUT ldd --version | head -n 1 | sed 's/.*) 2\.//')"
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=libc:$libc_version"
+
+            kernel_version="$(ta_ssh TE_IUT uname -r)"
+            export IUT_KERNEL_VERSION="$kernel_version"
+            case "$kernel_version" in
+                2.6.* )
+                    LAST_NUMBER=$(echo ${kernel_version} | sed s/2\.6\.//g | sed s/[-.].*//g)
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-2.6:$LAST_NUMBER"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux:2"
+                    ;;
+                # Last 2.6 kernel is 2.6.39, so for 3.X linux-2.6 is equal
+                # to X + 40.
+                3.* )
+                    SECOND_NUMBER=$(echo ${kernel_version} | sed "s/3\.\([0-9]*\)[.-].*/\1/")
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-2.6:$((SECOND_NUMBER + 40))"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-3:$SECOND_NUMBER"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux:3"
+                    ;;
+                # Last 3.0 kernel is 3.19, so for 4.X linux-3 is equal
+                # to X + 20.
+                # Last 2.6.* kernel is 2.6.39, so for 4.X linux-2.6 is
+                # equal to linux-3 + 40, i.e. X + 20 + 40.
+                4.* )
+                    SECOND_NUMBER=$(echo ${kernel_version} | sed "s/4\.\([0-9]*\)[.-].*/\1/")
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-2.6:$((SECOND_NUMBER + 60))"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-3:$((SECOND_NUMBER + 20))"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-4:$SECOND_NUMBER"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux:4"
+                    ;;
+                # Last 4.0 kernel is 4.20, so for 5.X linux-4 is equal
+                # to X + 21.
+                # Last 3.0 kernel is 3.19, so for 5.X linux-3 is equal
+                # to linux-4 + 20, i.e. X + 21 + 20.
+                # Last 2.6.* kernel is 2.6.39, so for 5.X linux-2.6 is
+                # equal to linux-3 + 40, i.e. X + 21 + 20 + 40.
+                5.* )
+                    SECOND_NUMBER=$(echo ${kernel_version} | sed "s/5\.\([0-9]*\)[.-].*/\1/")
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-2.6:$((SECOND_NUMBER + 81))"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-3:$((SECOND_NUMBER + 41))"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-4:$((SECOND_NUMBER + 21))"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-5:$SECOND_NUMBER"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux:5"
+                    ;;
+                * )
+                    # the kernel is not 2.6 or 3
+                    ;;
+            esac
+
+            #CPUs number - was used in layer2
+            #cpus_number="$(ta_ssh TE_IUT cat /proc/cpuinfo | grep processor | wc -l)"
+            #case "$cpus_number" in
+            #    1 )
+            #        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!CPU_NUM_GEQ_2"
+            #        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!CPU_NUM_GEQ_4"
+            #        ;;
+            #    2 ) 
+            #        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=cpus_num_geq_2"
+            #        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!CPU_NUM_GEQ_4"
+            #        ;;
+            #    4 )
+            #        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=cpus_num_geq_2"
+            #        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=cpus_num_geq_4"
+            #        ;;
+            #    * )
+            #        #unsopported CPUs number
+            #        ;;
+            #esac
+            ;;
+
+        NetBSD )
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --opts=opts/netbsd"
+            machine="$(ta_ssh TE_IUT uname -m)"
+            case "$machine" in
+                i?86 )
+                    TE_IUT_TA_TYPE=netbsd
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!KERNEL_64"
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=kernel-32"
+                    ;;
+                * ) echo "Unknown machine $machine on $TE_IUT" >&2
+                    exit 1 ;;
+            esac
+            ;;
+
+        CYGWIN_NT-* )
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --opts=opts/win32"
+            # Override 'kname' to have acceptable names
+            # for interfaces.
+            kname="Win"
+            ;;
+
+        * ) echo "Unknown kernel on $TE_IUT: $machine" >&2
+            exit 1 ;;
+    esac
+
+    export TE_IUT_TA_TYPE
+
+    test -z "${TE_IUT_TST1}" -a \
+         -n "$(eval echo '${TE_IUT_TST1_'$kname'}')" && \
+        export TE_IUT_TST1="$(eval echo '${TE_IUT_TST1_'$kname'}')"
+    test -z "${TE_IUT_TST1_IUT}" -a \
+         -n "$(eval echo '${TE_IUT_TST1_IUT_'$kname'}')" && \
+        export TE_IUT_TST1_IUT="$(eval echo '${TE_IUT_TST1_IUT_'$kname'}')"
+    test -z "${TE_IUT_TST2}" -a \
+         -n "$(eval echo '${TE_IUT_TST2_'$kname'}')" && \
+        export TE_IUT_TST2="$(eval echo '${TE_IUT_TST2_'$kname'}')"
+    test -z "${TE_IUT_TST2_TST}" -a \
+         -n "$(eval echo '${TE_IUT_TST2_TST_'$kname'}')" && \
+        export TE_IUT_TST2_TST="$(eval echo '${TE_IUT_TST2_TST_'$kname'}')"
+fi
+
+if test -n "${TE_TST1}" -o "${TE_TST1_BUILD}" = local ; then
+
+    kname="$(ta_ssh TE_TST1 uname -s)"
+    export TST1_KERNEL_NAME="$kname"
+
+    case "$kname" in
+        Linux )
+            kernel_version="$(ta_ssh TE_TST1 uname -r)"
+            export TST1_KERNEL_VERSION="$kernel_version"
+            ;;
+
+    esac
+fi
+
+get_agent_type()
+{
+    local ta="$1"
+    local host_name="${!ta}"
+    local ta_type_var=${ta}_TA_TYPE
+    ta_type="${!ta_type_var}"
+    local ta_build="${ta}_BUILD"
+    local ta_build="${!ta_build}"
+    local force32_var="${ta}_FORCE32"
+    local force32="${!force32_var}"
+    if test \( -n "${host_name}" -o "${ta_build}" = local \) -a -z "${ta_type}" ; then
+        kname="$(ta_ssh $ta uname -s)"
+        case "$kname" in
+        Linux )
+            machine="$(ta_ssh $ta uname -m)"
+            case "$machine" in
+            i?86 )
+                ta_type=linux
+                ;;
+            x86_64 )
+                UL=$(ta_ssh $ta file /bin/bash | sed -e "s/.*ELF //; s/.bit .*//")
+                if [ "$UL" == "64" ] ; then
+                ta_type=linux64
+                else
+                ta_type=linux
+                fi
+                ;;
+            ppc64 )
+                UL=$(ta_ssh $ta file /bin/bash | sed -e "s/.*ELF //; s/.bit .*//")
+                if [ "$UL" == "64" ] ; then
+                ta_type=ppc64
+                else
+                ta_type=ppc32
+                fi
+                ;;
+            aarch64 )
+                ta_type=aarch64_linux
+                ;;
+
+            * ) echo "Unknown machine $machine on $host_name" >&2
+                exit 1 ;;
+            esac
+
+            ;;
+
+        NetBSD )
+            machine="$(ta_ssh $ta uname -m)"
+            case "$machine" in
+            i?86 )
+                ta_type=netbsd
+                ;;
+            * ) echo "Unknown machine $machine on $host_name" >&2
+                exit 1 ;;
+            esac
+            ;;
+
+        SunOS )
+            machine="$(ta_ssh $ta isainfo -k)"
+            case "$machine" in
+            i386 )
+                ta_type=solaris2
+                ;;
+            amd64 )
+                if test -z "$force32" ; then
+                ta_type=solaris2_64
+                else
+                ta_type=solaris2
+                fi
+                ;;
+            * ) echo "Unknown machine $machine on $host_name" >&2
+                exit 1 ;;
+            esac
+            ;;
+
+        CYGWIN_NT-* )
+            ;;
+
+        * ) echo "Unknown kernel on $host_name: $machine" >&2
+            exit 1 ;;
+        esac
+    fi
+}
+
+get_agent_type TE_TST1
+TE_TST1_TA_TYPE=$ta_type
+export TE_TST1_TA_TYPE
+get_agent_type TE_TST2
+TE_TST2_TA_TYPE=$ta_type
+export TE_TST2_TA_TYPE
+
+#
+# Check that the variable @b buildSSH is available and return it
+#
+# @param $1 Host name
+#
+# @return @c 0 in case @b buildSSH is available,
+#         else - @c 1 is returned.
+# @note The value @b buildSSH is returned on stdout.
+#
+get_buildSSH() {
+    local host=$1
+
+    test -z "$TE_TA_BUILD_SSH" && return 1
+
+    local SSH=$(eval "echo \"$TE_TA_BUILD_SSH\"")
+    test -z "$SSH" && return 1
+
+    $SSH "echo" >/dev/null 2>&1 # try execute command over @b $SSH
+    local res=$?
+    if test "$res" -eq "0" ; then
+        echo "$SSH"
+        echo "Successful connection with '$host' ($SSH)" >&2
+    else
+        echo "WARNING! Unable to connect to the '$host' ($SSH)" >&2
+    fi
+    return $res
+}
+
+#
+# Export @p dst equal @p src in case when @p src contains a value
+# and @p dst does not.
+#
+# @param dst The name of destination variable
+# @param src The name of source variable
+#
+maybe_export()
+{
+    local dst="$1"
+    local src="$2"
+    if test -z "${!dst}" -a -n "${!src}" ; then
+        export "${dst}"="${!src}"
+    fi
+}
+
+for HOST in TE_IUT TE_TST1 TE_TST2 TE_HYPERVISOR TE_LOG_LISTENER ; do
+    if test -z ${!HOST} ; then continue; fi
+
+    local TYPE=${HOST}_TA_TYPE
+    TYPE=${!TYPE}
+    case "$TYPE" in
+        *linux* | "" )
+            local CC=${HOST}_CC
+            local CFLAGS=${HOST}_CFLAGS
+            local CFLAGS_VAR=${HOST}_CFLAGS_VAR
+            local TA_SIGNATURE=${HOST}_TA_SIGNATURE
+
+            TA_SIGNATURE=${!TA_SIGNATURE}
+            if test -z "$TA_SIGNATURE" ; then
+                ta_ssh_args ${HOST}
+
+                TA_SIGNATURE="$(te_ta_signature "${SSH_ARGS}" \
+                    "${!CC:-gcc} ${!CFLAGS} ${!CFLAGS_VAR}")"
+                RES=$?
+                test $RES -ne 0 && exit $RES
+            fi
+
+            local PLATFORM="ta_$TA_SIGNATURE"
+            export "${HOST}_TA_TYPE"="$PLATFORM"
+            export "$(te_hostname2shname "${!HOST}_TA_TYPE")"="$PLATFORM"
+
+            # The values of variables *FLAGS are used for generating files
+            # configure and Makefile. The values of variables *FLAGS_VAR are
+            # used for execution files confODigure and Makefile.
+            maybe_export "${PLATFORM}_CC"           "${HOST}_CC"
+            maybe_export "${PLATFORM}_CFLAGS"       "${HOST}_CFLAGS"
+            maybe_export "${PLATFORM}_CFLAGS_VAR"   "${HOST}_CFLAGS_VAR"
+            maybe_export "${PLATFORM}_CPPFLAGS"     "${HOST}_CPPFLAGS"
+            maybe_export "${PLATFORM}_CPPFLAGS_VAR" "${HOST}_CPPFLAGS_VAR"
+
+            local P_HOST="${PLATFORM}_HOST"
+            test -z "${!P_HOST}" && export "$P_HOST"="${!HOST}"
+
+            local buildSSH=
+            local platformSSH="${PLATFORM}_SSH"
+
+            buildSSH=$(get_buildSSH "${!HOST}")
+            if test "$?" -eq "0" ; then
+                export "$platformSSH"="${buildSSH}"
+            elif test -z "${!platformSSH}" ; then
+                export "$platformSSH"="ssh ${!HOST}"
+            fi
+            ;;
+    esac
+done
+
+if test -n "${IUT_KERNEL_VERSION}" ; then
+    first_num="$(echo $IUT_KERNEL_VERSION | sed 's/\([0-9]*\)\..*/\1/')"
+    second_num="$(echo $IUT_KERNEL_VERSION | sed 's/[0-9]*\.\([0-9]*\)\..*/\1/')"
+    export IUT_KERNEL_VERSION_NUM=$((first_num * 100 + $second_num))
+fi
+
+#
+# Some exports for the i386 case which will be used further
+# in builder.conf file
+#
+if test "$TE_OOL_UL" = "m32" ; then
+    # Set type for i386 platform
+    export TE_IUT_RPCS_I386_TYPE="${TE_IUT_TA_TYPE}_rpcs_i386"
+
+    # Obtain HOST and SSH for i386 platform from the base platform
+    for sfx in HOST SSH ; do
+        name="${TE_IUT_RPCS_I386_TYPE}_${sfx}"
+        pval="${TE_IUT_TA_TYPE}_${sfx}"
+        eval "export ${name}=\"${!pval}\""
+    done
+fi
+
+if test -n "$TE_IUT" ; then
+    CHECK_CONFIG=$(${SSH} ${TE_IUT} "cat /boot/config-\$(uname -r)| sed 's/#.*$//'")
+    if test "$?" -ne "0"; then
+        echo "Failed to get kernel configuration for IUT"
+    else
+        if [[ "$CHECK_CONFIG" != *CONFIG_TRANSPARENT_HUGEPAGE=y* ]] ; then
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!TRANSPARENT_HUGE_PAGES"
+        fi
+        if [[ "$CHECK_CONFIG" != *CONFIG_IPV6_SUBTREES=y* ]] ; then
+            # We expect this on RHEL7/8, see ON-11090
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!IPV6_RT_RULE_FROM"
+        fi
+
+        # Do not run BPF tests on kernels with disabled BPF. See ST-1894.
+        if [[ "$CHECK_CONFIG" != *CONFIG_BPF_SYSCALL=y* ]] ; then
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!BPF"
+        fi
+
+        if [[ "$CHECK_CONFIG" != *CONFIG_IPV6=y* ]] ; then
+            export ST_NO_IP6=yes
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!IP6_IP4MAPPED"
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!IP6"
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!IP6_ONLOAD"
+        fi
+        if [[ "$CHECK_CONFIG" != *CONFIG_NET_NS=y* ]] ; then
+            export SOCKAPI_TS_NO_NETNS=yes
+            TE_EXTRA_OPTS+=" --tester-req=!NETNS"
+        fi
+        if [[ "$CHECK_CONFIG" == *CONFIG_DEBUG_KMEMLEAK=y* ]] ; then
+            export ST_DEBUG_KMEMLEAK=yes
+        fi
+    fi
+fi

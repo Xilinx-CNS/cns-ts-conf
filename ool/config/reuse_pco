@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_ENV_REUSE_PCO="yes"
+export SFC_ZF_ATTR_ADD="${SFC_ZF_ATTR_ADD}${SFC_ZF_ATTR_ADD:+;}tcp_finwait_ms=5000;tcp_timewait_ms=5000"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=reuse_pco --tester-req=!NO_REUSE_PCO"

@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# RHEL6 specific options
+--tester-req=!TEAM
+--tester-req=!F_SETPIPE_SZ
+--tester-req=!F_GETPIPE_SZ
+
+# Option SO_SELECT_ERR_QUEUE does not exist in the host headers
+--tester-req=!SO_SELECT_ERR_QUEUE

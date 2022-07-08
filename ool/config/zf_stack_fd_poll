@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_RPC_ZF_STACK_FD_IOMUX_ENABLED=true
+export TE_RPC_ZF_STACK_FD_IOMUX_DEF=poll
+
+TE_EXTRA_OPTS="--trc-tag=zf_stack_fd_poll"

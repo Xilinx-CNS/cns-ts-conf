@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_HIGH_THROUGHPUT_MODE=1
+
+TE_EXTRA_OPTS="--trc-tag=high_throughput"
+
+# Multicast receiving tests don't work correctly
+# with EF_HIGH_THROUGHPUT_MODE=1 on pre-medford. See ST-1377
+# ST-2542: EF100 is post-medford
+
+if test -z "${IUT_FW_VERSION}" ; then
+    echo "WARNING! IUT_FW_VERSION is empty; are the drivers loaded?"
+else
+    if test -z "$EF_IUT_EF100" ; then
+        if ((`echo "${IUT_FW_VERSION}" | sed -e "s/\..*//"` <= 6)); then
+            TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!MULTICAST_RECV"
+        fi
+    fi
+fi

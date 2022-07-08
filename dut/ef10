@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_IUT_EF10=true
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!OUT_OF_BUFFERS"
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=ef10"
+
+export EF_RX_TIMESTAMPING=1
+
+if test "$EF_IUT_ZF_ALTS" != "true" ; then
+    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!ZF_ALTS"
+fi

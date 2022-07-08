@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Loopback is accelerated with Onload
+TE_EXTRA_OPTS="--trc-tag=ool_loop_onload --tester-req=!NO_LOOP_ONLOAD"

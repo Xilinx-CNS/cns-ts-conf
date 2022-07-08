@@ -1,0 +1,13 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Set core_pattern for Agt_A and Agt_B if exist.
+# Do not set it for all agents, because Agt_D for sapi is kili.
+
+- set:
+    - if: ${TE_IUT_TA_NAME} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/sys:/core_pattern:"
+      value: "/var/tmp/core.te.%h-%p-%t"
+    - if: ${TE_TST1_TA_NAME} != ""
+      oid: "/agent:${TE_TST1_TA_NAME}/sys:/core_pattern:"
+      value: "/var/tmp/core.te.%h-%p-%t"

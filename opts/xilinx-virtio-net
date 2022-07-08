@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+--script=env/pci.iut.virtio-net-trans
+--script=env/xilinx-virtio
+
+--trc-tag=xilinx-virtio-net
+#--trc-tag=virtio-net-no-ctrl-q
+--trc-tag=max_rx_queues:8
+--trc-tag=max_tx_queues:8

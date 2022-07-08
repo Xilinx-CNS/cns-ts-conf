@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_SOCKET_CACHE_MAX=1000
+export EF_PER_SOCKET_CACHE_MAX=500
+export EF_TCP_TCONST_MSL=5
+export TE_TEST_BEHAVIOUR_CLEANUP_FD_LEAK_CHECK=0
+
+# see bug47417
+export EF_FDS_MT_SAFE=1
+
+# Active and passive socket caching are incompatible with (v)fork().
+# See Onload User Guide.
+TE_EXTRA_OPTS="--tester-req=!FDS_NON_MT_SAFE  --tester-req=!VFORK --tester-req=!FORK --tester-req=!FORK_ACCEPT --trc-tag=socket_cache"
+
+# Exclude FD caching incompatible tests.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FD_CACHE_INCOMPATIBLE"
+
+# Socket caching + setuid() do not play together. See ON-13521.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SETUID"

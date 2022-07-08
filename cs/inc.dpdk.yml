@@ -1,0 +1,151 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- set:
+    - oid: "/local:/dpdk:/reuse_rpcs:"
+      value: "${TE_ENV_REUSE_PCO}"
+
+- set:
+    - oid: "/local:${TE_IUT_TA_NAME}/mem_channels:"
+      value: "${TE_IUT_MEM_CHANNELS}"
+    - oid: "/local:${TE_IUT_SOC_TA_NAME}/mem_channels:"
+      value: "${TE_IUT_SOC_MEM_CHANNELS}"
+    - oid: "/local:${TE_TST1_TA_NAME}/mem_channels:"
+      value: "${TE_TST1_MEM_CHANNELS}"
+
+- set:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/mem_amount:"
+      value: "${TE_IUT_MEM_AMOUNT}"
+    - oid: "/local:${TE_IUT_SOC_TA_NAME}/dpdk:/mem_amount:"
+      value: "${TE_IUT_SOC_MEM_AMOUNT}"
+    - oid: "/local:${TE_TST1_TA_NAME}/dpdk:/mem_amount:"
+      value: "${TE_TST1_MEM_AMOUNT}"
+
+- set:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/app_prefix:"
+      value: "${TE_IUT_APP_PREFIX:-${TE_DPDK_APP_PREFIX}}"
+    - oid: "/local:${TE_IUT_SOC_TA_NAME}/dpdk:/app_prefix:"
+      value: "${TE_IUT_SOC_APP_PREFIX:-${TE_DPDK_APP_PREFIX}}"
+    - oid: "/local:${TE_TST1_TA_NAME}/dpdk:/app_prefix:"
+      value: "${TE_TST1_APP_PREFIX:-${TE_DPDK_APP_PREFIX}}"
+
+- add:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/dev_args:pci_fn:${TE_PCI_VENDOR_IUT_TST1}:${TE_PCI_DEVICE_IUT_TST1}:"
+      value: "${TE_IUT_DEV_ARGS:-${TE_DPDK_DEV_ARGS}}"
+    - if: ${TE_PCI_VENDOR_IUT_SOC} != ""
+      oid: "/local:${TE_IUT_SOC_TA_NAME}/dpdk:/dev_args:pci_fn:${TE_PCI_VENDOR_IUT_SOC}:${TE_PCI_DEVICE_IUT_SOC}:"
+      value: "${TE_IUT_SOC_DEV_ARGS:-${TE_IUT_DEV_ARGS:-${TE_DPDK_DEV_ARGS}}}"
+    - oid: "/local:${TE_TST1_TA_NAME}/dpdk:/dev_args:pci_fn:::"
+      value: "${TE_TST1_DEV_ARGS:-${TE_DPDK_DEV_ARGS}}"
+
+- add:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/required_service_cores:pci_fn:${TE_PCI_VENDOR_IUT_TST1}:${TE_PCI_DEVICE_IUT_TST1}:"
+      value: "${TE_IUT_REQUIRED_SERVICE_CORES:-${TE_DPDK_REQUIRED_SERVICE_CORES}}"
+    - if: ${TE_PCI_VENDOR_IUT_SOC} != ""
+      oid: "/local:${TE_IUT_SOC_TA_NAME}/dpdk:/required_service_cores:pci_fn:${TE_PCI_VENDOR_IUT_SOC}:${TE_PCI_DEVICE_IUT_SOC}:"
+      value: "${TE_IUT_SOC_REQUIRED_SERVICE_CORES:-${TE_DPDK_REQUIRED_SERVICE_CORES}}"
+
+- set:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/extra_eal_args:"
+      value: "${TE_DPDK_EXTRA_EAL_ARGS} ${TE_IUT_EXTRA_EAL_ARGS}"
+    - oid: "/local:${TE_IUT_SOC_TA_NAME}/dpdk:/extra_eal_args:"
+      value: "${TE_DPDK_EXTRA_EAL_ARGS} ${TE_IUT_SOC_EXTRA_EAL_ARGS}"
+    - oid: "/local:${TE_TST1_TA_NAME}/dpdk:/extra_eal_args:"
+      value: "${TE_DPDK_EXTRA_EAL_ARGS} ${TE_TST1_EXTRA_EAL_ARGS}"
+
+- set:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/link_speeds:"
+      value: "${TE_IUT_LINK_SPEEDS:-${TE_DPDK_LINK_SPEEDS}}"
+    - oid: "/local:${TE_IUT_SOC_TA_NAME}/dpdk:/link_speeds:"
+      value: "${TE_IUT_SOC_LINK_SPEEDS:-${TE_DPDK_LINK_SPEEDS}}"
+    - oid: "/local:${TE_TST1_TA_NAME}/dpdk:/link_speeds:"
+      value: "${TE_TST1_LINK_SPEEDS:-${TE_DPDK_LINK_SPEEDS}}"
+
+- add:
+    - if: |
+        ${TE_ENV_RTE_VERSION} >= 18080000 &
+        ${TE_ENV_SFC_DP_TX} = ef10_simple
+      oid: "/local:/dpdk:/offloads:/dev:/tx:/fixed:MBUF_FAST_FREE"
+
+- set:
+    - if: 0x${TE_PCI_VENDOR_TST1_IUT} = 0x10ee
+      oid: "/local:/dpdk:/peer_max_mtu:"
+      value: 9216
+    - if: 0x${TE_PCI_VENDOR_TST1_IUT} = 0x1924
+      oid: "/local:/dpdk:/peer_max_mtu:"
+      value: 9216
+    - if: 0x${TE_PCI_VENDOR_TST1_IUT} = 0x8086
+      oid: "/local:/dpdk:/peer_max_mtu:"
+      value: 9216
+    - if: |
+        0x${TE_PCI_VENDOR_TST1_IUT} != 0x10ee &
+        0x${TE_PCI_VENDOR_TST1_IUT} != 0x1924 &
+        0x${TE_PCI_VENDOR_TST1_IUT} != 0x8086
+      oid: "/local:/dpdk:/peer_max_mtu:"
+      value: 1500
+
+- cond:
+    if: |
+        (0x${TE_PCI_VENDOR_IUT_TST1} = 0x1924) &
+        ((0x${TE_PCI_DEVICE_IUT_TST1} = 0x0923) |
+         (0x${TE_PCI_DEVICE_IUT_TST1} = 0x0903) |
+         (0x${TE_PCI_DEVICE_IUT_TST1} = 0x0a03) |
+         (0x${TE_PCI_DEVICE_IUT_TST1} = 0x0b03))
+    then:
+      - add:
+          - "/local:/dpdk:/iut_loopback_mode:3"
+          - "/local:/dpdk:/iut_loopback_mode:27"
+          - "/local:/dpdk:/iut_loopback_mode:29"
+
+- cond:
+    if: |
+        (0x${TE_PCI_VENDOR_IUT_TST1} = 0x10ee &
+        0x${TE_PCI_DEVICE_IUT_TST1} = 0x0100)
+    then:
+      - add:
+          - "/local:/dpdk:/iut_loopback_mode:29"
+
+# Automatic RTE vdev instance to be deployed if need be.
+# The list of slave devices to include either one of IUT PCI
+# instances or both of them depending on the configuration choice.
+# Point to a newly created RTE vdev instance if need be.
+# Values set above get overridden (for IUT side only).
+- cond:
+    if: ${TE_ENV_RTE_VDEV_NAME} != ""
+    then:
+      - add:
+          - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}"
+
+      - set:
+          - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}/mode:"
+            value: "${TE_ENV_RTE_VDEV_MODE}"
+
+      - add:
+          - if: ${TE_PCI_INSTANCE_IUT_TST1} != ""
+            oid: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}/slave:${TE_PCI_INSTANCE_IUT_TST1}"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1}"
+          - if: ${TE_PCI_INSTANCE_IUT_TST1a} != ""
+            oid: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}/slave:${TE_PCI_INSTANCE_IUT_TST1a}"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1a}"
+
+      - set:
+          - if: ${TE_PCI_INSTANCE_IUT_TST1} != ""
+            oid: "/net:net1/node:A"
+            value: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}"
+          - if: ${TE_PCI_INSTANCE_IUT_TST1a} != ""
+            oid: "/net:net1a/node:A"
+            value: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}"
+
+- set:
+    - oid: "/local:/dpdk:/extra_tx_descs_per_packet:"
+      value: "${TE_ENV_DPDK_EXTRA_TX_DESCS_PER_PKT:-0}"
+
+- set:
+    - oid: "/local:/dpdk:/tso_cutoff_barrier:"
+      value: "${TE_ENV_DPDK_TSO_CUTOFF_BARRIER:-0}"
+
+- set:
+    - if: 0x${TE_PCI_VENDOR_IUT_TST1} = 0x1924
+      oid: "/local:/dpdk:/tso_ip_id_inc_algo:"
+      value: "mod15"

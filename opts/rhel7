@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# RHEL7 specific options
+
+# Do not create ipvlan interfaces in tests as
+# it requires linux >= 3.19
+--tester-req=!IPVLAN

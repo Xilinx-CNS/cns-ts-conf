@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# The VM has not started yet at this point, and trc tags are exported
+# with ts-conf/env/cmod-* files, see also ST-2578.
+if test "$HWSIM" != "true" ; then
+    TE_EXTRA_OPTS="$(${TE_BASE}/scripts/trc-tags.sh -d ${scripts/opts})"
+fi

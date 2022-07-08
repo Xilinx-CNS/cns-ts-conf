@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Run "sudo sfboot sriov=enabled vf-count=3 vf-msix-limit=1"
+# The DUT hardware should support IOMMU.
+export EF_PACKET_BUFFER_MODE=1
+
+TE_EXTRA_OPTS="--trc-tag=ool_sriov"
+# Bug 58889
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEPORT"

@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Platform-agnostic options that are used in bond test configurations.
+
+--tester-req=!NO_BOND
+
+--script=env/bond

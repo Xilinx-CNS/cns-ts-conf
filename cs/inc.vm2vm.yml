@@ -1,0 +1,209 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+# Start IUT VM
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1"
+
+- cond:
+    if: |
+        ${TE_HYPERVISOR_TOTAL_HUGEPAGES} != "" &
+        ${TE_HYPERVISOR_TOTAL_HUGEPAGES} > 0
+    then:
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/path:"
+            value: /dev/hugepages
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/prealloc:"
+            value: 1
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/cpu:/num:"
+      value: 2
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/size:"
+      value: 1536
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root/file:"
+      value: "${TE_IUT_VM_DRIVE:-${TE_VM_DRIVE}}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root/snapshot:"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/type:"
+      value: "tap"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/type_spec:"
+      value: "${TE_IUT_TST1_TAP}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/mac_addr:"
+      value: "52:54:00:01:02:03"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/status:"
+      value: 1
+
+- get:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/ssh_port:/host:"
+      value: "TE_IUT_SSH_PORT"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/rcf_port:"
+      value: "TE_IUT_PORT"
+
+# Start Tester VM
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/drive:root"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1"
+
+- cond:
+    if: |
+        ${TE_HYPERVISOR_TOTAL_HUGEPAGES} != "" &
+        ${TE_HYPERVISOR_TOTAL_HUGEPAGES} > 0
+    then:
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mem:/path:"
+            value: /dev/hugepages
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mem:/prealloc:"
+            value: 1
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/cpu:/num:"
+      value: 2
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mem:/size:"
+      value: 1536
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/drive:root/file:"
+      value: "${TE_IUT_VM_DRIVE:-${TE_VM_DRIVE}}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/drive:root/snapshot:"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/type:"
+      value: "tap"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/type_spec:"
+      value: "${TE_TST1_IUT_TAP}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/mac_addr:"
+      value: "52:54:00:01:02:04"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/status:"
+      value: 1
+
+- get:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/ssh_port:/host:"
+      value: "TE_TST1_SSH_PORT"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/rcf_port:"
+      value: "TE_TST1_PORT"
+
+# Configure and start IUT and Tester agents
+- add:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}"
+      value: "${TE_IUT_TA_TYPE}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}"
+      value: "${TE_TST1_TA_TYPE}"
+
+- set:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/vm:"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/vm:"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/rebootable:"
+      value: 1
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/rcflib:"
+      value: "rcfunix"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/rebootable:"
+      value: 1
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/rcflib:"
+      value: "rcfunix"
+
+- add:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:host"
+      value: "${TE_IUT:-127.0.0.1}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:port"
+      value: "${TE_IUT_PORT}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:user"
+      value: "${TE_IUT_SSH_USER}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:key"
+      value: "${TE_IUT_SSH_KEY}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:ssh_proxy"
+      value: "${TE_HYPERVISOR}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:ssh_port"
+      value: "${TE_IUT_SSH_PORT}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:copy_tries"
+      value: 10
+
+- add:
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:host"
+      value: "${TE_TST1:-127.0.0.1}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:port"
+      value: "${TE_TST1_PORT}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:user"
+      value: "${TE_TST1_SSH_USER}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:key"
+      value: "${TE_TST1_SSH_KEY}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:ssh_proxy"
+      value: "${TE_HYPERVISOR}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:ssh_port"
+      value: "${TE_TST1_SSH_PORT}"
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/conf:copy_tries"
+      value: 10
+
+- set:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/status:"
+      value: 1
+    - oid: "/rcf:/agent:${TE_TST1_TA_NAME}/status:"
+      value: 1
+
+# Add bridge with test network taps after agents startup to be sure
+# that tap interfaces are already in place
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/rsrc:${TE_IUT_TST1_BR}"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_BR}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/rsrc:${TE_IUT_TST1_TAP}"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/rsrc:${TE_TST1_IUT_TAP}"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_TST1_BR}"
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/sys:/net:/ipv6:/conf:${TE_IUT_TST1_TAP}/disable_ipv6:"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/sys:/net:/ipv6:/conf:${TE_TST1_IUT_TAP}/disable_ipv6:"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_BR}/status:"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/mtu:"
+      value: "9200"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/mtu:"
+      value: "9200"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:rx-gro"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:rx-vlan-filter"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:tx-checksum-ip-generic"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:tx-generic-segmentation"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:tx-tcp-segmentation"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:tx-tcp6-segmentation"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:tx-vlan-hw-insert"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/feature:tx-vlan-stag-hw-insert"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:rx-gro"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:rx-vlan-filter"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:tx-checksum-ip-generic"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:tx-generic-segmentation"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:tx-tcp-segmentation"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:tx-tcp6-segmentation"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:tx-vlan-hw-insert"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/feature:tx-vlan-stag-hw-insert"
+      value: 0
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/status:"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/status:"
+      value: 1
+
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_TST1_BR}/port:${TE_IUT_TST1_TAP}"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_TST1_BR}/port:${TE_TST1_IUT_TAP}"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}"

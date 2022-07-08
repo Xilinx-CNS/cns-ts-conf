@@ -1,0 +1,94 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Specific configuration objects for congestion algorithms testing.
+# Congestion setup consists of:
+# - 2 pairs of VETHs
+# - 2 Linux bridges
+# - namespace
+# - Agent and RPC server inside namespace
+#
+- register:
+    - oid: "/local/congestion"
+      access: read_only
+      type: none
+
+    - oid: "/local/congestion/bottleneck_first_veth_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/bottleneck_second_veth_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/receiver_first_veth_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/receiver_second_veth_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/bottleneck_bridge_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/receiver_bridge_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/ns_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/ns_agent_name"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/ns_agent_rpcprovider"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/ns_agent_rcf_port"
+      access: read_write
+      type: string
+
+    - oid: "/local/congestion/ns_pco_name"
+      access: read_write
+      type: string
+
+- set:
+    - oid: "/local:/congestion:/bottleneck_first_veth_name:"
+      value: "ct-btlnck0"
+
+    - oid: "/local:/congestion:/bottleneck_second_veth_name:"
+      value: "ct-btlnck1"
+
+    - oid: "/local:/congestion:/receiver_first_veth_name:"
+      value: "ct-recv0"
+
+    - oid: "/local:/congestion:/receiver_second_veth_name:"
+      value: "ct-recv1"
+
+    - oid: "/local:/congestion:/bottleneck_bridge_name:"
+      value: "ct-br-btlnck"
+
+    - oid: "/local:/congestion:/receiver_bridge_name:"
+      value: "ct-br-recv"
+
+    - oid: "/local:/congestion:/ns_name:"
+      value: "ctns"
+
+    - oid: "/local:/congestion:/ns_agent_name:"
+      value: "Agt_ctns"
+
+    - oid: "/local:/congestion:/ns_agent_rpcprovider:"
+      value: "${SF_TS_TST_RPCPROVIDER}"
+
+    - oid: "/local:/congestion:/ns_agent_rcf_port:"
+      value: "30667"
+
+    - oid: "/local:/congestion:/ns_pco_name:"
+      value: "pco_ctns"

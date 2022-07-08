@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_POLL_USEC=-1
+export EF_TCP_SEND_SPIN=1
+export EF_PIPE_SEND_SPIN=1
+export EF_PIPE_RECV_SPIN=1
+export EF_TCP_ACCEPT_SPIN=1
+export EF_TCP_CONNECT_SPIN=1
+
+TE_EXTRA_OPTS="--trc-tag=ool_spin --tester-req=!NO_SPIN"

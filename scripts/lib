@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_LOG_LISTENER_LOG_LEVEL=WARN
+SOCKAPI_TS_IF_ALIAS_DONE=false
+
+get_random_vlan()
+{
+    echo $(((RANDOM % 4093) + 2))
+}
+
+#
+# Use interface name aliases to avoid combining too long name.
+# An interface name should not exceed 16 bytes length.
+#
+# Do not set aliases if SOCKAPI_TS_IF_ALIAS_DONE=true or bonding is used.
+# Note, if $5=true is set changes will be applied ignoring
+# SOCKAPI_TS_IF_ALIAS_DONE value.
+#
+use_interface_name_aliases()
+{
+    local var="$1"
+    local base="$2"
+    local alias="$3"
+    local suffix="$4"
+    local force=${5:-false}
+
+    if test -n "$SOCKAPI_TS_BOND_NAME"  || \
+       ($SOCKAPI_TS_IF_ALIAS_DONE && ! $force); then
+        export $var="${base}.${suffix}"
+        return
+    fi
+
+    export $var="${alias}.${suffix}"
+
+    echo "Substitute base interface name $base -> $alias: ${!var}"
+}

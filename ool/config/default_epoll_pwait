@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_RPC_DEFAULT_IOMUX=epoll_pwait
+
+TE_EXTRA_OPTS="--trc-tag=default_iomux_epoll"

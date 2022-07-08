@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# This option is about behavior when clustering is used, not about
+# enabling clustering. Enabling clustering occurs either when using
+# rss scalable filters or when testing reuseport package.
+# No need to set EF_CLUSTER_SIZE in this file.
+
+# Specify cluster name to reuse a cluster stack through tests.
+export EF_CLUSTER_NAME=clus
+
+# Set EF_CLUSTER_RESTART=1 to destroy orphaned sockets which can keep alive
+# after some tests execution. This helps to avoid test failures in reuseport
+# package.
+export EF_CLUSTER_RESTART=1

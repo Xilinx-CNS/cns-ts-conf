@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_TEST_BEHAVIOUR_CLEANUP_FD_CLOSE_ENFORCE_LIBC=1
+
+TE_EXTRA_OPTS="--trc-tag=libc_close"

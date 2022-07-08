@@ -1,0 +1,18 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: |
+        ${HWSIM} = "" |
+        ${ONLOAD_CPLANE_DIR} = ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_sfc_resource"
+          value: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource"
+
+- set:
+    - if: ${SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/parameter:enable_af_xdp_flow_filters"
+      value: "${SFC_RESOURCE_ENABLE_AF_XDP_FLOW_FILTERS}"

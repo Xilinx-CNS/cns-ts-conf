@@ -1,0 +1,24 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Add 'assert' event to iut parser
+#
+
+- add:
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:assert"
+      value: "assert"
+
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:assert/pattern:1"
+      value: "assert"
+
+    - oid: "/local:/tester:/event:assert"
+
+    - oid: "/local:/tester:/event:assert/handler:internal_handler"
+
+- set:
+    - oid: "/local:/tester:/event:assert/handler:internal_handler/internal:"
+      value: "1"
+
+    - oid: "/local:/tester:/event:assert/handler:internal_handler/signal:"
+      value: "SIGUSR2"

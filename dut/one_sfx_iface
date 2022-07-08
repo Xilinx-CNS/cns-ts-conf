@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TWO_INDEP_IFS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-2LINKS-IUT"

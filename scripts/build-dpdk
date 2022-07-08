@@ -1,0 +1,76 @@
+#! /bin/bash
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+RTE_MACHINE="$1"
+DPDK_CFLAGS="$2"
+
+set -e
+
+meson_setup() {
+    local configure=$1
+    local -a meson_opts=()
+    local disable_drivers
+
+    if test -n "${DPDK_CFLAGS}" ; then
+        meson_opts+=(-Dc_args="${DPDK_CFLAGS}")
+    fi
+
+    if test -n "${TE_DO_TCE}" ; then
+        meson_opts+=(-Db_coverage=true)
+    fi
+
+    meson_opts+=(--prefix "${TE_PREFIX}" --libdir lib)
+    # Stick to default release build type since debug shows worse performance
+    #meson_opts+=(--buildtype debug)
+    meson_opts+=(--default-library static)
+
+    test -z "${RTE_MACHINE}" || meson_opts+=(-Dmachine=${RTE_MACHINE})
+
+    disable_drivers+="baseband/*,compress/*,crypto/*,dma/*,event/*,raw/*"
+    disable_drivers+=",*/dpaa*"
+    disable_drivers+=",*/octeontx*"
+    disable_drivers+=",common/cnxk,common/cpt,common/iavf,common/qat"
+    disable_drivers+=",bus/ifpga,bus/fslmc,bus/vmbus"
+    disable_drivers+=",mempool/cnxk"
+    disable_drivers+=",net/ark,net/atlantic,net/avp,net/axgbe"
+    disable_drivers+=",net/bnx2x,net/bnxt,net/cxgbe,net/ena,net/enetc,net/enic"
+    disable_drivers+=",net/fm10k,net/hinic,net/hns3,net/iavf,net/ice"
+    disable_drivers+=",net/ionic,net/liquidio,net/mlx4,net/netvsc,net/nfp"
+    disable_drivers+=",net/ngbe,net/pfe,net/qede,net/softnic,net/thunderx"
+    disable_drivers+=",net/txgbe,net/vdev_netvsc,net/vmxnet3"
+    disable_drivers+=",vdpa/ifc"
+    ${RTE_MLX5_PMD:-false} || disable_drivers+=",common/mlx5"
+    meson_opts+=(-Ddisable_drivers="${disable_drivers}")
+
+    # Disable kernel modules build since it requires extra rights to install
+    meson_opts+=(-Denable_kmods=false)
+
+    # Want faster build, so disable unit tests
+    meson_opts+=(-Dtests=false)
+
+    meson_opts+=(-Dexamples=l2fwd)
+
+    if ${configure} ; then
+        meson configure "${meson_opts[@]}"
+    else
+        meson setup "${meson_opts[@]}" "${EXT_SOURCES}" "$(pwd -P)"
+    fi
+}
+
+build_using_meson() {
+    if test -f build.ninja ; then
+        meson_setup true
+    else
+        meson_setup false
+    fi
+
+    # DPDK requires meson 0.47.1 which already has 'meson install' command
+    # Do not use --only-changed since it works bad with DPDK repo switching
+    meson install
+    # Examples binaries are not installed by above (no idea why)
+    cp -p -t "${TE_PREFIX}/bin" examples/dpdk-l2fwd
+}
+
+build_using_meson
+exit $?

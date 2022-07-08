@@ -1,0 +1,179 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+. ${SF_TS_CONFDIR}/scripts/zf_update
+export_zf_shim_separate_repo_lib
+
+# here should be appropriate tester reqs and TRC tags
+
+# Exclude ZF incompatible tests.  Each ZF_INCOMPATIBLE use should be
+# accompanied with a comment explaining why the test is not compatible with
+# ZF socket shim.
+TE_EXTRA_OPTS="--tester-req=!ZF_INCOMPATIBLE"
+
+# Exclude packages:
+# FIXME: PMTU, ARP, ROUTE, IFCFG may be will be tested in future
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PMTU"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ARP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ROUTE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IFCFG"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BNBVALUE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SIGNALS"
+
+# See ST-2039 for details. Congestion package may be tested in
+# the future
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!CONGESTION"
+
+# Unsupported functions:
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!DUP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SENDFILE"
+# ZF supports some socket options:
+# TCP_INFO, SO_ACCEPTCONN, SO_ERROR,
+# IP_ADD_MEMBERSHIP, IP_DROP_MEMBERSHIP
+# but SOCKOPTS turns off sockopts/package.xml which is not interesting
+# here.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SOCKOPTS"
+# Same for ioctl: we handle FIONBIO, but do not support generic ioctl
+# interface
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IOCTLS"
+# F_SETFL is supported to set O_NONBLOCK, but let's turn off fcntl/ test
+# package
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FCNTL"
+
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL_INTEROP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FD_CACHING"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FD_CACHING_TARGETED"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ULV"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SERVICES"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!LIBINIT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SFC_SFPTPD"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!AIO"
+
+# Exclude all iomuxes except simple epoll_wait():
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SELECT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PSELECT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!POLL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PPOLL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_PWAIT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_WODA"
+
+# Exclude environments:
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-2PEERS-IUT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-2PEERS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-2LINKS-IUT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_IP4MAPPED"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-TST-LINK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-TST-GW"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-LOOPBACK"
+
+# exclude socket options:
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEPORT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOB"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_ADD_SOURCE_MEMBERSHIP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_MTU"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_MTU_DISCOVER"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_MULTICAST_LOOP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_MULTICAST_IF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_MULTICAST_TTL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MCAST_JOIN_GROUP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MCAST_JOIN_SOURCE_GROUP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_PKTINFO"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_RECVERR"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_RECVOPTS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_RECVTOS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_RECVTTL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_TOS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_TTL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_BINDTODEVICE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_BROADCAST"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_DONTROUTE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_KEEPALIVE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_LINGER"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_OOBINLINE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_PRIORITY"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_PROTOCOL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_RCVBUF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_RCVLOWAT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_RCVTIMEO"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEADDR"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_SELECT_ERR_QUEUE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_SNDBUF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_SNDLOWAT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_SNDTIMEO"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_CORK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_DEFER_ACCEPT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_KEEPCNT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_KEEPIDLE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_KEEPINTVL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_MAXSEG"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_NODELAY"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_QUICKACK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_USER_TIMEOUT"
+
+# Functionality of the getsockopt() in ZF shim is very limited
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!DRILL_GETSOCKOPT"
+
+# Exclude other reqs:
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SOCK_RAW"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SOCK_UNKNOWN"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOB"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IF_NAMEINDEX"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EXEC"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PIPE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SPLICE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_RECV"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_TEMPLATE_SEND"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_ODS_RAW"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_TRANSPARENT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!THREADS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FDS_NON_MT_SAFE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!HW_PTP_TX_TIMESTAMP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!JUMBO"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FORK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!VFORK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RECVMMSG"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!CHROOT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MSG_CONTROL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MSG_DONTROUTE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MSG_NOSIGNAL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MSG_WAITALL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MSG_PEEK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MSG_TRUNC"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_MULTI_LEVEL"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLLONESHOT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_CTL_EARLY"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!LISTEN_BACKLOG"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SENDMMSG"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RECV_IP_FRAG"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ICMP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SIMULTANEOUS_OPEN"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SYN_COOKIES"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ONLY"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_ISN_REUSE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_BLIND_WINDOW"
+# ZF properly handles jumbo frames, but it does not use it.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!JUMBO_FRAME"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BIND_BROADCAST"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FSTAT"
+
+export TE_RPC_DEFAULT_IOMUX=epoll
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=zf_shim"
+
+export TE_RPCSERVER_PLUGIN=zf_shim_rpcs_plugin
+
+export IUT_NO_CHECK_MSG_FLAGS_IN_RPC=1
+
+# Bug 87778
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PACKETDRILL"
+
+# ZF does not implement BPF. Bug ST-1842
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BPF"
+
+# ZF does not support TCP timestaps.
+export DISABLE_TIMESTAMPS=1
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_TS_ENABLED"

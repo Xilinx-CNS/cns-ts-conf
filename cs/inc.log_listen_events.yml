@@ -1,0 +1,22 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Enable the Tester thread to listen for events.
+#
+# Note: it should be used after including all the necessary
+# event parsers (see inc.log_event*).
+#
+# Variables:
+#   TE_LOG_LISTENER_TESTER_PERIOD       Period for polling of events status in
+#                                       milliseconds (100 by default)
+#   TE_LOG_LISTENER_TESTER_ENABLE       Enable the Tester thread to listen for
+#                                       events, values: 0 or 1 (by default)
+#
+
+- set:
+    - oid: "/local:/tester:/period:"
+      value: "${TE_LOG_LISTENER_TESTER_PERIOD:-100}"
+
+    - oid: "/local:/tester:/enable:"
+      value: "${TE_LOG_LISTENER_TESTER_ENABLE:-1}"

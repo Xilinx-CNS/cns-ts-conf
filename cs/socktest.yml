@@ -1,0 +1,141 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Socket API testing specific configuration objects
+#
+
+- include:
+    - cm_bridge.yml
+    - cm_base.yml
+    - cm_net.yml
+    - cm_local.yml
+    - cm_volatile.yml
+    - cm_iptables.yml
+    - cm_sys.yml
+    - cm_module.yml
+    - cm_ftpserver.yml
+    - cm_sshd.yml
+    - cm_xvfb.yml
+    - cm_smtp.yml
+    - cm_rshd.yml
+    - cm_vnc.yml
+    - cm_slapd.yml
+    - cm_dnsserver.yml
+    - cm_dhcpserver.yml
+    - cm_vtun.yml
+    - cm_namespace.yml
+    - cm_local_host.yml
+    - cm_cmd_monitor.yml
+    - cm_sniffer.yml
+    - cm_sfptpd.yml
+    - cm_ntpd.yml
+    - cm_bpf.yml
+    - cm_tc.yml
+    - cm_aggregation.yml
+    - cm_l4_port.yml
+
+- cond:
+    if: ${TE_LOG_LISTENER} != ""
+    then:
+      - include:
+          - cm_netconsole.yml
+          - cm_serial_parse.yml
+          - cm_serial.yml
+          - inc.log_listener.yml
+          - inc.log_event_call_trace.yml
+          - inc.log_event_allocate_stack.yml
+          - inc.log_event_assert.yml
+      - cond:
+          # ON-13603: disable temporarily "x flush outstanding after" for X3 NICs
+          if: ${EF_IUT_X3} = ""
+          then:
+            - include:
+                - inc.log_event_x_flush_outstanding_after.yml
+      - cond:
+          if: ${L5_RUN} = "true"
+          then:
+            - include:
+                - inc.log_event_onload_banners.yml
+      - include:
+          - inc.log_listen_events.yml
+      - add:
+          - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/console:serial_console"
+            value: "${TE_IUT}"
+
+- cond:
+    if: ${HWSIM} != ""
+    then:
+      - include:
+          - cm_process.yml
+          - cm_vm.yml
+          - cm_rcf.yml
+          - inc.hwsim.yml
+          - inc.hwsim.load-modules.yml
+
+- add:
+    - oid: "/local:${TE_IUT_TA_NAME_NS}"
+    - oid: "/local:${TE_TST1_TA_NAME}"
+    - if: ${TE_TST2_TA_NAME} != ""
+      oid: "/local:${TE_TST2_TA_NAME}"
+
+- include:
+    - inc.conf_delay.yml
+    - inc.net_pool.yml
+    - inc.core_pattern.yml
+    - inc.socktest.common.yml
+
+- add:
+    - if: ${TE_RPC_PTR_UNSAFE} != ""
+      oid: "/local:${TE_IUT_TA_NAME_NS}/env:TE_RPC_PTR_UNSAFE"
+      value: "${TE_RPC_PTR_UNSAFE}"
+
+- cond:
+    if: ${SOCKAPI_TS_CFG_DUT_INC} = ""
+    then:
+      - include:
+        - inc.socktest.dut.yml
+
+- cond:
+    if: ${SOCKAPI_TS_CFG_L5_UL_INC} != ""
+    then:
+      - include:
+        - inc.socktest.onload_mod_params.yml
+        - inc.socktest.sfc_mod_params.yml
+        - inc.socktest.sfc_resource_mod_params.yml
+
+- include:
+    - inc.misc.yml
+
+- set:
+    - if: ${TE_TA_RLIMIT_NOFILE} != ""
+      oid: "/agent:${TE_IUT_TA_NAME_NS}/rlimits:/nofile:/cur:"
+      value: "${TE_TA_RLIMIT_NOFILE}"
+
+    # Configure rpcprovider
+    - oid: "/agent:${TE_IUT_TA_NAME}/rpcprovider:"
+      value: "${SF_TS_IUT_RPCPROVIDER}"
+
+    - oid: "/agent:${TE_TST1_TA_NAME}/rpcprovider:"
+      value: "${SF_TS_TST_RPCPROVIDER}"
+
+    - if: ${TE_TST2_TA_NAME} != ""
+      oid: "/agent:${TE_TST2_TA_NAME}/rpcprovider:"
+      value: "${SF_TS_TST_RPCPROVIDER}"
+
+    - if: ${TE_LOG_LISTENER_TA_NAME} != ""
+      oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/rpcprovider:"
+      value: "${SF_TS_TST_RPCPROVIDER}"
+
+    # Change core_pattern according to SF_TS_TMPDIR value
+    - if: ${TE_IUT_TA_NAME} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/sys:/core_pattern:"
+      value: "${SF_TS_TMPDIR:-/tmp}/core.te.%h-%p-%t"
+
+    - if: ${TE_TST1_TA_NAME} != ""
+      oid: "/agent:${TE_TST1_TA_NAME}/sys:/core_pattern:"
+      value: "${SF_TS_TMPDIR:-/tmp}/core.te.%h-%p-%t"
+
+    - oid: "/local:/iut_errno_change_no_check:"
+      value: "${TE_ERRNO_CHANGE_NO_CHECK:-0}"

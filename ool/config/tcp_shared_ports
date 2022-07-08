@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_TCP_SHARED_LOCAL_PORTS=10
+export EF_TCP_SHARED_LOCAL_PORTS_MAX=100
+
+TE_EXTRA_OPTS="--trc-tag=ool_tcp_shared_ports"
+
+# tcp_shared_ports option enables active wilds which use several
+# hardware filters. This specificity makes a significant inaccuracy
+# when calculating hw filters in the out_of_resources prologue.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OUT_OF_RESOURCES"
+

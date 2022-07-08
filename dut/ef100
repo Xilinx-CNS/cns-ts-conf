@@ -1,0 +1,63 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=ef100"
+export EF_IUT_EF100=true
+
+. "${SF_TS_CONFDIR}/dut/lib"
+
+# Presumably all of these parameters are supported by the ef100
+# (stolen from dut/medford script)
+export EF_IUT_ZF_ALTS=true
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --script=dut/ef10"
+
+# ON-13318: no PIO
+try_add_ool "nopio" "nopio" "ef100/ON-13318"
+
+# ST-2441: timestamping isn't supported on EF100
+try_add_ool "no_rx_ts" "no_rx_ts" "ef100/ST-2441"
+
+# ST-2443: Tx mcast UDP loopback is not supported on EF100 NICs
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=no_hw_tx_mcast_loop"
+
+# ST-2578, ST-2438: add zc_reg_huge_align if zc_reg_huge* is not specified
+try_add_ool zc_reg_huge_align "zc_reg_huge_align zc_reg_huge" "ef100/ST-2438"
+
+# List of EF100 specific trc tags
+declare -A VER_TAGS
+VER_TAGS[fw]='MC Firmware version is'
+VER_TAGS[fw-build]='Build name:'
+VER_TAGS[fw-rev]='Extended info:'
+VER_TAGS[suc]='SUC Firmware version is'
+VER_TAGS[fpga]='FPGA version is'
+VER_TAGS[fpga-extra]='FPGA extra:'
+VER_TAGS[board]='board name:'
+VER_TAGS[board-rev]='board rev:'
+VER_TAGS[board-sn]='Serial num:'
+VER_TAGS[soc-uboot]='SoC uboot version is'
+VER_TAGS[soc-rootfs]='SoC main rootfs version is'
+VER_TAGS[soc-recovery]='SoC recovery buildroot version is'
+
+get_ef100_tags() {
+    local tag=
+    local tags=
+    local prefix="--trc-tag="
+
+    local out_version="$(do_cmdclient 'version;quit;')"
+
+    for tag in "${!VER_TAGS[@]}" ; do
+        value="$(echo "${out_version}" | grep "^${VER_TAGS[${tag}]}" | sed 's/.* //')"
+        test -z "${value}" || tags="${tags} ${prefix}${tag}-${value}"
+    done
+
+    echo "$tags"
+}
+
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} $(get_ef100_tags)"
+
+# ST-2551, FWRIVERHD-3313: disable autonegotiation
+warn "ef100/ST-2551:FWRIVERHD-3313: disabling autonegotiation on $TE_IUT_TST1"
+$SSH $TE_IUT "ethtool -s ${TE_IUT_TST1} autoneg off speed 100000 duplex full"\
+    || echo "  FAILED" >&2
+
+# SWNETLINUX-4014: ST-2635: NIC reset is not supported yet.
+try_add_req "!RESET_NIC" "!RESET_NIC" "ef100/SWNETLINUX-4014"

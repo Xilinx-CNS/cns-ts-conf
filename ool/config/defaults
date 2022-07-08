@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+SSH="ssh -qxTn -o BatchMode=yes"
+stdump="$SFC_ONLOAD_GNU/tools/ip/onload_stackdump"
+
+. ${SF_TS_CONFDIR}/scripts/lib.run
+te_iut_host="$(get_te_iut_host)"
+
+find_default() {
+    name="$1"
+    defs="${@:2}"
+    echo $defs | sed "s/.*${name}[^.]*default: \([0-9]*\) .*/\1/"
+}
+
+if test "x$SFC_ONLOAD_LOCAL" == "xyes" ; then
+    onload_defs=$($SSH $te_iut_host $stdump doc)
+else
+    stdump_remote="/tmp/onload_stackdump"
+    scp "${stdump}" "${te_iut_host}:${stdump_remote}" 1>/dev/null
+    onload_defs=$($SSH $te_iut_host $stdump_remote doc)
+    $SSH ${te_iut_host} "rm -f $stdump_remote"
+fi
+
+if [ -z $EF_TCP_URG_MODE ] ; then
+    val=$(find_default "EF_TCP_URG_MODE" $onload_defs)
+    if test $val -eq 0 ; then
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/config/urg_allow"
+    else
+        TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/config/urg_ignore"
+    fi
+fi

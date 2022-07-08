@@ -1,0 +1,22 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: ${TE_RPCSERVER_PLUGIN} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_NS}/rpcserver_plugin:pco_iut"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_NS}/rpcserver_plugin:pco_iut/install:"
+          value: "${TE_RPCSERVER_PLUGIN}_install"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_NS}/rpcserver_plugin:pco_iut/action:"
+          value: "${TE_RPCSERVER_PLUGIN}_action"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_NS}/rpcserver_plugin:pco_iut/uninstall:"
+          value: "${TE_RPCSERVER_PLUGIN}_uninstall"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_NS}/rpcserver_plugin:pco_iut/enable:"
+          value: "1"

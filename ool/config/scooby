@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+if [ -f ${SFC_PROFILE_DIR}/nginx-like-st.opf ]; then
+    # In new branches (onload-7.0) we use nginx-like-st profile.
+    TE_EXTRA_OPTS="--script=ool/profile:nginx-like-st"
+else
+    # Otherwise we use the old scaleout profile,
+    # or cloud profile if your are bisecting things
+    if [ -f ${SFC_PROFILE_DIR}/cloud.opf ]; then
+        TE_EXTRA_OPTS="--script=ool/profile:cloud"
+    else
+        TE_EXTRA_OPTS="--script=ool/profile:scaleout"
+    fi
+
+    # cloud/scaleout profiles sets EF_UDP=0
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=SOCK_STREAM"
+
+    # Bug 77255 (it is already set in nginx-like-st.opf)
+    export EF_TX_PUSH=0
+fi
+
+# All scooby profiles set EF_HIGH_THROUGHPUT_MODE=1.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/config/high_throughput"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=scooby"
+# PIO is not available in this mode
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_TEMPLATE_SEND"
+

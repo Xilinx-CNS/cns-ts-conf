@@ -1,0 +1,384 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Level5 specific environment variables for Unix
+#
+- add:
+    # common
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:LD_ASSUME_KERNEL"
+      value: "${TE_LD_ASSUME_KERNEL}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:TE_RPC_DEFAULT_IOMUX"
+      value: "${TE_RPC_DEFAULT_IOMUX}"
+
+    - oid: "/local:${TE_TST1_TA_NAME}/env:TE_RPC_DEFAULT_IOMUX"
+      value: "${TE_RPC_DEFAULT_IOMUX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:SOCKTS_ZC_REG_BUF"
+      value: "${SOCKTS_ZC_REG_BUF}"
+
+    # v5 generic
+    # Yes, we always load environment
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_LOAD_ENV"
+      value: "${EF_LOAD_ENV:-1}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:TP_LOG"
+      value: "${TP_LOG}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UNIX_LOG"
+      value: "${EF_UNIX_LOG}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_LOG_VIA_IOCTL"
+      value: "${EF_LOG_VIA_IOCTL}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_LOG_FILE"
+      value: "${EF_LOG_FILE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_LOG_THREAD"
+      value: "${EF_LOG_THREAD}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_NAME"
+      value: "${EF_NAME}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_NO_FAIL"
+      value: "${EF_NO_FAIL}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FORK_NETIF"
+      value: "${EF_FORK_NETIF}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_NETIF_DTOR"
+      value: "${EF_NETIF_DTOR}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SIGNALS_NOPOSTPONE"
+      value: "${EF_SIGNALS_NOPOSTPONE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SCALABLE_FILTERS"
+      value: "${EF_SCALABLE_FILTERS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SCALABLE_FILTERS_ENABLE"
+      value: "${EF_SCALABLE_FILTERS_ENABLE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SCALABLE_LISTEN_MODE"
+      value: "${EF_SCALABLE_LISTEN_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SYNC_CPLANE_AT_CREATE"
+      value: "${EF_SYNC_CPLANE_AT_CREATE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_XDP_MODE"
+      value: "${EF_XDP_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_INTERFACE_WHITELIST"
+      value: "${EF_INTERFACE_WHITELIST}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_INTERFACE_BLACKLIST"
+      value: "${EF_INTERFACE_BLACKLIST}"
+
+    # sockets
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FDTABLE_SIZE"
+      value: "${EF_FDTABLE_SIZE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_MAX_ENDPOINTS"
+      value: "${EF_MAX_ENDPOINTS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FDTABLE_STRICT"
+      value: "${EF_FDTABLE_STRICT}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SOCKET_CACHE_MAX"
+      value: "${EF_SOCKET_CACHE_MAX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PER_SOCKET_CACHE_MAX"
+      value: "${EF_PER_SOCKET_CACHE_MAX}"
+
+    # packets
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PACKET_BUFFER_MODE"
+      value: "${EF_PACKET_BUFFER_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_USE_HUGE_PAGES"
+      value: "${EF_USE_HUGE_PAGES}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_COMPOUND_PAGES_MODE"
+      value: "${EF_COMPOUND_PAGES_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_MIN_FREE_PACKETS"
+      value: "${EF_MIN_FREE_PACKETS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PREFAULT_PACKETS"
+      value: "${EF_PREFAULT_PACKETS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_MAX_PACKETS"
+      value: "${EF_MAX_PACKETS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_MAX_RX_PACKETS"
+      value: "${EF_MAX_RX_PACKETS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_MAX_TX_PACKETS"
+      value: "${EF_MAX_TX_PACKETS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_RXQ_SIZE"
+      value: "${EF_RXQ_SIZE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_KERNEL_PACKETS_BATCH_SIZE"
+      value: "${EF_KERNEL_PACKETS_BATCH_SIZE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_ENDPOINT_PACKET_RESERVE"
+      value: "${EF_ENDPOINT_PACKET_RESERVE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PREALLOC_PACKETS"
+      value: "${EF_PREALLOC_PACKETS}"
+
+    # spin
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_POLL_USEC"
+      value: "${EF_POLL_USEC}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SLEEP_SPIN_USEC"
+      value: "${EF_SLEEP_SPIN_USEC}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_INT_DRIVEN"
+      value: "${EF_INT_DRIVEN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SELECT_SPIN"
+      value: "${EF_SELECT_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_POLL_SPIN"
+      value: "${EF_POLL_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_EPOLL_SPIN"
+      value: "${EF_EPOLL_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PIPE_RECV_SPIN"
+      value: "${EF_PIPE_RECV_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PIPE_SEND_SPIN"
+      value: "${EF_PIPE_SEND_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SEND_SPIN"
+      value: "${EF_TCP_SEND_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_RECV_SPIN"
+      value: "${EF_TCP_RECV_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UDP_SEND_SPIN"
+      value: "${EF_UDP_SEND_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UDP_RECV_SPIN"
+      value: "${EF_UDP_RECV_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_ACCEPT_SPIN"
+      value: "${EF_TCP_ACCEPT_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_CONNECT_SPIN"
+      value: "${EF_TCP_CONNECT_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PKT_WAIT_SPIN"
+      value: "${EF_PKT_WAIT_SPIN}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TX_PUSH"
+      value: "${EF_TX_PUSH}"
+
+    # lock buzz
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_STACK_LOCK_BUZZ"
+      value: "${EF_STACK_LOCK_BUZZ}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SOCK_LOCK_BUZZ"
+      value: "${EF_SOCK_LOCK_BUZZ}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_BUZZ_USEC"
+      value: "${EF_BUZZ_USEC}"
+
+    # poll
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_POLL_FAST"
+      value: "${EF_POLL_FAST}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_POLL_FAST_USEC"
+      value: "${EF_POLL_FAST_USEC}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SELECT_FAST"
+      value: "${EF_SELECT_FAST}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SELECT_FAST_USEC"
+      value: "${EF_SELECT_FAST_USEC}"
+
+    # The value 0 is default for the testing due to SF bug 24383
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_POLL_NONBLOCK_FAST_USEC"
+      value: "${EF_POLL_NONBLOCK_FAST_USEC}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SELECT_NONBLOCK_FAST_USEC"
+      value: "${EF_SELECT_NONBLOCK_FAST_USEC}"
+
+    # epoll
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UL_EPOLL"
+      value: "${EF_UL_EPOLL}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_EPOLL_CTL_HANDOFF"
+      value: "${EF_EPOLL_CTL_HANDOFF}"
+
+    # We test default value in short runs with tester-req=EPOLL
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_EPOLL_CTL_FAST"
+      value: "${EF_EPOLL_CTL_FAST:-0}"
+
+    # pipe
+    # Behaviour with default value (it is 2) isn't good for testing
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PIPE"
+      value: "${EF_PIPE:-1}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PIPE_SIZE"
+      value: "${EF_PIPE_SIZE}"
+
+    # multithreading
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FDS_MT_SAFE"
+      value: "${EF_FDS_MT_SAFE:-0}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_EPOLL_MT_SAFE"
+      value: "${EF_EPOLL_MT_SAFE}"
+
+    # TCP loopback
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SERVER_LOOPBACK"
+      value: "${EF_TCP_SERVER_LOOPBACK}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_CLIENT_LOOPBACK"
+      value: "${EF_TCP_CLIENT_LOOPBACK}"
+
+    # v5 features
+    # High throughput mode
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_HIGH_THROUGHPUT_MODE"
+      value: "${EF_HIGH_THROUGHPUT_MODE}"
+
+    # RX timestamps a switched on in dut.ef10;
+    # timestamps are off by default to suit siena
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_RX_TIMESTAMPING"
+      value: "${EF_RX_TIMESTAMPING:-0}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TX_TIMESTAMPING"
+      value: "${EF_TX_TIMESTAMPING:-0}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PIO"
+      value: "${EF_PIO}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_CTPIO"
+      value: "${EF_CTPIO}"
+
+    # udp
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FORCE_SEND_MULTICAST"
+      value: "${EF_FORCE_SEND_MULTICAST}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_MCAST_SEND"
+      value: "${EF_MCAST_SEND}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UDP_RCVBUF"
+      value: "${EF_UDP_RCVBUF}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UDP"
+      value: "${EF_UDP}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UDP_CONNECT_HANDOVER"
+      value: "${EF_UDP_CONNECT_HANDOVER}"
+
+    # tcp
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SNDBUF_MODE"
+      value: "${EF_TCP_SNDBUF_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_RCVBUF_MODE"
+      value: "${EF_TCP_RCVBUF_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_RCVBUF_STRICT"
+      value: "${EF_TCP_RCVBUF_STRICT}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SYNCOOKIES"
+      value: "${EF_TCP_SYNCOOKIES}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_RETRANSMIT_THRESHOLD"
+      value: "${EF_RETRANSMIT_THRESHOLD}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SEND_NONBLOCK_NO_PACKETS_MODE"
+      value: "${EF_TCP_SEND_NONBLOCK_NO_PACKETS_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_DELACK_THRESH"
+      value: "${EF_DELACK_THRESH}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_LISTEN_REPLIES_BACK"
+      value: "${EF_TCP_LISTEN_REPLIES_BACK}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS_MAX"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS_MAX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS_REUSE_FAST"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS_REUSE_FAST}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS_NO_FALLBACK"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS_NO_FALLBACK}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS_PER_IP"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS_PER_IP}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS_PER_IP_MAX"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS_PER_IP_MAX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SHARED_LOCAL_PORTS_STEP"
+      value: "${EF_TCP_SHARED_LOCAL_PORTS_STEP}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_SYNRECV_MAX"
+      value: "${EF_TCP_SYNRECV_MAX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_BACKLOG_MAX"
+      value: "${EF_TCP_BACKLOG_MAX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_ACCEPTQ_MIN_BACKLOG"
+      value: "${EF_ACCEPTQ_MIN_BACKLOG}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_TCONST_MSL"
+      value: "${EF_TCP_TCONST_MSL}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_INITIAL_CWND"
+      value: "${EF_TCP_INITIAL_CWND}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_DYNAMIC_ACK_THRESH"
+      value: "${EF_DYNAMIC_ACK_THRESH}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_COMBINE_SENDS_MODE"
+      value: "${EF_TCP_COMBINE_SENDS_MODE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_URG_MODE"
+      value: "${EF_TCP_URG_MODE}"
+
+    # AF_XDP
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_AF_XDP_ZEROCOPY"
+      value: "${EF_AF_XDP_ZEROCOPY}"
+
+    # Clustering
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_CLUSTER_SIZE"
+      value: "${EF_CLUSTER_SIZE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_CLUSTER_NAME"
+      value: "${EF_CLUSTER_NAME}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_CLUSTER_RESTART"
+      value: "${EF_CLUSTER_RESTART}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_CLUSTER_HOT_RESTART"
+      value: "${EF_CLUSTER_HOT_RESTART}"
+
+    # OFE
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_OFE_CONFIG_FILE"
+      value: "${EF_OFE_CONFIG_FILE}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_OFE_ENGINE_SIZE"
+      value: "${EF_OFE_ENGINE_SIZE}"
+
+    # v5 deprecated
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_UDP_CHECK_ERRORS"
+      value: "${EF_UDP_CHECK_ERRORS}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_EPCACHE_MAX"
+      value: "${EF_EPCACHE_MAX}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TCP_LOOPBACK"
+      value: "${EF_TCP_LOOPBACK}"
+
+    # ZF
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:ZF_ATTR"
+      value: "interface=${TE_IUT_TST1}${SFC_ZF_ATTR_ADD:+;}${SFC_ZF_ATTR_ADD}"

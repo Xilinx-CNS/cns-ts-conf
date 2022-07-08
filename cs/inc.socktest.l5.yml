@@ -1,0 +1,14 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Level5 specific configuration objects
+#
+- cond:
+    if: ${SOCKAPI_TS_CFG_L5_UL_INC} != ""
+    then:
+      - include:
+        - inc.socktest.l5-env.yml
+        - inc.socktest.l5-unix.yml
+        - inc.socktest.l5-ul.yml

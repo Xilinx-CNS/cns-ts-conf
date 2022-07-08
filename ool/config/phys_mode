@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_PACKET_BUFFER_MODE=2
+export ONLOAD_PHYS_MODE_GID=-1
+TE_EXTRA_OPTS="--trc-tag=ool_phys_mode --tester-req=!NO_PHYS_MODE"

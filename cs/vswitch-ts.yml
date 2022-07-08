@@ -1,0 +1,43 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+- include:
+    - cm_bridge.yml
+    - cm_ovs.yml
+    - cm_tunnel.yml
+    - cm_base.yml
+    - cm_sniffer.yml
+    - cm_sys.yml
+    - cm_system.yml
+    - cm_pci.yml
+    - cm_net.yml
+    - cm_vm.yml
+    - cm_rcf.yml
+    - cm_module.yml
+    - cm_nginx.yml
+    - cm_local.yml
+    - cm_local_dpdk.yml
+    - cm_volatile.yml
+
+- include:
+    - inc.conf_delay.yml
+    - inc.net_pool.yml
+
+- add:
+    - oid: "/local:${TE_IUT_TA_NAME}"
+    - oid: "/local:${TE_IUT_SOC_TA_NAME}"
+    - oid: "/local:${TE_TST1_TA_NAME}"
+    - oid: "/volatile:"
+
+- set:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rpcprovider:"
+      value: "ta_rpcs"
+    - oid: "/agent:${TE_TST1_TA_NAME}/rpcprovider:"
+      value: "ta_rpcs"
+
+- include:
+    - inc.core_pattern.yml
+    - inc.drivers.yml
+    - inc.net_cfg_pci_fns.yml
+    - inc.misc.yml
+    - inc.dpdk.yml

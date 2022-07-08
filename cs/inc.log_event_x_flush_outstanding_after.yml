@@ -1,0 +1,24 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Add 'x flush outstanding after' event to iut parser
+#
+
+- add:
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:x_flush_outstanding_after"
+      value: "x_flush_outstanding_after"
+
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:x_flush_outstanding_after/pattern:1"
+      value: "x flush outstanding after"
+
+    - oid: "/local:/tester:/event:x_flush_outstanding_after"
+
+    - oid: "/local:/tester:/event:x_flush_outstanding_after/handler:internal_handler"
+
+- set:
+    - oid: "/local:/tester:/event:x_flush_outstanding_after/handler:internal_handler/internal:"
+      value: "1"
+
+    - oid: "/local:/tester:/event:x_flush_outstanding_after/handler:internal_handler/signal:"
+      value: "SIGUSR2"

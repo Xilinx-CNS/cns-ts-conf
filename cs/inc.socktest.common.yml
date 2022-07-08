@@ -1,0 +1,189 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- register:
+    - oid: "/local/iut_orig_ts_state"
+      access: read_create
+      type: integer
+
+    - oid: "/local/serial_pattern_name"
+      access: read_create
+      type: string
+
+    - oid: "/local/nfqueue_pid"
+      access: read_create
+      type: integer
+      volatile: true
+
+    - oid: "/local/libdir"
+      access: read_create
+      type: string
+
+- add:
+    - oid: "/volatile:"
+
+- set:
+    - oid: "/volatile:/sockaddr_port:"
+      value: "0"
+
+    # Default value for 'use_static_arp'
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/use_static_arp:"
+      value: "${TE_IUT_USE_STATIC_ARP:-0}"
+
+#
+# Force the creation of RPC servers in the main prologue before testing.
+# It is required for ool=reuse_pco mode
+#
+- cond:
+    if: ${TE_ENV_REUSE_PCO} != ""
+    then:
+      - add:
+        - oid: "/local:${TE_IUT_TA_NAME_NS}/rpcserver:pco_iut"
+        - oid: "/local:${TE_TST1_TA_NAME}/rpcserver:pco_tst"
+        - oid: "/local:${TE_TST1_TA_NAME}/rpcserver:pco_tst2"
+
+- cond:
+    if: ${TE_TST2} != ""
+    then:
+      - add:
+        - oid: "/local:${TE_TST2_TA_NAME}/rpcserver:pco_tst"
+        - oid: "/local:${TE_TST2_TA_NAME}/rpcserver:pco_tst2"
+
+#
+# Register test agents in /local:/host:
+#
+- add:
+    - oid: "/local:/host:${TE_IUT}"
+    - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME}"
+
+- cond:
+    if: ${TE_TST1} != ""
+    then:
+      - add:
+        - oid: "/local:/host:${TE_TST1}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}"
+
+- cond:
+    if: ${TE_TST2} != ""
+    then:
+      - add:
+        - oid: "/local:/host:${TE_TST2}"
+        - oid: "/local:/host:${TE_TST2}/agent:${TE_TST2_TA_NAME}"
+        - oid: "/agent:${TE_TST2_TA_NAME}/rsrc:lo"
+          value: "/agent:${TE_TST2_TA_NAME}/interface:lo"
+
+#
+# Grab the original interfaces on IUT and TST1 hosts.
+#
+- add:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_ORIG_IUT_TST1}"
+      value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1}"
+
+    - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_ORIG_TST1_IUT}"
+      value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT}"
+
+    - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1}"
+    - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT}"
+
+#
+# This interface should be grabbed by ${TE_IUT_TA_NAME_NS} agent in
+# prologue if network namespaces are checked, not here
+#
+- cond:
+    if: ${SOCKAPI_TS_CFG_DUT_INC} = ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:lo"
+          value: "/agent:${TE_IUT_TA_NAME}/interface:lo"
+
+- add:
+    - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:lo"
+      value: "/agent:${TE_TST1_TA_NAME}/interface:lo"
+
+- cond:
+    if: ${TE_ORIG_IUT_TST1_IUT} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_ORIG_IUT_TST1_IUT}"
+          value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1_IUT}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_ORIG_TST1_IUT_IUT}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT_IUT}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1_IUT}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT_IUT}"
+
+- cond:
+    if: ${TE_ORIG_IUT_TST1_IUT2} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_ORIG_IUT_TST1_IUT2}"
+          value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1_IUT2}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_ORIG_TST1_IUT_IUT2}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT_IUT2}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1_IUT2}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT_IUT2}"
+
+- cond:
+    if: ${TE_ORIG_IUT_TST1_IUT3} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_ORIG_IUT_TST1_IUT3}"
+          value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1_IUT3}"
+
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_ORIG_TST1_IUT_IUT3}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT_IUT3}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME}/interface:${TE_ORIG_IUT_TST1_IUT3}"
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_ORIG_TST1_IUT_IUT3}"
+
+- cond:
+    if: ${TE_IUT_TST2_TST} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_IUT_TST2_TST}"
+          value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_TST2_TST}"
+
+        - oid: "/agent:${TE_TST2_TA_NAME}/rsrc:${TE_TST2_IUT_TST}"
+          value: "/agent:${TE_TST2_TA_NAME}/interface:${TE_TST2_IUT_TST}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_TST2_TST}"
+        - oid: "/local:/host:${TE_TST2}/agent:${TE_TST2_TA_NAME}/interface:${TE_TST2_IUT_TST}"
+
+- cond:
+    if: ${TE_TST1_TST2} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:${TE_TST1_TST2}"
+          value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_TST2}"
+
+        - oid: "/agent:${TE_TST2_TA_NAME}/rsrc:${TE_TST2_TST1}"
+          value: "/agent:${TE_TST2_TA_NAME}/interface:${TE_TST2_TST1}"
+
+        - oid: "/local:/host:${TE_TST1}/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1_TST2}"
+        - oid: "/local:/host:${TE_TST2}/agent:${TE_TST2_TA_NAME}/interface:${TE_TST2_TST1}"
+
+- cond:
+    if: ${TE_IUT_TST2} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_NS}/rsrc:${TE_IUT_TST2}"
+          value: "/agent:${TE_IUT_TA_NAME_NS}/interface:${TE_IUT_TST2}"
+
+        - oid: "/agent:${TE_TST2_TA_NAME}/rsrc:${TE_TST2_IUT}"
+          value: "/agent:${TE_TST2_TA_NAME}/interface:${TE_TST2_IUT}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_NS}/interface:${TE_IUT_TST2}"
+        - oid: "/local:/host:${TE_TST2}/agent:${TE_TST2_TA_NAME}/interface:${TE_TST2_IUT}"
+
+- cond:
+    if: ${SOCKAPI_TS_CFG_IFS_INC} = ""
+    then:
+      - include:
+        - inc.socktest.ifs.yml
+
+- include:
+    - inc.socktest.congestion.yml

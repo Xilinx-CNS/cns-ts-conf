@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_PIO=0
+export SFC_ZF_ATTR_ADD="${SFC_ZF_ATTR_ADD}${SFC_ZF_ATTR_ADD:+;}pio=0"
+
+# Bug 82774
+TE_EXTRA_OPTS="--tester-req=!SF_TEMPLATE_SEND"

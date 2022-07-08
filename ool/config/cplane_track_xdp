@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# This option sets cplane_track_xdp module option to "Y"
+# After this, the Control Plane Server tracks XDP programs
+# linked to network interfaces.  It is needed for
+# EF_XDP_MODE=compatible mode to function properly.
+export SFC_CPLANE_TRACK_XDP="Y"

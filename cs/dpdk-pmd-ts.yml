@@ -1,0 +1,70 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+- include:
+    - cm_bridge.yml
+    - cm_base.yml
+    - cm_process.yml
+    - cm_sniffer.yml
+    - cm_sys.yml
+    - cm_system.yml
+    - cm_pci.yml
+    - cm_net.yml
+    - cm_vm.yml
+    - cm_rcf.yml
+    - cm_local.yml
+    - cm_local_dpdk.yml
+    - cm_volatile.yml
+    - cm_module.yml
+    - cm_l4_port.yml
+
+- include:
+    - inc.conf_delay.yml
+    - inc.net_pool.yml
+
+- cond:
+    if: ${TE_LOG_LISTENER} != ""
+    then:
+      - include:
+          - cm_netconsole.yml
+          - cm_serial_parse.yml
+          - inc.log_listener.yml
+
+- cond:
+    if: ${TE_IUT_VM} != ""
+    then:
+      - include: inc.iut_vm.yml
+
+- cond:
+    if: ${TE_VM2VM} != ""
+    then:
+      - include: inc.vm2vm.yml
+
+- cond:
+    if: ${HWSIM} != ""
+    then:
+      - include: inc.hwsim.yml
+
+- add:
+    - oid: "/local:${TE_IUT_TA_NAME}"
+    - oid: "/local:${TE_TST1_TA_NAME}"
+    - oid: "/local:${TE_HYPERVISOR_TA_NAME}"
+    - oid: "/volatile:"
+
+- set:
+    - oid: "/agent:${TE_IUT_TA_NAME}/rpcprovider:"
+      value: "dpdkrpc"
+    - oid: "/agent:${TE_TST1_TA_NAME}/rpcprovider:"
+      value: "ta_rpcs"
+
+- include:
+    - inc.core_pattern.yml
+    - inc.drivers.yml
+    - inc.net_cfg_pci_fns.yml
+    - inc.dpdk.yml
+    - inc.misc.yml
+
+- cond:
+    if: ${TE_IUT_SETUP_VFS} = 1
+    then:
+        - include: inc.iut-enable-vfs.yml

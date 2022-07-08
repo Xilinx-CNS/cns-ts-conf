@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_MCAST_SEND=3
+
+TE_EXTRA_OPTS="--trc-tag=ool_mcast_send:3"

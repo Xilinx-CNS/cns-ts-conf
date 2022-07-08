@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Driver build with X3 support
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=build_with_x3"

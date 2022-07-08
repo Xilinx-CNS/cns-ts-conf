@@ -1,0 +1,236 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Determining availability of some functions to be tested;
+# setting requirements accordingly.
+# The file has to be used after TAs were built and RCF was run.
+#
+
+#
+# Convert up to first four numbers in kernel version string to the single
+# number.
+#
+# @param $1 Kernel version string
+kernel_ver_str2num()
+{
+    local ver=$1
+    local mask=10000000000
+    local ver_num=0
+    local num
+    local len
+    local i=1
+
+    for num  in `echo $ver | sed -e s/[-.]/\ /g` ; do
+        if [[ $num =~ ^[0-9]+$ ]]; then
+            let "len = ${#mask} - $i"
+            if test $len -lt 1 ; then
+                break
+            fi
+
+            mask=${mask:0:len}
+            let "tmp = mask * num"
+            let "ver_num += $tmp"
+        else
+            break
+        fi
+
+        let i+=1
+    done
+
+    echo $ver_num
+}
+
+#
+# Check kernel version to determine whether IPv6 multipath is fully
+# supported, add !IP6_MULTIPATH to requirements if it is not.
+#
+# @param $1     Kernel version number (obtained with kernel_ver_str2num())
+check_ipv6_mpath()
+{
+    local kern_ver=$1
+
+    # See OL bug 9972, and SF bug 87592.
+    if test $kern_ver -lt $(kernel_ver_str2num 4.16) ; then
+        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!IP6_MULTIPATH"
+    fi
+}
+
+if test -n "${TE_IUT}" -a -n "${TE_IUT_TA_TYPE}" ; then
+
+    if test -f "${TE_TA_LIST_FILE}" ; then
+        iut_agent=$(cat ${TE_TA_LIST_FILE} | \
+                    grep "\s${TE_IUT}\s*${TE_IUT_TA_TYPE}" | \
+                    head -n 1)
+        ta_iut_path=$(echo $iut_agent | \
+                sed "s/^\([^[:space:]]*\s*\)\{3\}\([^[:space:]]*\)\s\+.*/\2/")
+        ta_iut_path="${ta_iut_path}/ta"
+
+        if test -n "${ta_iut_path}" ; then
+            libc_path=$(ssh ${TE_IUT} "ldd ${ta_iut_path} | grep '\<libc[.]' |\
+                                       sed 's/^.*=>\s*//g' | \
+                                       sed 's/\s*([0-9a-fx]*)$//g'") 
+            if test -n ${libc_path} ; then
+                for i in accept4 pipe2 dup2 dup3 epoll_create1 \
+                         epoll_pwait ppoll pselect recvmmsg sendmmsg ; do
+                    if test -z "$(ssh ${TE_IUT} \
+                                  nm -D ${libc_path} \| grep $i)" ; then
+                        req_name=$(echo $i | tr '[:lower:]' '[:upper:]')
+                        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!${req_name}"
+                    fi
+                done
+            fi
+        fi
+    fi
+
+    eval $(echo $IUT_KERNEL_VERSION |\
+           sed -n "s/^\([0-9]*\)[.\-]\([0-9]*\)[.\-]\([0-9]*\)[.\-]*\([0-9]*\).*$/a=\1 b=\2 c=\3 d=\4/p")
+
+    if test -z "$a" ; then
+        echo "Failed to parse kernel version: $IUT_KERNEL_VERSION" >&2
+        exit 1
+    fi
+
+    # Some functions may be available in libc but not in kernel on some
+    # hosts
+    if test "x$(echo ${TE_EXTRA_OPTS} | grep 'EPOLL_PWAIT')" = "x" ; then
+      if test $a -lt 2 -o \( $a -eq 2 -a $b -lt 6 \) -o \
+              \( $a -eq 2 -a $b -eq 6 -a ${c:-0} -lt 19 \); then
+          TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!EPOLL_PWAIT"
+      fi
+    fi
+    if test "x$(echo ${TE_EXTRA_OPTS} | grep 'RECVMMSG')" = "x" ; then
+      if test $a -lt 2 -o \( $a -eq 2 -a $b -lt 6 \) -o \
+              \( $a -eq 2 -a $b -eq 6 -a ${c:-0} -lt 33 \); then
+          TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!RECVMMSG"
+      fi
+    fi
+    if test "x$(echo ${TE_EXTRA_OPTS} | grep 'SENDMMSG')" = "x" ; then
+      if test $a -lt 3 ; then
+          TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SENDMMSG"
+      fi
+    fi
+
+    ## We use syscall() when recvmmsg()/sendmmsg() are not accessible
+    ## in libc, so we should check kernel version to determine
+    ## whether they are available or not
+    #if test $a -lt 3 ; then
+    #    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SENDMMSG"
+    #fi
+    #if test $a -lt 2 -o \( $a -eq 2 -a $b -lt 6 \) -o \
+    #        \( $a -eq 2 -a $b -eq 6 -a $c -lt 32 \); then
+    #    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!RECVMMSG"
+    #fi
+
+    case "$IUT_KERNEL_NAME" in
+        Linux )
+            kernel_version_tst1="$($SSH $TE_TST1 uname -r)"
+
+            case "$IUT_KERNEL_VERSION" in
+                *.el6.* )
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!ETHTOOL_RESET"
+                    ;;
+            esac
+
+            case "$IUT_KERNEL_VERSION" in
+                2.6.* )
+                    LAST_NUMBER=$(echo ${IUT_KERNEL_VERSION} | sed s/2\.6\.//g | sed s/[-.].*//g)
+                    if test $LAST_NUMBER -le 18 ; then
+                        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SO_TIMESTAMPNS --tester-req=!SIOCGSTAMPNS --tester-req=!MCAST_JOIN_GROUP"
+                        export TE_SUPP_ETHTOOL=false
+                    elif test $LAST_NUMBER -le 26 ; then
+                        export TE_SUPP_ETHTOOL=false
+                    fi
+                    ;;
+                4.9.* )
+                    # ST-1996: removing IPv6 link-local addresses on Debian 9
+                    # with 4.9 kernel may generate many failed neighbour entries,
+                    # which breaks further testing.
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!REMOVE_IP6_LL_ADDR"
+                    ;;
+
+            esac
+
+            local reuseport_tst=false
+            local reuseport_iut=false
+            for unsupp in "2.6.26-2" "2.6.18-" "2.6.24-" "2.6.32-bpo.5" "2.6.32-5-" "3.2.0-0" "3.2.0-4" ; do
+                if [[ "$IUT_KERNEL_VERSION" == $unsupp* ]] && ! $reuseport_iut ; then
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SO_REUSEPORT"
+                    reuseport_iut=true
+                fi
+
+                if [[ "$kernel_version_tst1" == $unsupp* ]] && ! $reuseport_tst ; then
+                    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SO_REUSEPORT_TST1"
+                    reuseport_tst=true
+                fi
+                $reuseport_iut && $reuseport_tst && break
+            done
+
+            kernel_num=$(kernel_ver_str2num $IUT_KERNEL_VERSION)
+            if test $kernel_num -ge $(kernel_ver_str2num 3.17) ; then
+                export IUT_TS_SYS_ZERO=${IUT_TS_SYS_ZERO:-1}
+            fi
+            if test $kernel_num -ge $(kernel_ver_str2num 3.18) ; then
+                export IUT_TS_TX_TCP=${IUT_TS_TX_TCP:-1}
+                export IUT_TS_TX_ACK=${IUT_TS_TX_ACK:-1}
+            fi
+            if test $kernel_num -ge $(kernel_ver_str2num 4.15) ; then
+                export IUT_TS_RX_TCP=${IUT_TS_RX_TCP:-1}
+            fi
+            if test $kernel_num -ge $(kernel_ver_str2num 3.19) ; then
+                export IUT_TS_TX_SCHED=${IUT_TS_TX_SCHED:-1}
+                export IUT_TS_OPT_CMSG=${IUT_TS_OPT_CMSG:-1}
+            else
+                TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SOF_TIMESTAMPING_OPT_ID"
+            fi
+            if test $kernel_num -lt $(kernel_ver_str2num 4.0) ; then
+                TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SOF_TIMESTAMPING_OPT_TSONLY"
+            fi
+
+            check_ipv6_mpath $kernel_num
+
+            # Perhaps there are kernels where TX timestamps are not supported.
+            # This value sholuld be set to zero if patch for Bug 36099 will
+            # be discarded.
+            export IUT_TS_TX_SW=${IUT_TS_TX_SW:-1}
+
+            # Software transmit timestamps are supported in linux, but it is
+            # not implemented in Onload.
+            export IUT_TS_TX_SW_UDP=${IUT_TS_TX_SW_UDP:-1}
+
+            if test $kernel_num -lt $(kernel_ver_str2num 3.10) ; then
+                TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SO_SELECT_ERR_QUEUE"
+            fi
+            ;;
+    esac
+
+    # keep_addr_on_down IPv6 option was introduced in 4.6 kernel. However
+    # it may be present in distributions with earlier kernel versions,
+    # for instance it was available on host mim
+    # (3.10.0-957.10.1.el7.x86_64).
+    keep_addr="$($SSH $TE_IUT cat /proc/sys/net/ipv6/conf/all/keep_addr_on_down 2>/dev/null)"
+    if test -z "$keep_addr" ; then
+        TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!KEEP_ADDR_ON_DOWN"
+    fi
+fi
+
+if test -n "${TE_TST1}" ; then
+
+    case "$TST1_KERNEL_NAME" in
+        Linux )
+            tst1_kernel_num=$(kernel_ver_str2num $TST1_KERNEL_VERSION)
+
+            # Multipath route is created both on IUT and TST1, so
+            # we need to check kernel version of TST1 too.
+            check_ipv6_mpath $tst1_kernel_num
+            ;;
+    esac
+fi
+
+# Route tests do not work on Onload with bonding + calico netns.
+# See ON-11753.
+if test "${L5_RUN}" = "true" &&
+   test -n "$SOCKAPI_TS_BOND_NAME" &&
+   test $SOCKAPI_TS_NETNS_CALICO
+then
+    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!ROUTE"
+fi

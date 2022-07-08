@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --opts=opts/bond --trc-tag=$SOCKAPI_TS_BOND"
+
+mode=${SOCKAPI_TS_BOND/bond/}
+mode=${mode/team/}
+if test "x$mode" != "x1" -a "x$mode" != "x4" ; then
+    echo "Incorrect bond/team mode: \"$mode\""
+    exit 1
+fi
+
+# iut_if1 and iut_if2 is dependent in the case of bond/team
+# with or without any combination of vlan and macvlan,
+# so tests assuming that iut_if1 and iut_if2 are
+# independent should be disabled.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TWO_INDEP_IFS"
+
+if test "x$SOCKAPI_TS_BOND" = "xbond4" ; then
+  if [[ x"$IUT_KERNEL_VERSION" == x*el6* ]] ; then
+      # See comment 6 in bug 70712
+      TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MACVLAN --tester-req=!IPVLAN"
+  fi
+  TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_BOND4"
+fi
+
+if test "x$SOCKAPI_TS_BOND" = "xteam4" ; then
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_TEAM4"
+fi

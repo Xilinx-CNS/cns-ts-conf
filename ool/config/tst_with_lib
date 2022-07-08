@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_ENV_TST_WITH_LIB="yes"
+if [ -z "$L5_SOCKAPI_LIB_TST1" -a -n "$TE_TST1" ]; then
+    eval export L5_SOCKAPI_LIB_TST1="$(echo '$SFC_ONLOAD_GNU_'${TE_TST1})/lib/transport/unix/libcitransport0.so"
+fi
+if [ -z "$L5_SOCKAPI_LIB_TST1" -o \
+     "x$L5_SOCKAPI_LIB_TST1" == "x/lib/transport/unix/libcitransport0.so" ] ; then
+    echo -n "L5_SOCKAPI_LIB_TST1 is not exported for "
+    echo "tst_with_lib testing"
+    exit 1
+fi

@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_TCP_SERVER_LOOPBACK=2
+export EF_TCP_CLIENT_LOOPBACK=4
+
+TE_EXTRA_OPTS="--trc-tag=ool_loop:4"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_WODA --tester-req=!NO_LOOP4"

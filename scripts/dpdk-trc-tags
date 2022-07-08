@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="$(${SF_TS_CONFDIR}/dpdk-trc-tags.sh -d -V "${TE_PCI_VENDOR_IUT_TST1}" -D "${TE_PCI_DEVICE_IUT_TST1}" -F "${TE_PCI_INSTANCE_IUT_TST1:-${TE_PCI_INSTANCE_IUT_TST1a}}")"
+
+dpdk_ver_num=${TE_EXTRA_OPTS##*dpdk:}
+dpdk_ver_num=${dpdk_ver_num%% *}
+
+dpdk_pmd_tx_dp=${TE_EXTRA_OPTS##*tx-datapath-}
+dpdk_pmd_tx_dp=${dpdk_pmd_tx_dp%% *}
+
+dpdk_pmd_rx_dp=${TE_EXTRA_OPTS##*rx-datapath-}
+dpdk_pmd_rx_dp=${dpdk_pmd_rx_dp%% *}
+
+# Export variables referenced by conditional expressions in 'dpdk-pmd-ts-conf.yml'
+export TE_ENV_RTE_VERSION="${dpdk_ver_num}"
+export TE_ENV_SFC_DP_TX="${dpdk_pmd_tx_dp}"
+export TE_ENV_SFC_DP_RX="${dpdk_pmd_rx_dp}"
+

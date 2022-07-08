@@ -1,0 +1,99 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# This is the place to common functions and variables for dut scripts
+#
+
+SSH="ssh -qxT -o BatchMode=yes -o StrictHostKeyChecking=no"
+
+warn() {
+    echo "WARNING: $*" >&2
+}
+
+#
+# Add the ool_add script if ool_checks scripts are not specified
+#
+# Arguments:
+#   ool_add     - what to add
+#   ool_checks  - the list of things to check, separated by space
+#   extra_info  - link to a Bug or some additional information, optionally
+#
+# Note: the function relies on the 'cmd_line_opts' from ${TE_BASE}/dispatcher.sh
+#
+try_add_ool() {
+    local ool_add="$1" ; shift
+    local ool_checks="$1" ; shift
+    local extra_info="$1"
+
+    local ool_checks_found=false
+    for item in $ool_checks ; do
+        if test "${cmd_line_opts/--script=ool\/config\/$item/}" != "$cmd_line_opts" ; then
+            ool_checks_found=true
+            break
+        fi
+    done
+    if test "$ool_checks_found" = "false" ; then
+        TE_EXTRA_OPTS+=" --script=ool/config/${ool_add}"
+        warn "$extra_info: using --ool=$ool_add"
+    fi
+}
+
+#
+# Add the tester-req req_add if req_checks are not specified
+#
+# Arguments:
+#   req_add     - what to add
+#   req_checks  - the list of things to check, separated by space
+#   extra_info  - link to a Bug or some additional information, optionally
+#
+# Note: the function relies on the 'cmd_line_opts' from ${TE_BASE}/dispatcher.sh
+#
+try_add_req() {
+    local req_add="$1" ; shift
+    local req_checks="$1" ; shift
+    local extra_info="$1"
+
+    local req_checks_found=false
+    for item in $req_checks ; do
+        if test "${cmd_line_opts/--tester-req=$item/}" != "$cmd_line_opts" ; then
+            req_checks_found=true
+            break
+        fi
+    done
+    if test "$req_checks_found" = "false" ; then
+        TE_EXTRA_OPTS+=" --tester-req=${req_add}"
+        warn "$extra_info: using --tester-req=$req_add"
+    fi
+}
+
+check_var() {
+    local var="$1"
+    local val="${!var}"
+
+    if test -z "$val" ; then
+        echo "ERROR: variable $var is not specified" >&2
+        set > /tmp/set.txt
+        exit 1
+    fi
+}
+
+do_cmdclient() {
+    local cmd="$1" ; shift
+
+    check_var TE_IUT
+    check_var TE_IUT_TST1
+    check_var SF_TS_CMDCLIENT
+    if test ! -x "$SF_TS_CMDCLIENT" ; then
+        echo "ERROR: '$SF_TS_CMDCLIENT' is not exist" >&2
+        exit 1
+    fi
+
+    local remote_cmdclient="/tmp/cmdclient"
+    local cmds="sudo ${remote_cmdclient} -q -c '$cmd' ioctl=$TE_IUT_TST1 2>/dev/null"
+
+    scp -q "$SF_TS_CMDCLIENT" "$TE_IUT:$remote_cmdclient"
+    local vars="$($SSH $TE_IUT ${cmds})"
+    $SSH $TE_IUT "rm ${remote_cmdclient}" 1>&2
+
+    echo "$vars"
+}

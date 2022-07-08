@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+--trc-tag=one_tester
+--tester-req=!ENV-TST-LINK
+--tester-req=!ENV-GW
+--tester-req=!ENV-TST-GW
+--tester-req=!ENV-2PEERS
+--tester-req=!ENV-2PEERS-IUT
+--trc-tag=one-iut
+--tester-req=!ENV-IUT2IUT

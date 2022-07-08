@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Run IUT agent in the second network namespace.
+# Move and confiugre all IUT interfaces in the namespace.
+
+. $SF_TS_CONFDIR/scripts/lib.netns
+
+export TE_IUT_TA_NAME_IFS=Agt_A_netns
+export SOCKAPI_TS_CFG_IFS="$SF_TS_CONFDIR/cs/inc.socktest.ifs.yml"
+export SOCKAPI_TS_CFG_IFS_INC=false
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=netns_all"

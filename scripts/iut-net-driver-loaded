@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+source "${SF_TS_CONFDIR}/make_cmds"
+
+# Prepare ssh commands for TE_IUT
+make_cmds_for_host
+
+if test -z "${TE_ENV_IUT_NET_MODULE}" ; then
+    echo "TE_ENV_IUT_NET_MODULE undefined, cannot check driver status"
+    return;
+fi
+
+TE_IUT_MODULES=$(process_ssh_cmd "
+    lsmod | cut -f1 -d' ' ;
+")
+
+iut_module_loaded() {
+    grep -qw "$1" <<< "${TE_IUT_MODULES}"
+}
+
+if iut_module_loaded "${TE_ENV_IUT_NET_MODULE}" ; then
+    export TE_IUT_NET_DRIVER_LOADED=1
+fi
+
+# sfc needs additional modules
+if test "${TE_ENV_IUT_NET_DRIVER}" = "sfc" ; then
+    iut_module_loaded "sfc_driverlink" &&
+        export TE_IUT_MOD_SFC_DRIVERLINK_LOADED=1
+    iut_module_loaded "virtual_bus" &&
+        export TE_IUT_MOD_VIRTUAL_BUS_LOADED=1
+
+    TE_IUT_KERNEL_CONFIG=$(process_ssh_cmd "cat /boot/config-\$(uname -r) | sed 's/#.*$//'")
+    if test "$?" -ne "0"; then
+        echo "Failed to get kernel configuration for IUT"
+    else
+        if [[ "${TE_IUT_KERNEL_CONFIG}" = *CONFIG_VDPA=m* ]] ; then
+            iut_module_loaded "vdpa" ||
+                export TE_IUT_MOD_VDPA_REQUIRED=1
+        fi
+    fi
+fi

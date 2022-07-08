@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_TEST_BEHAVIOUR_USE_CHK_FUNCS=1
+
+TE_EXTRA_OPTS="--trc-tag=use_chk_funcs --tester-req=!NO_CHK_FUNCS"

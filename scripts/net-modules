@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+case "${TE_ENV_IUT_NET_DRIVER}" in
+    vfio-pci)
+        export TE_ENV_IUT_NET_MODULE=vfio_pci ;;
+    sfc_ef100)
+        export TE_ENV_IUT_NET_MODULE=sfc ;;
+    *)
+        export TE_ENV_IUT_NET_MODULE="${TE_ENV_IUT_NET_DRIVER}" ;;
+esac

@@ -1,0 +1,45 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Do not add module_onload since this entry is already present in cmod-x3sim mode
+#
+- cond:
+    if: |
+        ${HWSIM} = "" |
+        ${ONLOAD_CPLANE_DIR} = ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_onload"
+          value: "/agent:${TE_IUT_TA_NAME}/module:onload"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload"
+
+- set:
+    - if: ${ONLOAD_OOF_SHARED_KEEP_THRESH} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:oof_shared_keep_thresh"
+      value: "${ONLOAD_OOF_SHARED_KEEP_THRESH}"
+
+    - if: ${ONLOAD_PHYS_MODE_GID} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:phys_mode_gid"
+      value: "${ONLOAD_PHYS_MODE_GID}"
+
+    - if: ${SFC_CPLANE_ZERO_GRACE_TIMEOUT} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:cplane_server_grace_timeout"
+      value: "${SFC_CPLANE_ZERO_GRACE_TIMEOUT}"
+
+    - if: ${SFC_OOF_LADDR_ALL} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:oof_use_all_local_ip_addresses"
+      value: "${SFC_OOF_LADDR_ALL}"
+
+    - if: ${SFC_PREFSRC_AS_LOCAL} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:cplane_use_prefsrc_as_local"
+      value: "${SFC_PREFSRC_AS_LOCAL}"
+
+    - if: ${SFC_CPLANE_SERVER_PARAMS} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:cplane_server_params"
+      value: "${SFC_CPLANE_SERVER_PARAMS}"
+
+    - if: ${SOCKAPI_TS_NETNS_CALICO} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:oo_accelerate_veth"
+      value: "1"

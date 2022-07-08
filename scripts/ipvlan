@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Export IPVLAN configuration parameters. It should be done here
+# rather than in env/ipvlan because some tests configure IPVLAN
+# themselves.
+#
+export SOCKAPI_TS_IPVLAN_MODE="l2"
+export SOCKAPI_TS_IPVLAN_FLAG="private"
+
+# Fix IP VLAN flag for Linux<4.15 and old Linux headers
+if test "x${SOCKAPI_TS_IPVLAN_FLAG}" != "xbridge" ; then
+
+    ipvlan_set_fl_bridge=0
+    if test ${IUT_KERNEL_VERSION_NUM} -lt 415 ; then
+        ipvlan_set_fl_bridge=1
+    else
+        # Old distros may have old headers for new kernel, we should check it
+        ipvlan_fl_exist="$(${SSH} ${TE_IUT} grep IPVLAN_F_PRIVATE " \
+                        "/usr/include/linux/if_link.h | wc -l)"
+        if test ${ipvlan_fl_exist} -eq 0 ; then
+            ipvlan_set_fl_bridge=1
+        fi
+    fi
+
+    if test ${ipvlan_set_fl_bridge} -gt 0 ; then
+        echo "IPVLAN: flag '${SOCKAPI_TS_IPVLAN_FLAG}' is not supported," \
+             "used default 'bridge' value"
+        export SOCKAPI_TS_IPVLAN_FLAG="bridge"
+    fi
+fi

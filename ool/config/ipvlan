@@ -1,0 +1,19 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+if test ! -z ${TE_IUT_TST1_MV} ; then
+    echo "It is impossible to use ipvlan together with macvlan"
+    exit 1
+fi
+
+# IP VLAN is supported from Linux=3.19
+if test ${IUT_KERNEL_VERSION_NUM} -lt 319 ; then
+    echo "Do not use ipvlan on kernels less than 3.19"
+    exit 1
+fi
+
+# IPVLAN is incompatible with multipath tests.
+# All multipath tests use two ipvlan interfaces. ST-1639.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTIPATH"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=env/ipvlan --trc-tag=ipvlan"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_IPVLAN"

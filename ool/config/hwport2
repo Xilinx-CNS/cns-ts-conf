@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Use second SFC NIC port by default - it will be considered as the
+# first available interface
+export TE_CHOOSE_HWPORT2_FIRST=1
+
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=hwport2"

@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Auxiliary functions to process ZF links and export
+# nessecary environment for Zetaferno TS and ZF Shim.
+#
+
+. ${SF_TS_CONFDIR}/scripts/sfc_onload_gnu
+. ${SF_TS_CONFDIR}/scripts/lib.run
+
+# Export SFC_ZETAFERNO_BUILD and SFC_ZETAFERNO_GNU if
+# it's necessary and possible
+export_zf_env() {
+    if test -z "${SF_ZETAFERNO_DIR}" ; then
+       echo "SF_ZETAFERNO_DIR is undefined!!!" >&2 ;
+       echo "It's OK for branches which are older than onload-8.0" >&2 ;
+       echo "Otherwise you have to set path to the root of an TCPDirect checkout" >&2 ;
+    else
+        if test -z "${SFC_ZETAFERNO_BUILD}" ; then
+            export SFC_ZETAFERNO_BUILD="${SF_ZETAFERNO_DIR}/build"
+        fi
+
+        if test -z "${SFC_ZETAFERNO_GNU}" ; then
+            iut_arch="gnu_$(${SSH} ${TE_IUT} 'gcc -dumpmachine' | sed 's/-.*$//')"
+            export SFC_ZETAFERNO_GNU="${SFC_ZETAFERNO_BUILD}/${iut_arch}"
+        fi
+    fi
+}
+
+# Update links to ZF lib and headers.
+update_zf_links() {
+    zf_headers_link_name="${ZETAFERNO_TS_LIBDIR}/zf"
+    etherfabric_headers_link_name="${ZETAFERNO_TS_LIBDIR}/etherfabric"
+
+    if test -n "${SFC_ZETAFERNO_HEADERS}" ; then
+        zf_headers_path="${SFC_ZETAFERNO_HEADERS}/zf"
+        if test "x$SFC_ONLOAD_LOCAL" == "xyes" ; then
+            mkdir -p "${ZETAFERNO_TS_LIBDIR}/copied_headers/"
+            etherfabric_headers_path="${SFC_ONLOAD_GNU}/../../src/include/etherfabric"
+            etherfabric_headers_copy="${ZETAFERNO_TS_LIBDIR}/copied_headers/etherfabric"
+        else
+            etherfabric_headers_path="${ONLOAD_TREE}/src/include/etherfabric"
+        fi
+    else
+        echo "ERROR! Path to Zetaferno API headers is not defined." >&2 && exit 1
+    fi
+
+    ln_sf_safe "$zf_headers_path" "$zf_headers_link_name"
+    if test "x$SFC_ONLOAD_LOCAL" == "xyes" ; then
+        scp_dir "$TE_IUT" "$etherfabric_headers_path" "$etherfabric_headers_copy"
+        ln_sf_safe "$etherfabric_headers_copy" "$etherfabric_headers_link_name"
+    else
+        ln_sf_safe "$etherfabric_headers_path" "$etherfabric_headers_link_name"
+    fi
+
+    # Check the links exist
+    ls "${zf_headers_link_name}/" >/dev/null || exit 1
+    ls "${etherfabric_headers_link_name}/" >/dev/null || exit 1
+}
+
+# Export paths to ZF headers and lib for branches
+# which are older then onload-8.0 and update links.
+# This functions MUST BE called only from scripts/check_branch_reqs.
+setup_zf_one_repo() {
+    if test -n "${SFC_ONLOAD_GNU}" ; then
+        export SFC_ZETAFERNO_HEADERS="${SFC_ONLOAD_GNU}/../../src/include"
+        export SFC_ZETAFERNO_LIB="${SFC_ONLOAD_GNU}/lib/zf/libonload_zf.so"
+        export SFC_ZETAFERNO_APPS="${SFC_ONLOAD_GNU}/tests/zf_apps/static/"
+    fi
+
+    update_zf_links
+}
+
+# Export path to ZF Shim lib.
+# This path may be rewritten in the scripts/check_branch_reqs file
+# for branches which are older than onload-8.0
+export_zf_shim_separate_repo_lib() {
+    export_zf_env
+
+    export SFC_SOCKAPI_LIB_IUT="${SFC_ZETAFERNO_GNU}/lib/libzf_sockets.so"
+}

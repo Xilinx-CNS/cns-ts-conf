@@ -1,0 +1,17 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- set:
+    - oid: "/local:/iut_errno_change_no_check:"
+      value: "${TE_ERRNO_CHANGE_NO_CHECK:-1}"
+    - oid: "/volatile:/alien_link_addr:"
+      value: "${TE_ALIEN_LINK_ADDR:-00:10:29:38:47:56}"
+
+- set:
+    - if: ${TE_IUT_RPC_DEFAULT_TIMEOUT} != ""
+      oid: "/agent:${TE_IUT_TA_NAME}/rpc_default_timeout:"
+      value: "${TE_IUT_RPC_DEFAULT_TIMEOUT}"
+    - if: ${TE_TST1_RPC_DEFAULT_TIMEOUT} != ""
+      oid: "/agent:${TE_TST1_TA_NAME}/rpc_default_timeout:"
+      value: "${TE_TST1_RPC_DEFAULT_TIMEOUT}"

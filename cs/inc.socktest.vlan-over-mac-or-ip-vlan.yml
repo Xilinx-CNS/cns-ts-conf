@@ -1,0 +1,11 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: ${SOCKAPI_TS_VLAN_OVER_MAC_OR_IP_VLAN} != ""
+    then:
+      - include:
+        - inc.socktest.macvlan.yml
+        - inc.socktest.ipvlan.yml
+        - inc.socktest.vlan.yml

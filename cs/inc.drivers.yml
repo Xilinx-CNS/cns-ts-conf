@@ -1,0 +1,18 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- add:
+    - if: ${TE_ENV_IUT_DPDK_DRIVER} != ""
+      oid: "/local:${TE_IUT_TA_NAME}/dpdk_driver:"
+      value: "${TE_ENV_IUT_DPDK_DRIVER}"
+    - if: ${TE_ENV_IUT_NET_DRIVER} != ""
+      oid: "/local:${TE_IUT_TA_NAME}/net_driver:"
+      value: "${TE_ENV_IUT_NET_DRIVER}"
+
+    - if: ${TE_ENV_TST_DPDK_DRIVER} != ""
+      oid: "/local:${TE_TST1_TA_NAME}/dpdk_driver:"
+      value: "${TE_ENV_TST_DPDK_DRIVER}"
+    - if: ${TE_ENV_TST_NET_DRIVER} != ""
+      oid: "/local:${TE_TST1_TA_NAME}/net_driver:"
+      value: "${TE_ENV_TST_NET_DRIVER}"

@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+--trc-tag=no-l5-specific
+--tester-req=!ONLOAD_ONLY
+--tester-req=!ONLOAD_ZC_RECV
+--tester-req=!ONLOAD_ZC_SEND
+--tester-req=!SF_TEMPLATE_SEND
+

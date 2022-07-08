@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+--opts=opts/unix
+
+--tester-req=!IP6_FULL
+--trc-tag=no-ip6-full

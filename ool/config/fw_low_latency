@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Tx mcast UDP loopback is not supported on EF10 NICs in 'low latency' mode.
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=no_hw_tx_mcast_loop"
+
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=fw_low"

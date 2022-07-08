@@ -1,0 +1,16 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Do not add module_sfc since this entry is already present in cmod-x3sim mode
+#
+- cond:
+    if: |
+        ${HWSIM} = "" |
+        ${ONLOAD_CPLANE_DIR} = ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_sfc"
+          value: "/agent:${TE_IUT_TA_NAME}/module:sfc"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc"

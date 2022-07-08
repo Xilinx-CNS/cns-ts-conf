@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Common scripts/to run IUT agent in a network namespace.
+
+if [[ "x${SOCKAPI_TS_NO_NETNS}" == "xyes" ]] ; then
+    echo "Netns testing can't be run on this kernel"
+    exit 1
+fi
+
+export TE_IUT_TA_NAME_NS=Agt_A_netns
+
+export SOCKAPI_TS_NETNS=true
+export SOCKAPI_TS_CFG_DUT="$SF_TS_CONFDIR/cs/inc.socktest.dut.yml"
+export SOCKAPI_TS_CFG_DUT_INC=false
+
+export SOCKAPI_TS_NETNS_NAME=test_ns
+
+# RCF port of the agent in the net namespace.
+export SOCKAPI_TS_NETNS_PORT=30667
+
+# Interface which is used for TA-TEN communication in default net namespace.
+# The environment can be used to specify control interface explicitly,
+# otherwise default route interface is used.
+# export SOCKAPI_TS_NETNS_CTL_IF=${TE_IUT_CTL_IF:-eth0}
+
+# Names of VETH interfaces couple, which is used for the communication of
+# namespaced agent with TEN if IP-level switching is configured.
+export SOCKAPI_TS_NETNS_VETH1=veth1
+export SOCKAPI_TS_NETNS_VETH2=veth2
+
+# MAC VLAN interface name.
+# The interface is added over $SOCKAPI_TS_NETNS_CTL_IF and moved to the
+# created namespace for TA-TEN communication.
+# Export this variable in case of MAC-level switching mode
+# export SOCKAPI_TS_NETNS_MACVLAN=ctl.mvlan
+
+# Exclude net namespaces incompatible tests.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_NETNS"
+
+# Bug 75337
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!CREATE_NET_IF"
+
+# Bug 78643. Disabled for Linux<=4.4
+if test ${IUT_KERNEL_VERSION_NUM} -le 404 ; then
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PROC_SYS_NET"
+fi
+# Bug 79015. Disabled for Linux<4.13
+if test ${IUT_KERNEL_VERSION_NUM} -lt 413 ; then
+    export SOCKAPI_TS_REMOVE_DISABLE_TS="yes"
+fi
+
+# We do not configure default route in netns carefully, so let's disable
+# tests which delete/change default route
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!CHANGE_DEFAULT_ROUTE"
+
+# ST-2013: disable route/multipath* tests on Linux<4
+if test ${IUT_KERNEL_VERSION_NUM} -lt 400 ; then
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTIPATH"
+fi
+
+# ST-2190. Disabled for Linux<=4.9
+if test ${IUT_KERNEL_VERSION_NUM} -le 409 ; then
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SYSCTL_TCP_EARLY_RETRANS"
+fi

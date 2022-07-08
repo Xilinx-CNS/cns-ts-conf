@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Scalable filters for TCP listening sockets
+export EF_SCALABLE_FILTERS=${SOCKAPI_TS_SCALABLE_IF}=passive
+TE_EXTRA_OPTS="--trc-tag=scalable_passive"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_SCALABLE"
+export SF_V5_KILL_ZOMBIE_STACKS="yes"
+
+if test "x$EF_IUT_EF10" != "xtrue" ; then
+    echo "We can test scalable filters only on EF10"
+    exit 1
+fi

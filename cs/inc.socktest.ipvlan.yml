@@ -1,0 +1,63 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- cond:
+    if: ${TE_IUT_TST1_IV} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IV}/ipvlan:${TE_IUT_TST1_IV_NAME}"
+          value: "${SOCKAPI_TS_IPVLAN_MODE}:${SOCKAPI_TS_IPVLAN_FLAG}"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/rsrc:${TE_IUT_TST1_IV_NAME}"
+          value: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IV_NAME}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IV_NAME}"
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IV_NAME}/parent:0"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IV}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IV}/rp_filter:"
+          value: "2"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IV}/arp_ignore:"
+          value: "1"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IV_NAME}/rp_filter:"
+          value: "2"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IV_NAME}/arp_ignore:"
+          value: "0"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IV}/status:"
+          value: "1"
+
+- cond:
+    if: ${TE_IUT_TST1_IUT_IV} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_IV}/ipvlan:${TE_IUT_TST1_IUT_IV_NAME}"
+          value: "${SOCKAPI_TS_IPVLAN_MODE}:${SOCKAPI_TS_IPVLAN_FLAG}"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/rsrc:${TE_IUT_TST1_IUT_IV_NAME}"
+          value: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_IV_NAME}"
+
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_IV_NAME}"
+        - oid: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_IV_NAME}/parent:0"
+          value: "/local:/host:${TE_IUT}/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_IV}"
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IUT_IV}/rp_filter:"
+          value: "2"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IUT_IV}/arp_ignore:"
+          value: "1"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IUT_IV_NAME}/rp_filter:"
+          value: "2"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/sys:/net:/ipv4:/conf:${TE_IUT_TST1_IUT_IV_NAME}/arp_ignore:"
+          value: "0"
+
+        - oid: "/agent:${TE_IUT_TA_NAME_IFS}/interface:${TE_IUT_TST1_IUT_IV}/status:"
+          value: "1"

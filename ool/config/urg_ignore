@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_TCP_URG_MODE="ignore"
+
+TE_EXTRA_OPTS="--trc-tag=urg_ignore --tester-req=!OOB"
+

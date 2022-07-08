@@ -1,0 +1,252 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- set:
+    - oid: "/agent:${TE_TST1_TA_NAME}/l4_port:/alloc:/next:/type:"
+      value: 1
+
+#
+# tapsock is required for QEMU to connect to to make network interface
+# to talk to. It must be run before QEMU.
+#
+- cond:
+    if: ${QEMU_NET_TAPSOCK_0} != ""
+    then:
+      - get:
+          - oid: "/agent:${TE_TST1_TA_NAME}/l4_port:/alloc:/next:"
+            value: QEMU_NET_SOCKET_TCP_PORT_0
+      - add:
+          - oid: "/agent:${TE_TST1_TA_NAME}/l4_port:/alloc:/allocated:${QEMU_NET_SOCKET_TCP_PORT_0}"
+      - add:
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock0"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock0/arg:1"
+            value: "--listen"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock0/arg:2"
+            value: "${TE_TST1_IUT}"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock0/arg:3"
+            value: "${QEMU_NET_SOCKET_TCP_PORT_0}"
+      - set:
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock0/exe:"
+            value: "${TAPSOCK_EXE}"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock0/status:"
+            value: 1
+
+- cond:
+    if: ${QEMU_NET_TAPSOCK_1} != ""
+    then:
+      - get:
+          - oid: "/agent:${TE_TST1_TA_NAME}/l4_port:/alloc:/next:"
+            value: QEMU_NET_SOCKET_TCP_PORT_1
+      - add:
+          - oid: "/agent:${TE_TST1_TA_NAME}/l4_port:/alloc:/allocated:${QEMU_NET_SOCKET_TCP_PORT_1}"
+      - add:
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock1"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock1/arg:1"
+            value: "--listen"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock1/arg:2"
+            value: "${TE_TST1_IUT_IUT}"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock1/arg:3"
+            value: "${QEMU_NET_SOCKET_TCP_PORT_1}"
+      - set:
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock1/exe:"
+            value: "${TAPSOCK_EXE}"
+          - oid: "/agent:${TE_TST1_TA_NAME}/process:tapsock1/status:"
+            value: 1
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/l4_port:/alloc:/next:/type:"
+      value: 1
+- get:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/l4_port:/alloc:/next:"
+      value: CMOD_COSIM_PORT
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/l4_port:/alloc:/allocated:${CMOD_COSIM_PORT}"
+
+#
+# Start QEMU which connects to tapsock and provides listening socket for
+# hwsim
+#
+- add:
+    - if: ${QEMU_NET_TAPSOCK_0} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:QEMU_NET_SOCKET_PORT_0"
+      value: "${CMOD_QEMU_NET_HOST}:${QEMU_NET_SOCKET_TCP_PORT_0}"
+    - if: ${QEMU_NET_TAPSOCK_1} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:QEMU_NET_SOCKET_PORT_1"
+      value: "${CMOD_QEMU_NET_HOST}:${QEMU_NET_SOCKET_TCP_PORT_1}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:COSIM_ADDRESS"
+      value: ":${CMOD_COSIM_PORT}"
+
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/drive:root"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/device:sfc"
+      value: "sfc-dut-port"
+- cond:
+    if: ${QEMU_DEVICE_IOMMU} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/device:iommu"
+          value: "${QEMU_DEVICE_IOMMU}"
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/qemu:"
+      value: "${CMOD_QEMU_EXE}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/machine:"
+      value: "q35,max-ram-below-4g=128M,kernel-irqchip=split"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/cpu:/model:"
+      value: "host"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/cpu:/num:"
+      value: 2
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/mem:/size:"
+      value: 2048
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/drive:root/file:"
+      value: "${CMOD_ROOT:-/local/virtual/x86_64_centos7.qcow2}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/drive:root/cdrom:"
+      value: ${CMOD_ROOT_CDROM:-0}
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/drive:root/snapshot:"
+      value: ${CMOD_ROOT_SNAPSHOT:-1}
+
+- cond:
+    if: ${QEMU_VIRTFS_ROOT} != ""
+    then:
+      - add:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/virtfs:ro"
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/virtfs:ro/fsdriver:"
+            value: "local"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/virtfs:ro/path:"
+            value: "${QEMU_VIRTFS_ROOT}"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/virtfs:ro/security_model:"
+            value: "none"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/virtfs:ro/mount_tag:"
+            value: "ro"
+
+- cond:
+    if: ${CMOD_KERNEL} != ""
+    then:
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/kernel:"
+            value: "${CMOD_KERNEL}"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/kernel:/cmdline:"
+            value: "${CMOD_KERNEL_CMDLINE}"
+
+- cond:
+    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    then:
+      - get:
+          - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/port:"
+            value: TE_LOG_LISTENER_NETCONSOLE_PORT_IUT
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/serial:"
+            value: "udp:${TE_LOG_LISTENER}:${TE_LOG_LISTENER_NETCONSOLE_PORT_IUT}"
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/status:"
+      value: 1
+
+#
+# Start hwsim immediately after QEMU since QEMU is wating for connection
+# from simulator.
+#
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:NEED_QEMU"
+      value: 1
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:SDNET_INSTALL"
+      value: "${CMOD_SDNET_INSTALL:-/proj/smartnic/xir/tools/sdnet/2018.3_P3}"
+
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim"
+- cond:
+    if: ${HWSIM_NO_XACCEL} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:5"
+          value: "--no-xaccel"
+- cond:
+    if: ${HWSIM_MAC} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:10"
+          value: "--mac${HWSIM_MAC}G"
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:11"
+          value: "--mac-addr"
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:12"
+          value: "00:0e:ad:be:ef:03/2"
+- cond:
+    if: ${HWSIM_PCIID} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:16"
+          value: "--pciid"
+- cond:
+    if: ${TE_VIRTIO_VENDOR_ID} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:17"
+          value: "10ee:0100,10ee:0100,${TE_VIRTIO_VENDOR_ID}:1000/${TE_VIRTIO_VENDOR_ID}:0001,${TE_VIRTIO_VENDOR_ID}:1001/${TE_VIRTIO_VENDOR_ID}:0002"
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:100"
+      value: "--flash"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:101"
+      value: "${MC_FW_FLASH}"
+- cond:
+    if: ${HWSIM_ISA_OPTS} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:120"
+          value: "--isa-opts"
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:121"
+          value: "${HWSIM_ISA_OPTS}"
+- add:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:140"
+      value: "${MCFW_ELF}"
+
+- set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/exe:"
+      value: "${HWSIM_EXE}"
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/status:"
+      value: 1
+
+#
+# Start Test Agent inside QEMU
+#
+- get:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/ssh_port:/host:"
+      value: VM_IUT_SSH_PORT
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/rcf_port:"
+      value: VM_IUT_RCF_PORT
+
+- add:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}"
+      value: "${TE_IUT_TA_TYPE}"
+
+- set:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/vm:"
+      value: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/rcflib:"
+      value: "rcfunix"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/rebootable:"
+      value: 1
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/synch_time:"
+      value: 0
+
+- add:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:port"
+      value: "${VM_IUT_RCF_PORT}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:ssh_proxy"
+      value: "${TE_HYPERVISOR}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:ssh_port"
+      value: "${VM_IUT_SSH_PORT}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:host"
+      value: "localhost"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:user"
+      value: "root"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:key"
+      value: "${TE_IUT_SSH_KEY}"
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/conf:copy_tries"
+      value: 10
+
+- set:
+    - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/status:"
+      value: 1

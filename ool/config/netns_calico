@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export SOCKAPI_TS_NETNS_CALICO=true
+export SOCKAPI_TS_NETNS_CALICO_NS=calicoish-namespace
+export SOCKAPI_TS_NETNS_CALICO_VETH1_NAME=veth1
+export SOCKAPI_TS_NETNS_CALICO_VETH2_NAME=veth2
+export SOCKAPI_TS_NETNS_CALICO_IP4_ADDR=10.136.1.1
+export SOCKAPI_TS_NETNS_CALICO_IP6_ADDR=fec0:136::1
+export SOCKAPI_TS_NETNS_CALICO_LOCAL_ADDR=169.254.1.1
+export SOCKAPI_TS_NETNS_CALICO_TA=Agt_A_cns
+export SOCKAPI_TS_NETNS_CALICO_RPCS=pco_iut_cns
+export SOCKAPI_TS_NETNS_CALICO_RCFPORT=30667
+
+TE_EXTRA_OPTS="--tester-req=NETNS_CALICO --trc-tag=netns_calico"
+
+if test ${IUT_KERNEL_VERSION_NUM} -lt 410 ; then
+    #
+    # Calico tries to add default IPv6 route via IPv4-mapped gateway, like:
+    # ip -6 -n calicoish-namespace route add default via ::ffff:169.254.1.1 dev veth1
+    # It fails on Linux < 4.10. So let's disable IPv6 testing in such case.
+    #
+    TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
+    export ST_IPV4_ONLY_RUN=yes
+fi

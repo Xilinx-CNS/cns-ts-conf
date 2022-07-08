@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# The ulhelper build profile does not support a lot of things.
+# SO_LINGER is broken;
+# IPv6 is compiled out;
+# see src/include/ci/internal/transport_config_opt_ulhelper.h
+# for other limitations.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_LINGER"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEPORT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BPF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SENDFILE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL_INTEROP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FD_CACHING"
+#TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RESET_NIC"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ICMP"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_MTU"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PMTU"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEADDR"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ENV-LOOPBACK"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_MOVE_FD"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!CHROOT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!VFORK_MODE_2"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SCALABLE"
+
+# ON-12506: disable temporarily
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OUT_OF_RESOURCES"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_BUILD_ULHELPER"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=build_ulhelper"

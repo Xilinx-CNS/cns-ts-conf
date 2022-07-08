@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+TE_EXTRA_OPTS="--trc-tag=v5"
+
+if test -z "${SFC_ONLOAD_GNU}" ; then
+    echo "SFC_ONLOAD_GNU is empty. It should be exported for Onload testing" >&2
+    exit 1
+fi
+
+. ${SF_TS_CONFDIR}/scripts/lib.run
+te_iut_host="$(get_te_iut_host)"
+
+# Determining whether Onload was compiled with NDEBUG=1.
+# In this case ool_ndebug tag is added.
+if test "x${SFC_ONLOAD_LOCAL}" == "xyes" ; then
+    LIB_PATH="${SFC_ONLOAD_GNU}/lib/transport/unix/libcitransport0.so"
+else
+    scp "${SFC_ONLOAD_GNU}/lib/transport/unix/libcitransport0.so" "${te_iut_host}:/tmp/libte-iut.so" 1>/dev/null
+    LIB_PATH="/tmp/libte-iut.so"
+fi
+ssh "${te_iut_host}" "$LIB_PATH" | grep "(debug)" 1>/dev/null
+if test $? -ne 0 ; then
+    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=ool_ndebug --tester-req=!NO_NDEBUG"
+    export SFC_NDEBUG=1
+fi
+if test "x${SFC_ONLOAD_LOCAL}" != "xyes" ; then
+    ssh ${te_iut_host} "sudo rm /tmp/libte-iut.so"
+fi
+
+if test "$EF_IUT_EF10" = "true" ; then
+    export IUT_TS_TX_TCP=0
+    export IUT_TS_RX_TCP=1
+    export IUT_TS_SYS_ZERO=0
+    export IUT_TS_TX_SW=1
+    export IUT_TS_TX_HW=1
+    export IUT_TS_TX_SW_UDP=0
+    export IUT_TS_TX_SCHED=0
+    export IUT_TS_TX_ACK=0
+    export IUT_TS_OPT_CMSG=0
+fi
+
+# Get initial cplane server parameters to extend the list.
+export SFC_CPLANE_SERVER_PARAMS="$(ssh ${TE_IUT} cat /sys/module/onload/parameters/cplane_server_params 2>/dev/null)"
+if test -z "$SFC_CPLANE_SERVER_PARAMS" ; then
+    unset SFC_CPLANE_SERVER_PARAMS
+fi

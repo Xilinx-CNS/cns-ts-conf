@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export TE_RPC_ZF_HAS_PENDING_REACTOR_ENABLED=true
+
+TE_EXTRA_OPTS="--trc-tag=zf_has_pending_reactor"

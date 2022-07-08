@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# ST-1874: do not run BPF tests on aarch64
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BPF"
+
+# ST-2027: do not run packetdrill tests on aarch64
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PACKETDRILL"

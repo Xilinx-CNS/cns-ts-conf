@@ -1,0 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export SOCKAPI_TS_SCALABLE_IF="any"
+TE_EXTRA_OPTS="--trc-tag=scalable_any"

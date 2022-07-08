@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# This file is not intended for standalone use.
+# It should be included from other configuration files.
+
+# Set oof_shared_keep_thresh=0 to keep using a wild
+# filter for passively accepted TCP sockets.
+export ONLOAD_OOF_SHARED_KEEP_THRESH=0
+
+# AF_XDP doesn't work with enabled huge pages. ON-12249.
+export EF_USE_HUGE_PAGES=0
+
+# Do not test BPF with AF_XDP.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BPF"
+unset EF_XDP_MODE
+
+# RSS/Clustering in any form is not supported. ON-11388
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEPORT"
+
+# ZC sending is broken with AF_XDP. ON-12447
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND_USER_BUF"
+
+# Multicast tests have problems with AF_XDP. ON-12484
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTICAST_RECV"
+
+# AF_XDP-Onload allows to insert 2 duplicate filters,
+# and one of the sockets does not work properly.
+# So, SO_REUSEADDR should be disabled. ON-12491
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEADDR"
+
+# PIO is not available in this mode. ON-12578.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_TEMPLATE_SEND"
+
+# Packetdrill is incompatible with AF_XDP build. ON-12616.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PACKETDRILL"
+
+# ST-2488: ON-12141: RX/TX HW timestamps are not supported
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SFC_SFPTPD"
+
+# Exclude AF_XDP incompatible tests.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_AF_XDP"
+
+# Bug 11833: ST-2188: JUMBO_FRAMEs are not supported
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!JUMBO_FRAME"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=af_xdp"

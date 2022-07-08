@@ -1,0 +1,65 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Workaround for "-" symbol in hostname. In case of such hostname,
+# you will not be able to use ${L5_SOCKAPI_LIB[DIR]_'$TE_IUT'}.
+if test "x${TE_IUT/-/+/}" != "x${TE_IUT}" ; then
+    TE_IUT_AUX=
+else
+    TE_IUT_AUX="${TE_IUT}"
+fi
+if test "x${TE_TST1/-/+/}" != "x${TE_TST1}" ; then
+    TE_TST1_AUX=
+else
+    TE_TST1_AUX="${TE_TST1}"
+fi
+if test "x${TE_TST2/-/+/}" != "x${TE_TST2}" ; then
+    TE_TST2_AUX=
+else
+    TE_TST2_AUX="${TE_TST2}"
+fi
+
+##
+# Export variable @p SFC_ONLOAD_GNU if it necessary
+#
+export_SFC_ONLOAD_GNU() {
+    local guess_gnu="$1"
+    local var_gnu=
+
+    # Try to find and use variables like:
+    #  - @p SFC_ONLOAD_GNU32_${iut_name}/SFC_ONLOAD_GNU64_${iut_name};
+    #  - @p SFC_ONLOAD_GNU32/SFC_ONLOAD_GNU64.
+    case "${TE_OOL_UL}" in
+        m32) var_gnu="SFC_ONLOAD_GNU32" ;;
+        m64) var_gnu="SFC_ONLOAD_GNU64" ;;
+    esac
+    if test -n "${var_gnu}" ; then
+        local host_gnu="${var_gnu}_${TE_IUT_AUX}"
+        host_gnu="${!host_gnu}"
+        local var_gnu="${!var_gnu}"
+        if test -n "${host_gnu}" ; then
+            export SFC_ONLOAD_GNU="${host_gnu}"
+            return 0
+        elif test -n "${var_gnu}" ; then
+            export SFC_ONLOAD_GNU="${var_gnu}"
+            return 0
+        fi
+    fi
+
+    # Try to find and use variables like:
+    #  - @p SFC_ONLOAD_GNU_${iut_name};
+    #  - and other.
+    local host_gnu="SFC_ONLOAD_GNU_${TE_IUT_AUX}"
+    host_gnu="${!host_gnu}"
+    if test -n "${host_gnu}" ; then
+        export SFC_ONLOAD_GNU="${host_gnu}"
+    elif test -n "${guess_gnu}" ; then
+        export SFC_ONLOAD_GNU="${guess_gnu}"
+    fi
+
+    if test "x${SFC_ONLOAD_GNU}" != "x${SFC_ONLOAD_GNU/iut:}" ; then
+        export SFC_ONLOAD_GNU="${SFC_ONLOAD_GNU/iut:}"
+        export SFC_ONLOAD_LOCAL="yes"
+    fi
+
+    # In other cases @p SFC_ONLOAD_GNU will be used
+}

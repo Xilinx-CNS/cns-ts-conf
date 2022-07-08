@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+. ${SF_TS_CONFDIR}/scripts/check_branch_reqs
+
+# This file is used for EOL5 release/branch
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL1606"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL1710"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL1805"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL1811"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=branch_ool1606"
+
+# ST-929: do not run tests with new cplane behavior
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NEW_CPLANE"
+
+# SO_SNDBUFFORCE and SO_RCVBUFFORCE were implemented after ool1710
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_RCVBUFFORCE"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_SNDBUFFORCE"
+
+# Policy based routing was implemented starting from ool1710
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ROUTE_POLICY"
+
+# Multipath does not supported in eol5 branch
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTIPATH"
+
+# ON-11249: don't test route hoplimit support - it's not implemented in eol5
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RT_HOPLIMIT"
+
+# We suppose that it doesn't exist in this branch, because ool1606 branch
+# is dead and there is no onload_socket_unicast_nonaccel() function in
+# enterpriseonload-5.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_NONACCEL"
+
+# Do not test IPv6
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
+
+# See scripts/check_branch_reqs
+active_cache_check $TESTER_OPTS
+kernel_pkt_injection_check $TESTER_OPTS
+zf_ods_check $TESTER_OPTS
+bpf_disable
+pftf_recv_disable
+onload_zc_release_os_inline_disable
+zf_one_repo_check $TESTER_OPTS
+
+# Support of pio ZF attribute was implemented after the release ool1606.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/config/without_zf_pio"
+
+# The behavior of the EF_CLUSTER_SIZE option works correctly after
+# the release ool1606.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!CLUSTER_RESTART"
+
+# onload_zc_recv() now works with TCP, but not on older branches
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!(ONLOAD_ZC_RECV&SOCK_STREAM)"
+
+# ISN reuse was implemented for Ali, eol6.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_ISN_REUSE"
+
+bnb_check $TESTER_OPTS
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND_USER_BUF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_HLRX"

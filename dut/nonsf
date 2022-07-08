@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# no RX timestamping on Siena
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!HW_PTP_RX_TIMESTAMP"
+
+# no PIO
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SF_TEMPLATE_SEND"
+
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=nonsf"
+
+export TE_DUT_NONSF=1

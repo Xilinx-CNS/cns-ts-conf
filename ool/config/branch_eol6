@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+. ${SF_TS_CONFDIR}/scripts/check_branch_reqs
+
+# Avoid OOL1811 requirement when possible, use the targeted requirements
+# below.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!OOL1811"
+
+# Features not supported in ool1811 / eol6 branch:
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTIPATH"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_BLIND_WINDOW"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MCAST_LOCAL_ADDR"
+
+# ON-11249: don't test route hoplimit support - it's not implemented in eol6
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RT_HOPLIMIT"
+
+# Don't test IP_TOS too big value. It works the wrong way in eol6.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_TOS_TOO_BIG"
+
+# Don't run sockopts/ip_tos tcp_passive iterations. See ON-11361.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_TOS_TCP_PASSIVE"
+
+# Do not test IPv6
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=branch_ool1811"
+
+# See scripts/check_branch_reqs
+active_cache_check $TESTER_OPTS
+bnb_check $TESTER_OPTS
+bpf_disable
+pftf_recv_disable
+onload_zc_release_os_inline_disable
+zf_one_repo_check $TESTER_OPTS
+
+# onload_zc_recv() now works with TCP, but not on older branches
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!(ONLOAD_ZC_RECV&SOCK_STREAM)"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND_USER_BUF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_HLRX"

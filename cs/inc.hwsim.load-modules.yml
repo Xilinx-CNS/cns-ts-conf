@@ -1,0 +1,100 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+#
+# Load all the necessary modules
+#
+- cond:
+    if: ${CNS_AUXILIARY_BUS_DIR} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_auxiliary"
+          value: "/agent:${TE_IUT_TA_NAME}/module:auxiliary"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:auxiliary"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:auxiliary/filename:"
+          value: "${CNS_AUXILIARY_BUS_DIR}/auxiliary.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:auxiliary/loaded:"
+          value: 1
+
+- cond:
+    if: ${XLNX_EFCT_DIR} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_xilinx_efct"
+          value: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct/filename:"
+          value: "${XLNX_EFCT_DIR}/xilinx_efct.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct/loaded:"
+          value: 1
+
+- cond:
+    if: ${SFC_DRIVER_LINUX_DIR} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_sfc_driverlink"
+          value: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/filename:"
+          value: "${SFC_DRIVER_LINUX_DIR}/sfc_driverlink.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
+          value: 1
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_virtual_bus"
+          value: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/filename:"
+          value: "${SFC_DRIVER_LINUX_DIR}/virtual_bus.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/loaded:"
+          value: 1
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_sfc"
+          value: "/agent:${TE_IUT_TA_NAME}/module:sfc"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc/filename:"
+          value: "${SFC_DRIVER_LINUX_DIR}/sfc.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc/loaded:"
+          value: 1
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_sfc_resource"
+          value: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/filename:"
+          value: "${SFC_DRIVER_LINUX_DIR}/sfc_resource.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_resource/loaded:"
+          value: 1
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_sfc_char"
+          value: "/agent:${TE_IUT_TA_NAME}/module:sfc_char"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_char"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_char/filename:"
+          value: "${SFC_DRIVER_LINUX_DIR}/sfc_char.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_char/loaded:"
+          value: 1
+
+- cond:
+    if: ${ONLOAD_CPLANE_DIR} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_onload"
+          value: "/agent:${TE_IUT_TA_NAME}/module:onload"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload"
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload/filename:"
+          value: "${SFC_DRIVER_LINUX_DIR}/onload.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload/loaded:"
+          value: 1
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:cplane_server_path"
+          value: "${ONLOAD_CPLANE_DIR}/onload_cp_server"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:cplane_track_xdp"
+          value: "yes"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:onload/parameter:cplane_server_params"
+          value: "-K"

@@ -1,0 +1,33 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+
+- add:
+    - oid: "/conf_delay:route"
+      value: "/agent/route"
+    - oid: "/conf_delay:route/ta:"
+      value: 500
+    - oid: "/conf_delay:rule"
+      value: "/agent/rule"
+    - oid: "/conf_delay:rule/ta:"
+      value: 500
+    - oid: "/conf_delay:net_addr"
+      value: "/agent/interface/net_addr"
+    - oid: "/conf_delay:net_addr/ta:"
+      value: 500
+    - oid: "/conf_delay:if_status"
+      value: "/agent/interface/status"
+    - oid: "/conf_delay:if_status/ta:"
+      value: 5000
+    - oid: "/conf_delay:vlans"
+      value: "/agent/interface/vlans"
+    - oid: "/conf_delay:vlans/ta:"
+      value: 3000
+    - oid: "/conf_delay:if_mtu"
+      value: "/agent/interface/mtu"
+    - oid: "/conf_delay:if_mtu/ta:"
+      value: 5000
+    - oid: "/conf_delay:xdp"
+      value: "/agent/interface/xdp"
+    - oid: "/conf_delay:xdp/ta:"
+      value: 500

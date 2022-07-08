@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# applied to epoll:1 and epoll:2 only.  Unusable for epoll:0.
+export EF_EPOLL_CTL_FAST=1
+
+TE_EXTRA_OPTS="--trc-tag=ool_epoll_ctl_fast --tester-req=!FORK --tester-req=!EXEC --tester-req=!DUP --tester-req=!EPOLL_MULTI_LEVEL"

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved. -->
+<!-- 
+    RGT filter file for sapi-ts project.
+  -->
+
+<filters>
+
+    <entity-filter>
+        <!-- Exclude log from all entities (control messages remain) -->
+        <exclude entity=""/>
+    </entity-filter>
+
+    <duration-filter>
+        <exclude max="60"/>
+    </duration-filter>
+
+</filters>
+

@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_UL_EPOLL=1
+
+TE_EXTRA_OPTS="--trc-tag=ool_epoll:1 --tester-req=!NO_EF_UL_EPOLL_ONE"
+
+# Set !FORK_EPOLL because epoll1 and epoll3 do not support epoll sets across fork(). See ON-12558.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!FORK_EPOLL"

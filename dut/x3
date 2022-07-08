@@ -1,0 +1,68 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+export EF_IUT_X3=true
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=x3"
+
+. "${SF_TS_CONFDIR}/dut/lib"
+
+# Presumably all of these parameters are supported by the x3
+# (stolen from dut/medford script)
+export EF_IUT_ZF_ALTS=true
+TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --script=dut/ef10"
+
+# ON-13666: timestamping isn't supported on X3
+try_add_ool "no_rx_ts" "no_rx_ts" "X3/ON-13666: timestamping isn't supported"
+
+# X3-686: disabled
+try_add_req "!ONLOAD_ZC_SEND_USER_BUF" "!ONLOAD_ZC_SEND_USER_BUF" "X3-686"
+
+# X3-379: disable temporarily
+try_add_req "!BPF" "!BPF" "X3-379"
+
+# ON-13752: disable tests with SO_REUSEADDR
+try_add_req "!SO_REUSEADDR" "!SO_REUSEADDR" "X3/ON-13752"
+
+# ON-13881, see also: XN-200494-PD-1F/KD-070 (RSS is not supported)
+try_add_req "!SO_REUSEPORT" "!SO_REUSEPORT" "X3/ON-13881"
+
+# ON-13759: disable tests with templated send
+try_add_req "!SF_TEMPLATE_SEND" "!SF_TEMPLATE_SEND" "X3/ON-13759"
+
+# Disable packetdrill tests on X3
+try_add_req "!PACKETDRILL" "!PACKETDRILL" "X3/testing packetdrill is useless"
+
+# Disable MTUs <= 500 and JUMBO_FRAME
+try_add_req "!MTU_500_OR_LESS" "!MTU_500_OR_LESS" "X3/ST-2622"
+try_add_req "!JUMBO_FRAME" "!JUMBO_FRAME" "X3/ST-2622"
+
+# List of X3 specific trc tags
+declare -A VER_TAGS
+VER_TAGS[fw]='MC Firmware version is'
+VER_TAGS[fw-rev]='Extended info:'
+VER_TAGS[fw-build]='Build name:'
+VER_TAGS[suc]='SUC Firmware version is'
+VER_TAGS[fpga]='FPGA version is'
+VER_TAGS[board-sn]='Serial num:'
+VER_TAGS[board]='board name:'
+VER_TAGS[board-rev]='board rev:'
+VER_TAGS[board-ver]='Board version is'
+VER_TAGS[bundle-ver]='Bundle version is'
+
+get_x3_tags() {
+    local tag=
+    local tags=
+    local prefix="--trc-tag="
+
+    local out_version="$(do_cmdclient 'version;quit;')"
+
+    for tag in "${!VER_TAGS[@]}" ; do
+        value="$(echo "${out_version}" | grep "^${VER_TAGS[${tag}]}" | sed 's/.* //')"
+        test -z "${value}" || tags="${tags} ${prefix}${tag}-${value}"
+    done
+
+    echo "${tags/$'\n'/-}"
+}
+
+if [[ -z "$HWSIM" ]] ; then
+    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} $(get_x3_tags)"
+fi

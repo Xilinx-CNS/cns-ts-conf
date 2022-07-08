@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# Use with sapi & zf as: --script=ool/console_loglevel:<N>
+# By default (i.e. without this script) N=7 is used, see ST-1706 for
+# rationale.
+# "--script=ool/console_loglevel:" without any parameter has a special
+# meaning: "do not change the loglevel".
+export ST_CONSOLE_LOGLEVEL=${script_opts/ /}
+

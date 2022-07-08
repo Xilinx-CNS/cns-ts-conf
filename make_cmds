@@ -1,0 +1,91 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Compose SSH commands to go to IUT and be used on IUT.
+#
+# Author: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+
+declare -r -a SSH_WITH_OPTS=( ssh -qxT -o BatchMode=yes -o StrictHostKeyChecking=no )
+declare -r -a SUDO_N=( "sudo" "-n" )
+
+# Variable to be set by make_cmds_for_host() and used by caller
+declare -a SSH_CMD
+declare RSH_CMD
+declare -a SUDO_CMD
+
+declare -a SSH_IUT
+declare RSH_IUT
+declare -a SUDO_IUT
+
+function make_iut_cmds() {
+    local -a cmd=( "${SSH_WITH_OPTS[@]}" )
+    local proxy_cmd
+
+    test -z "${TE_IUT_SSH_KEY:-${TE_SSH_KEY}}" ||
+        cmd+=( -i "${TE_IUT_SSH_KEY:-${TE_SSH_KEY}}" )
+    test -z "${TE_IUT_SSH_PORT:-${TE_SSH_PORT}}" ||
+        cmd+=( -p "${TE_IUT_SSH_PORT:-${TE_SSH_PORT}}" )
+    test -z "${TE_IUT_SSH_USER:-${TE_SSH_USER}}" ||
+        cmd+=( -l "${TE_IUT_SSH_USER:-${TE_SSH_USER}}" )
+    if test -n "${TE_IUT_SSH_PROXY:-${TE_SSH_PROXY}}" ; then
+        proxy_cmd+="${SSH_WITH_OPTS[@]} -W %h:%p ${TE_IUT_SSH_PROXY:-${TE_SSH_PROXY}}"
+        cmd+=( -o "ProxyCommand=${proxy_cmd}" )
+    fi
+
+    # Don't need sudo if user is root
+    test "${TE_IUT_SSH_USER:-${TE_SSH_USER}}" = root \
+        && SUDO_IUT=() \
+        || SUDO_IUT=( "${SUDO_N[@]}" )
+
+    SSH_IUT=( "${cmd[@]}" "${TE_IUT}" )
+    RSH_IUT="${cmd[@]}"
+}
+
+function make_cmds_for_host() {
+    local host="$1"
+    local -a ssh_cmd=()
+    local rsh_cmd=""
+    local -a sudo_cmd=( "${SUDO_N[@]}" )
+
+    if test -n "$host" ; then
+        # Host is specified. We don't know if it is IUT or TSTx or anything
+        # else, so, do not take TE_SSH_* variables into account
+        ssh_cmd=( "${SSH_WITH_OPTS[@]}" "${host}" )
+        rsh_cmd="${SSH_WITH_OPTS[@]}"
+    elif test -n "${TE_IUT}" ; then
+        # Fallback to TE_IUT by default if specified and use TE_IUT_* variables.
+        make_iut_cmds
+        ssh_cmd=( "${SSH_IUT[@]}" )
+        rsh_cmd="${RSH_IUT}"
+        sudo_cmd=( "${SUDO_IUT[@]}" )
+    fi
+
+    SSH_CMD=( "${ssh_cmd[@]}" )
+    RSH_CMD="${rsh_cmd}"
+    SUDO_CMD=( "${sudo_cmd[@]}" )
+}
+
+#######################################
+# Prepare all arguments and pass them to ${SSH_CMD[@]}
+# Arguments are prepared to be compatable with tcsh/csh.
+# The function uses code similar to TEs function te_eval_or_ssh()
+#
+# Arguments: the command lines to be executed under ${SSH_CMD[@]}
+#
+# Note: a multiline command line must contain semicolons, as it will
+# be converted to a single-line command for compatibility with tcsh.
+#
+#######################################
+function process_ssh_cmd() {
+    # Converts instructions to an one-line representation, replacing
+    # newlines with spaces, as a remote ssh command can run in /bin/csh,
+    # which cannot handle multi-line command arguments.
+    # See: https://github.com/tcsh-org/tcsh/blob/master/BUGS#L52
+    local cmd="${@//$'\n'/ }"
+
+    # Replace single quotes by '"'"' since /bin/bash already uses
+    # it in the command parameters
+    cmd="$(echo "${cmd}" | sed "s/'/\'\"\'\"\'/g")"
+
+    "${SSH_CMD[@]}" "/bin/bash -c 'set -e; cd /tmp; $cmd'"
+}
