@@ -349,6 +349,12 @@
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_AF_XDP_ZEROCOPY"
       value: "${EF_AF_XDP_ZEROCOPY}"
 
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_AF_XDP_TX_KICK_START"
+      value: "${EF_AF_XDP_TX_KICK_START}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_AF_XDP_TX_KICK_BATCH"
+      value: "${EF_AF_XDP_TX_KICK_BATCH}"
+
     # Clustering
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_CLUSTER_SIZE"
       value: "${EF_CLUSTER_SIZE}"
