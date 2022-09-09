@@ -99,7 +99,8 @@ function discover_pci_device_tags() {
 
 declare tags=""
 test -n "${TE_ENV_IUT_NET_DRIVER}" && tags+=" ${TE_ENV_IUT_NET_DRIVER}"
-test -n "${TE_ENV_TST_NET_DRIVER}" && tags+=" peer-${TE_ENV_TST_NET_DRIVER}"
+test -n "${TE_ENV_TST1_NET_DRIVER:-${TE_ENV_TST_NET_DRIVER}}" \
+    && tags+=" peer-${TE_ENV_TST1_NET_DRIVER:-${TE_ENV_TST_NET_DRIVER}}"
 
 # Generate NIC tags
 discover_pci_device_tags
