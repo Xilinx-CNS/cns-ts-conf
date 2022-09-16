@@ -69,21 +69,8 @@
       oid: "/local:/dpdk:/offloads:/dev:/tx:/fixed:MBUF_FAST_FREE"
 
 - set:
-    - if: 0x${TE_PCI_VENDOR_TST1_IUT} = 0x10ee
-      oid: "/local:/dpdk:/peer_max_mtu:"
+    - oid: "/local:/dpdk:/peer_max_mtu:"
       value: 9216
-    - if: 0x${TE_PCI_VENDOR_TST1_IUT} = 0x1924
-      oid: "/local:/dpdk:/peer_max_mtu:"
-      value: 9216
-    - if: 0x${TE_PCI_VENDOR_TST1_IUT} = 0x8086
-      oid: "/local:/dpdk:/peer_max_mtu:"
-      value: 9216
-    - if: |
-        0x${TE_PCI_VENDOR_TST1_IUT} != 0x10ee &
-        0x${TE_PCI_VENDOR_TST1_IUT} != 0x1924 &
-        0x${TE_PCI_VENDOR_TST1_IUT} != 0x8086
-      oid: "/local:/dpdk:/peer_max_mtu:"
-      value: 1500
 
 - cond:
     if: |
