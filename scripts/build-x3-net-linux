@@ -10,6 +10,8 @@ MAKE_ARGS="${@}"
 
 set -e
 
+LIB_MOD_DIR="lib/modules/$(uname -r)"
+
 rsync -av --delete --exclude='*.o' --exclude='*.mod.c' --exclude='*.ko' \
     --exclude='*.mod' --exclude='*.cmd' --exclude='*.d' --exclude='*.a' \
     --exclude=autocompat.h --exclude=config.h --exclude=modules.order \
@@ -20,7 +22,9 @@ export AUX_BUS_PATH="${EXT_SOURCES}/../../cns_auxiliary_bus/build"
 
 if make ${MAKE_ARGS} ; then
     for ta_type in ${TE_TA_TYPES} ; do
-        find . -name '*.ko' -exec cp -a {} "${TE_AGENTS_INST}/${ta_type}/" \;
+        DST="${TE_AGENTS_INST}/${ta_type}/${LIB_MOD_DIR}"
+        mkdir -p "$DST"
+        find . -name '*.ko' -exec cp -a {} "${DST}/" \;
     done
     exit 0
 else
