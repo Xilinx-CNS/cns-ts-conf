@@ -1,33 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
-SSH="ssh -qxTn -o BatchMode=yes"
-stdump="$SFC_ONLOAD_GNU/tools/ip/onload_stackdump"
-
-# Include the file if it really exists - this allows TS not to break.
-# It seems that the following functions may become unavailable on some
-# TE_TS_RIGSDIR implementations: 'get_te_iut_host'.
-if [[ -r "${TE_TS_RIGSDIR}/scripts/lib.run" ]] ; then
-    . ${TE_TS_RIGSDIR}/scripts/lib.run
-fi
-te_iut_host="$(get_te_iut_host)"
-
-find_default() {
-    name="$1"
-    defs="${@:2}"
-    echo $defs | sed "s/.*${name}[^.]*default: \([0-9]*\) .*/\1/"
-}
-
-if test "x$SFC_ONLOAD_LOCAL" == "xyes" ; then
-    onload_defs=$($SSH $te_iut_host $stdump doc)
-else
-    stdump_remote="/tmp/onload_stackdump"
-    scp "${stdump}" "${te_iut_host}:${stdump_remote}" 1>/dev/null
-    onload_defs=$($SSH $te_iut_host $stdump_remote doc)
-    $SSH ${te_iut_host} "rm -f $stdump_remote"
-fi
 
 if [ -z $EF_TCP_URG_MODE ] ; then
-    val=$(find_default "EF_TCP_URG_MODE" $onload_defs)
+    val=$(find_ef_default "EF_TCP_URG_MODE")
     if test $val -eq 0 ; then
         TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/config/urg_allow"
     else
