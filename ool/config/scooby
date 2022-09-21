@@ -27,3 +27,7 @@ TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=scooby"
 # PIO is not available in this mode
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_TEMPLATE_SEND"
 
+# nginx-like-st profile sets EF_AF_XDP_TX_KICK_BATCH=64 which is too high for
+# some tests e.g. performance/sfnt_pingpong. So we use the default value in
+# scooby mode. See bug 12309.
+export EF_AF_XDP_TX_KICK_BATCH=$(find_ef_default "EF_AF_XDP_TX_KICK_BATCH")
