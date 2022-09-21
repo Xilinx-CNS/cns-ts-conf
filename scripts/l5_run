@@ -15,6 +15,31 @@ if [[ -r "${TE_TS_RIGSDIR}/scripts/lib.run" ]] ; then
 fi
 te_iut_host="$(get_te_iut_host)"
 
+stdump="$SFC_ONLOAD_GNU/tools/ip/onload_stackdump"
+if test "x$SFC_ONLOAD_LOCAL" == "xyes" ; then
+    ONLOAD_EF_DEFS=$($SSH $te_iut_host $stdump doc)
+else
+    stdump_remote="/tmp/onload_stackdump"
+    scp "${stdump}" "${te_iut_host}:${stdump_remote}" 1>/dev/null
+    ONLOAD_EF_DEFS=$($SSH $te_iut_host $stdump_remote doc)
+    $SSH ${te_iut_host} "rm -f $stdump_remote"
+fi
+export ONLOAD_EF_DEFS
+
+#######################################
+# Get default EF_* variable value.
+# Arguments:
+#   Variable name
+# Globals:
+#   ONLOAD_EF_DEFS
+# Outputs:
+#   Writes variable value to stdout
+#######################################
+find_ef_default() {
+    name="$1"
+    echo $ONLOAD_EF_DEFS | sed "s/.*${name}[^.]*default: \([0-9]*\) .*/\1/"
+}
+
 # Determining whether Onload was compiled with NDEBUG=1.
 # In this case ool_ndebug tag is added.
 if test "x${SFC_ONLOAD_LOCAL}" == "xyes" ; then
