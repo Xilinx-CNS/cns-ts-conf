@@ -3,9 +3,17 @@
 
 # onload_set() and onload_import() are normally defined in the "onload"
 # scripts, and these functions are in use for the profile scripts.
+# Mimic the original Onload onload_set() default behaviour - do not set
+# the variable if it is already set by user.
 function onload_set()
 {
-  eval export $1=$2
+  var=$1
+  val=$2
+  if [ -z "${!var}" ] ; then
+    export $var=$val
+  else
+    echo "onload_set: $var=$val IGNORED (${!var})" >&2
+  fi
 }
 function onload_import()
 {
