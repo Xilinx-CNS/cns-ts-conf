@@ -48,10 +48,17 @@ else
     scp "${SFC_ONLOAD_GNU}/lib/transport/unix/libcitransport0.so" "${te_iut_host}:/tmp/libte-iut.so" 1>/dev/null
     LIB_PATH="/tmp/libte-iut.so"
 fi
-ssh "${te_iut_host}" "$LIB_PATH" | grep "(debug)" 1>/dev/null
-if test $? -ne 0 ; then
-    TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=ool_ndebug --tester-req=!NO_NDEBUG"
-    export SFC_NDEBUG=1
+libinfo="$(${SSH} ${te_iut_host} "${LIB_PATH} 2>&1")"
+rc=$?
+if test $rc -ne 0 ; then
+    fail "${LIB_PATH} returned unexepected code: $rc"
+else
+    if [[ "$libinfo" == *\(release\)* ]] ; then
+        TE_EXTRA_OPTS+=" --trc-tag=ool_ndebug --tester-req=!NO_NDEBUG"
+        export SFC_NDEBUG=1
+    elif [[ "$libinfo" != *\(debug\)* ]] ; then
+        fail "cannot obtain type of build from the output: $libinfo"
+    fi
 fi
 if test "x${SFC_ONLOAD_LOCAL}" != "xyes" ; then
     ssh ${te_iut_host} "sudo rm /tmp/libte-iut.so"
