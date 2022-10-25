@@ -152,7 +152,8 @@ TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RECV_IP_FRAG"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ICMP"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SIMULTANEOUS_OPEN"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SYN_COOKIES"
-TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ONLY"
+# See ST-2661 for more details
+#TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ONLY"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_ISN_REUSE"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!TCP_BLIND_WINDOW"
 # ZF properly handles jumbo frames, but it does not use it.
