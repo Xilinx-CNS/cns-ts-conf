@@ -1,0 +1,4 @@
+# ST-2551, FWRIVERHD-3313: disable autonegotiation on Tester host
+warn "ef100/ST-2551:FWRIVERHD-3313: Tester host: disabling autonegotiation on $TE_TST1_IUT"
+$SSH $TE_TST1 "sudo ethtool -s ${TE_IUT_TST1} autoneg off speed 100000 duplex full"\
+    || echo "  FAILED" >&2
