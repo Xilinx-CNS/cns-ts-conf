@@ -56,7 +56,7 @@ TE_EXTRA_OPTS="${TE_EXTRA_OPTS} $(get_ef100_tags)"
 
 # ST-2551, FWRIVERHD-3313: disable autonegotiation
 warn "ef100/ST-2551:FWRIVERHD-3313: disabling autonegotiation on $TE_IUT_TST1"
-$SSH $TE_IUT "ethtool -s ${TE_IUT_TST1} autoneg off speed 100000 duplex full"\
+$SSH $TE_IUT "sudo ethtool -s ${TE_IUT_TST1} autoneg off speed 100000 duplex full"\
     || echo "  FAILED" >&2
 
 # SWNETLINUX-4014: ST-2635: NIC reset is not supported yet.
