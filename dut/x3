@@ -35,6 +35,9 @@ try_add_req "!PACKETDRILL" "!PACKETDRILL" "X3/testing packetdrill is useless"
 try_add_req "!MTU_500_OR_LESS" "!MTU_500_OR_LESS" "X3/ST-2622"
 try_add_req "!JUMBO_FRAME" "!JUMBO_FRAME" "X3/ST-2622"
 
+# Disable overlapped receive API
+try_add_req "!PFTF_RECV" "X3-966"
+
 # List of X3 specific trc tags
 declare -A VER_TAGS
 VER_TAGS[fw]='MC Firmware version is'
