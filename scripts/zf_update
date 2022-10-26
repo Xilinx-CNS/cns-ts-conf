@@ -6,7 +6,7 @@
 #
 
 . ${SF_TS_CONFDIR}/scripts/sfc_onload_gnu
-. ${SF_TS_CONFDIR}/scripts/lib.run
+. ${TE_TS_RIGSDIR}/scripts/lib.run
 
 # Export SFC_ZETAFERNO_BUILD and SFC_ZETAFERNO_GNU if
 # it's necessary and possible

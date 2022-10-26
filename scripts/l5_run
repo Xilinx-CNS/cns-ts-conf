@@ -7,7 +7,7 @@ if test -z "${SFC_ONLOAD_GNU}" ; then
     exit 1
 fi
 
-. ${SF_TS_CONFDIR}/scripts/lib.run
+. ${TE_TS_RIGSDIR}/scripts/lib.run
 te_iut_host="$(get_te_iut_host)"
 
 # Determining whether Onload was compiled with NDEBUG=1.

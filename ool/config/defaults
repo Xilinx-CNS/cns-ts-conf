@@ -3,7 +3,7 @@
 SSH="ssh -qxTn -o BatchMode=yes"
 stdump="$SFC_ONLOAD_GNU/tools/ip/onload_stackdump"
 
-. ${SF_TS_CONFDIR}/scripts/lib.run
+. ${TE_TS_RIGSDIR}/scripts/lib.run
 te_iut_host="$(get_te_iut_host)"
 
 find_default() {
