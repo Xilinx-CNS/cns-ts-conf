@@ -17,6 +17,7 @@
     - cm_ntpd.yml
     - cm_bpf.yml
     - cm_rss.yml
+    - cm_rx_rules.yml
 
 - include:
     - inc.conf_delay.yml
