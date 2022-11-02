@@ -1,0 +1,91 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Helper script to setup environment to run on a pair of dynamically
+# started VMs using --cfg=virtio_virtio run.sh option (if supported).
+#
+# Required environment:
+#   - TE_VM_DRIVE - path to VM image or TE_VM_DRIVE_DIR (VM images
+#                   localtion) plus TE_VM_NAME (VM name without .qcow2)
+#
+# Most likely you need to define:
+#   - TE_HYPERVISOR - host to create QEMU virtual machines on
+#                     (localhost by default)
+#   - TE_VM_BUILD_HOST - host to build TE test agent type for VM if
+#                        distro on localhost does not match
+#                        (otherwise TA type for VM is build locally)
+#   - TE_VM_SSH_KEY - private SSH key to access VM under root or
+#                     TE_VM_SSH_USER if specified
+#                     (otherwise it will try without SSH key and
+#                     it must work without password)
+#
+
+# VM image patsh is required
+if [[ -z "${TE_VM_DRIVE}" ]] ; then
+    # Check fallback based on VM images directory name VM name
+    if [[ -z "${TE_VM_DRIVE_DIR}" || -z "${TE_VM_NAME}" ]] ; then
+        echo "TE_VM_DRIVE is not specified" >&2
+        exit 1
+    fi
+    : ${TE_VM_DRIVE:=${TE_VM_DRIVE_DIR}/${TE_VM_NAME}.qcow2}
+fi
+
+: ${TE_ID:=$(id -u)}
+
+TE_VM_BUILD_HOST_VAR=TE_TA_${TE_VM_NAME}_BUILD_HOST
+: ${TE_VM_BUILD_HOST:=${!TE_VM_BUILD_HOST_VAR}}
+
+: ${TE_VM_SSH_USER:=root}
+
+export TE_VM2VM=true
+export TE_VM_DRIVE
+
+export TE_IUT_RTE_MACHINE=corei7
+export TE_TST1_RTE_MACHINE=corei7
+
+if test -n "${TE_VM_BUILD_HOST}" ; then
+    export TE_IUT_BUILD_HOST=${TE_VM_BUILD_HOST}
+    export TE_TST1_BUILD_HOST=${TE_VM_BUILD_HOST}
+else
+    export TE_IUT_BUILD=local
+    export TE_IUT_TA_TYPE=linux64
+    export TE_TST1_BUILD=local
+    export TE_TST1_TA_TYPE=linux64
+fi
+
+# Build agent locally
+export TE_IUT_SSH_USER=${TE_VM_SSH_USER}
+export TE_IUT_SSH_KEY="${TE_VM_SSH_KEY}"
+export TE_IUT_SUDO=false
+export TE_IUT_MEM_CHANNELS=1
+export TE_IUT_DPDK_MEM_MB=512
+export TE_IUT_TST1_TAP=tap_i2t_${TE_ID}
+
+# Build agent locally
+export TE_TST1_SSH_USER=${TE_VM_SSH_USER}
+export TE_TST1_SSH_KEY="${TE_VM_SSH_KEY}"
+export TE_TST1_SUDO=false
+export TE_TST1_MEM_CHANNELS=1
+export TE_TST1_DPDK_MEM_MB=512
+export TE_TST1_IUT_TAP=tap_t2i_${TE_ID}
+
+export TE_IUT_TST1_BR=br_i2t_${TE_ID}
+
+# Extra Tx descriptor is required for virtio net header
+export TE_ENV_DPDK_EXTRA_TX_DESCS_PER_PKT=1
+
+export TE_PCI_VENDOR_IUT_TST1="1af4"
+export TE_PCI_DEVICE_IUT_TST1="1000"
+export TE_PCI_INSTANCE_IUT_TST1="0"
+export TE_ENV_IUT_DPDK_DRIVER="${TE_ENV_IUT_DPDK_DRIVER:-uio_pci_generic}"
+export TE_ENV_IUT_NET_DRIVER=virtio-pci
+
+export TE_PCI_VENDOR_TST1_IUT="1af4"
+export TE_PCI_DEVICE_TST1_IUT="1000"
+export TE_PCI_INSTANCE_TST1_IUT="0"
+export TE_ENV_TST_DPDK_DRIVER="${TE_ENV_TST_DPDK_DRIVER:-uio_pci_generic}"
+export TE_ENV_TST1_NET_DRIVER=virtio-pci
+
+export TE_IP4_POOL=192.168.1
+export TE_IP6_POOL=fec0:1:1:
+export TE_IP6_ALIEN=fec1:1:1::5555
