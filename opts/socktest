@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
 --script=scripts/lib
+--script=scripts/handle_dut
+--script=scripts/detect_num_testers
 --script=scripts/trc-tags
 --script=scripts/iut_os
 --tester-script=tester.script.iut_reqs
