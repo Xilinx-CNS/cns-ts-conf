@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Ensure that SSH keys have correct permissions.
+# Usually permissions are wrong just after the first checkout.
+
+for pfx in TE TE_IUT TE_IUT_SOC TE_TST1 TE_TST2 TE_TST3 TE_LOG_LISTENER TE_HYPERVISOR TE_VM ; do
+    key_var=${pfx}_SSH_KEY
+    if [[ -n "${!key_var}" && -f "${!key_var}" ]] ; then
+        chmod 600 "${!key_var}"
+    fi
+done
