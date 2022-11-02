@@ -20,6 +20,8 @@
             value: 1
 
 - set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mgmt_net_device:"
+      value: "e1000e"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/cpu:/num:"
       value: 2
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/size:"
@@ -61,6 +63,8 @@
             value: 1
 
 - set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mgmt_net_device:"
+      value: "e1000e"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/cpu:/num:"
       value: 2
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mem:/size:"
