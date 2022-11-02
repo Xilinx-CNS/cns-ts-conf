@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Detect and export interface names used between IUT/TST1. Interface names
+# are exported only if the corresponding variables are not already defined.
+
+export_ifnames

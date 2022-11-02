@@ -3,6 +3,8 @@
 export TE_LOG_LISTENER_LOG_LEVEL=WARN
 SOCKAPI_TS_IF_ALIAS_DONE=false
 
+[[ -n "$SSH" ]] || SSH="ssh -qxTn -o BatchMode=yes -o StrictHostKeyChecking=no"
+
 get_random_vlan()
 {
     echo $(((RANDOM % 4093) + 2))
@@ -89,4 +91,183 @@ export_kernel_version_num()
         local ver_min=${ver##*.}
         export ${1}_KERNEL_VERSION_NUM=$(($ver_maj * 100 + $ver_min))
     fi
+}
+
+#######################################
+# Get interface names of host by driver name. It is assumed
+# that the driver is loaded.
+# Arguments:
+#   Host name
+#   Driver name
+# Outputs:
+#   Writes interface names to stdout
+#######################################
+get_ifnames_by_driver() {
+    local host=$1 ; shift
+    local driver=$1 ; shift
+    local cmd="
+        for f in /sys/class/net/*; do
+            if grep -q DRIVER=${driver} \$f/device/uevent 2>/dev/null; then
+                basename \$f;
+            fi;
+        done
+    "
+    local ifs=($($SSH $host "$cmd"))
+
+    echo "${ifs[@]}"
+}
+
+#######################################
+# Export interface names of IUT/TST1.
+# Globals:
+#   TE_CHOOSE_HWPORT2_FIRST
+#   TE_ENV_IUT_NET_DRIVER
+#   TE_ENV_TST1_NET_DRIVER
+#   TE_IUT
+#   TE_IUT_TST1
+#   TE_IUT_TST1_IUT
+#   TE_TST1
+#   TE_TST1_IUT
+#   TE_TST1_IUT_IUT
+# Outputs:
+#   Writes interface names to stdout
+#######################################
+export_ifnames() {
+
+    if [[ "$TE_CHOOSE_HWPORT2_FIRST" == "1" ]] ; then
+        if1_id=1
+        if2_id=0
+    else
+        if1_id=0
+        if2_id=1
+    fi
+
+    local ifnames=( $(get_ifnames_by_driver "$TE_IUT" "$TE_ENV_IUT_NET_DRIVER") )
+    [[ -n "${TE_IUT_TST1}" ]] || export TE_IUT_TST1=${ifnames[$if1_id]}
+    [[ -n "${TE_IUT_TST1_IUT}" ]] || export TE_IUT_TST1_IUT=${ifnames[$if2_id]}
+
+    ifnames=( $(get_ifnames_by_driver "$TE_TST1" "$TE_ENV_TST1_NET_DRIVER") )
+    [[ -n "${TE_TST1_IUT}" ]] || export TE_TST1_IUT=${ifnames[$if1_id]}
+    [[ -n "${TE_TST1_IUT_IUT}" ]] || export TE_TST1_IUT_IUT=${ifnames[$if2_id]}
+
+
+    echo TE_IUT_TST1=${TE_IUT_TST1}
+    echo TE_IUT_TST1_IUT=${TE_IUT_TST1_IUT}
+    echo TE_TST1_IUT=${TE_TST1_IUT}
+    echo TE_TST1_IUT_IUT=${TE_TST1_IUT_IUT}
+}
+
+#######################################
+# Export interface firmware version for the host.
+# Globals:
+#   IUT_FW_VERSION
+# Arguments:
+#   Host name
+#   Interface name
+#######################################
+export_iut_fw_version() {
+    local host="$1"
+    local ifname="$2"
+
+    fw_version=$(${SSH} ${host} "sudo /sbin/ethtool -i $ifname 2>/dev/null | grep \"firmware-version\" | sed \"s/.*: //\"")
+
+    export IUT_FW_VERSION="$fw_version"
+}
+
+#######################################
+# Check consistency for ool options according to NIC firmware variant
+# on IUT and update the TE_EXTRA_OPTS variable if both options of the
+# firmware variant are omitted.
+# Globals:
+#   cmd_line_opts
+#   IUT_FW_VERSION
+#   TE_EXTRA_OPTS
+#######################################
+check_fw_var_consistency() {
+    local info="check_fw_var_consistency"
+
+    local fw_var="$(echo "$IUT_FW_VERSION" | sed -e "s/.*rx//" \
+                 | sed -e "s/ tx.*//")"
+
+    if [[ "$fw_var" == "0" ]] ; then
+        fw_var="fw_full_featured"
+    elif [[ "$fw_var" == "1" ]] ; then
+        fw_var="fw_low_latency"
+    else
+        echo "Strange variant of FW: '$fw_var'" >&2
+        exit 1
+    fi
+
+    local fw_ff_present=false
+    if [[ "${cmd_line_opts/--script=ool\/config\/fw_full_featured/}" != \
+          "$cmd_line_opts" ]] ; then
+        fw_ff_present=true
+    fi
+    local fw_ll_present=false
+    if [[ "${cmd_line_opts/--script=ool\/config\/fw_low_latency/}" != \
+          "$cmd_line_opts" ]] ; then
+        fw_ll_present=true
+    fi
+
+    if [[ "$fw_ff_present" = true && "$fw_var" == "fw_low_latency" ]] || \
+       [[ "$fw_ll_present" = true && "$fw_var" == "fw_full_featured" ]] ; then
+        fail "$info: ool option and FW variant on NIC is not the same!"
+    fi
+
+    if $fw_ll_present && $fw_ff_present ; then
+        fail "$info: only one of the ool options is allowed."
+    fi
+
+    if [[ "$fw_var" == "fw_full_featured" && "$fw_ff_present" != true ]] || \
+       [[ "$fw_var" == "fw_low_latency" && "$fw_ll_present" != true ]]; then
+        TE_EXTRA_OPTS+=" --script=ool/config/${fw_var}"
+        warn "RING: $info: using --ool=${fw_var}"
+    fi
+}
+
+#######################################
+# Safe "ln -sf": do nothing if the result is the same.
+# Arguments:
+#   Source location
+#   Destination
+#######################################
+ln_sf_safe() {
+    local from="$1" ; shift
+    local to="$1" ; shift
+    local file="$1"
+
+    [[ "$to" -ef "$from" ]] && return
+    [[ -n "$file" && "$to/$file" -ef "$from/$file" ]] && return
+
+    echo "WARNING: Linking: ln -sf \"$from\" \"$to\""
+    # ln -f does not overwrite symbolic link for a directory
+    [[ -d "$to" ]] && rm "$to"
+    ln -sf "$from" "$to"
+}
+
+#######################################
+# Get IUT host name. There are two cases:
+# 1) IUT is real host and TE_IUT variable is exists - use it.
+# 2) IUT is a VM and does not exist until the configurator does its job,
+#    but since TA for IUT are built on an auxiliary host, we can use this
+#    auxiliary host to get some auxiliary information.
+# Globals:
+#   TE_IUT
+#   {TE_IUT_TA_TYPE}_HOST
+# Outputs:
+#   Writes host name to stdout
+#######################################
+get_te_iut_host() {
+    local host="$TE_IUT"
+
+    if test -z "$host" ; then
+        pvar="${TE_IUT_TA_TYPE}_HOST"
+        host="${!pvar}"
+        if test -z "$host" ; then
+            echo "ERROR: get_te_iut_host(): failed to get the te_iut_host:" >&2
+            echo "the values of 'TE_IUT' and '$pvar' variables were checked." >&2
+            exit 1
+        fi
+    fi
+    echo "$host"
 }
