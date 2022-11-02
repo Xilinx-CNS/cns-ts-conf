@@ -15,5 +15,5 @@ fi
 # All multipath tests use two ipvlan interfaces. ST-1639.
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTIPATH"
 
-TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=env/ipvlan --trc-tag=ipvlan"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=scripts/make-ipvlan --trc-tag=ipvlan"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_IPVLAN"
