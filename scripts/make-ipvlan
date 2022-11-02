@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Export the necessary variables to let Configurator know to create
+# ipvlan interfaces.
+
+suffix="i"
+export TE_IUT_TST1_IV=$TE_IUT_TST1
+use_interface_name_aliases "TE_IUT_TST1" $TE_IUT_TST1 "teth1" $suffix
+export TE_IUT_TST1_IV_NAME=$TE_IUT_TST1
+
+export SOCKAPI_TS_IPVLAN_ENV=yes
+
+if test -n "$TE_IUT_TST1_VLAN" ; then
+    export SOCKAPI_TS_MAC_OR_IP_VLAN_OVER_VLAN=true
+    unset SOCKAPI_TS_VLAN_OVER_MAC_OR_IP_VLAN
+else
+    export SOCKAPI_TS_VLAN_OVER_MAC_OR_IP_VLAN=true
+fi
+
+if test -n "$SOCKAPI_TS_BOND_NAME" ; then
+    export SOCKAPI_TS_IPVLAN_OVER_BOND=true
+fi
+
+if test -n "$TE_IUT_TST1_IUT" -a -z "$SOCKAPI_TS_BOND_NAME" ; then
+    export TE_IUT_TST1_IUT_IV=$TE_IUT_TST1_IUT
+    use_interface_name_aliases "TE_IUT_TST1_IUT" $TE_IUT_TST1_IUT "teth2" $suffix
+    export TE_IUT_TST1_IUT_IV_NAME=$TE_IUT_TST1_IUT
+fi
+
+SOCKAPI_TS_IF_ALIAS_DONE=true

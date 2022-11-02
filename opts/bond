@@ -4,4 +4,4 @@
 
 --tester-req=!NO_BOND
 
---script=env/bond
+--script=scripts/make-bond

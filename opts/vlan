@@ -5,4 +5,4 @@
 --tester-req=!NO_VLAN
 --trc-tag=vlan
 
---script=env/vlan
+--script=scripts/make-vlan
