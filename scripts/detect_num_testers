@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Determine and add appropriate one_tester/two_testers options
+# according to the TE_TST2 variable.
+
+if [[ -z "$TE_TST2" ]] ; then
+    TE_EXTRA_OPTS+=" --opts=opts/one_tester"
+else
+    TE_EXTRA_OPTS+=" --opts=opts/two_testers"
+fi
+
+# The remaining 'opts/*' files are added from 'scripts/iut_os',
+# 'ool/config/*' files or from test-suite scripts.
