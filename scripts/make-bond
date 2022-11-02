@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Export the necessary variables to let Configurator know to create
+# bonding/teaming interfaces.
+
+export TE_IUT_TST1_S1=$TE_IUT_TST1
+export TE_TST1_IUT_S1=$TE_TST1_IUT
+if test -n "$TE_IUT_TST1_IUT" ; then
+    export TE_IUT_TST1_S2=$TE_IUT_TST1_IUT
+    export TE_TST1_IUT_S2=$TE_TST1_IUT_IUT
+fi
+if test -n "$TE_IUT_TST1_IUT2" ; then
+    export TE_IUT_TST1_S3=$TE_IUT_TST1_IUT2
+    export TE_TST1_IUT_S3=$TE_TST1_IUT_IUT2
+fi
+if test -n "$TE_IUT_TST1_IUT3" ; then
+    export TE_IUT_TST1_S4=$TE_IUT_TST1_IUT3
+    export TE_TST1_IUT_S4=$TE_TST1_IUT_IUT3
+fi
+
+export SOCKAPI_TS_BOND_NAME=bond0
+export SOCKAPI_TS_BOND_VLAN=$(get_random_vlan)
+export TE_IUT_TST1=$SOCKAPI_TS_BOND_NAME
+export TE_TST1_IUT=$SOCKAPI_TS_BOND_NAME
+export TE_IUT_TST1_IUT="$SOCKAPI_TS_BOND_NAME.$SOCKAPI_TS_BOND_VLAN"
+export TE_TST1_IUT_IUT="$SOCKAPI_TS_BOND_NAME.$SOCKAPI_TS_BOND_VLAN"
+export TE_IUT_TST1_IUT2=
+export TE_TST1_IUT_IUT2=
+export TE_IUT_TST1_IUT3=
+export TE_TST1_IUT_IUT3=

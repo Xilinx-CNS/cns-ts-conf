@@ -1,0 +1,50 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Export the necessary variables to let Configurator know to create
+# vlan interfaces.
+
+export TE_IUT_TST1_P=$TE_IUT_TST1
+export TE_TST1_IUT_P=$TE_TST1_IUT
+
+export TE_IUT_TST1_VLAN=${TE_IUT_TST1_VLAN:-$(get_random_vlan)}
+use_interface_name_aliases "TE_IUT_TST1" $TE_IUT_TST1 "teth1" \
+                            $TE_IUT_TST1_VLAN
+use_interface_name_aliases "TE_TST1_IUT" $TE_TST1_IUT "teth1" \
+                            $TE_IUT_TST1_VLAN true
+export TE_IUT_TST1_VLAN_NAME="$TE_IUT_TST1"
+export TE_TST1_IUT_VLAN_NAME="$TE_TST1_IUT"
+
+export SOCKAPI_TS_VLAN_OVER_MAC_OR_IP_VLAN=true
+
+# Setting options to add vlan over bond or bond-macvlan interface.
+if test -n "$SOCKAPI_TS_BOND_NAME" ; then
+    # Vlan over bond interface.
+    if test -z "$SOCKAPI_TS_MACVLAN_MODE" -a \
+            "$SOCKAPI_TS_IPVLAN_ENV" != yes ; then
+        # Don't add vlan interface in cs.conf.socktest.aggregation if
+        # macvlan/ipvlan is not added over bond. In this case both vlan
+        # interfaces are added using cs.conf.socktest.vlan.
+        unset SOCKAPI_TS_BOND_VLAN
+
+        # Use bond interface as parent to add the second vlan interface.
+        export TE_IUT_TST1_IUT=$SOCKAPI_TS_BOND_NAME
+        export TE_TST1_IUT_IUT=$SOCKAPI_TS_BOND_NAME
+    fi
+fi
+
+if test -n "$TE_IUT_TST1_IUT" -a "$SOCKAPI_TS_MACVLAN_OVER_BOND" != "true" -a \
+                                 "$SOCKAPI_TS_IPVLAN_OVER_BOND" != "true"; then
+    export TE_IUT_TST1_IUT_P=$TE_IUT_TST1_IUT
+    export TE_TST1_IUT_IUT_P=$TE_TST1_IUT_IUT
+
+    export TE_IUT_TST1_IUT_VLAN=${TE_IUT_TST1_IUT_VLAN:-$(get_random_vlan)}
+    use_interface_name_aliases "TE_IUT_TST1_IUT" $TE_IUT_TST1_IUT "teth2" \
+                                $TE_IUT_TST1_IUT_VLAN
+    use_interface_name_aliases "TE_TST1_IUT_IUT" $TE_TST1_IUT_IUT "teth2" \
+                                $TE_IUT_TST1_IUT_VLAN true
+    export TE_IUT_TST1_IUT_VLAN_NAME="$TE_IUT_TST1_IUT"
+    export TE_TST1_IUT_IUT_VLAN_NAME="$TE_TST1_IUT_IUT"
+fi
+
+SOCKAPI_TS_IF_ALIAS_DONE=true

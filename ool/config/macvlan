@@ -5,7 +5,7 @@ if test ! -z ${TE_IUT_TST1_IV} ; then
     exit 1
 fi
 
-TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=env/macvlan --trc-tag=macvlan"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=scripts/make-macvlan --trc-tag=macvlan"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_MACVLAN"
 # Bug 85701. Disabled for Linux<=3.16
 if test -n "$TE_IUT_TST1_VLAN" -a ${IUT_KERNEL_VERSION_NUM} -le 316 ; then
