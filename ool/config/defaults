@@ -3,7 +3,12 @@
 SSH="ssh -qxTn -o BatchMode=yes"
 stdump="$SFC_ONLOAD_GNU/tools/ip/onload_stackdump"
 
-. ${TE_TS_RIGSDIR}/scripts/lib.run
+# Include the file if it really exists - this allows TS not to break.
+# It seems that the following functions may become unavailable on some
+# TE_TS_RIGSDIR implementations: 'get_te_iut_host'.
+if [[ -r "${TE_TS_RIGSDIR}/scripts/lib.run" ]] ; then
+    . ${TE_TS_RIGSDIR}/scripts/lib.run
+fi
 te_iut_host="$(get_te_iut_host)"
 
 find_default() {
