@@ -7,7 +7,12 @@ if test -z "${SFC_ONLOAD_GNU}" ; then
     exit 1
 fi
 
-. ${TE_TS_RIGSDIR}/scripts/lib.run
+# Include the file if it really exists - this allows TS not to break.
+# It seems that the following functions may become unavailable on some
+# TE_TS_RIGSDIR implementations: 'get_te_iut_host'.
+if [[ -r "${TE_TS_RIGSDIR}/scripts/lib.run" ]] ; then
+    . ${TE_TS_RIGSDIR}/scripts/lib.run
+fi
 te_iut_host="$(get_te_iut_host)"
 
 # Determining whether Onload was compiled with NDEBUG=1.
