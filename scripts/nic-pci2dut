@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+#
+# Export variables that provide info about known NIC models.
+
+# Known NIC models
+declare -A NIC_MODELS
+# Solarflare Communications SFC9120 10G Ethernet Controller
+NIC_MODELS["1924:0903"]="ef10"
+# Solarflare Communications SFC9220 10/40G Ethernet Controller
+NIC_MODELS["1924:0a03"]="medford"
+# Solarflare Communications XtremeScale SFC9250 10/25/40/50/100G Ethernet Controller
+NIC_MODELS["1924:0b03"]="medford"
+
+#######################################
+# Export varibale with NIC model by the provided Vendor/Device IDs.
+# Globals:
+#   NIC_MODELS
+# Arguments:
+#   Vendor ID
+#   Device ID
+#   Varibale name to export
+#######################################
+export_nic_model() {
+    local vid="$1" ; shift
+    local did="$1" ; shift
+    local var="$1" ; shift
+
+    local key="${vid}:${did}"
+    local val="${NIC_MODELS[${key}]}"
+
+    [[ -z "$val" ]] || export ${var}="$val"
+}
+
+export_nic_model $TE_PCI_VENDOR_IUT_TST1 $TE_PCI_DEVICE_IUT_TST1 \
+    TE_ENV_IUT_EF_DUT
+export_nic_model $TE_PCI_VENDOR_TST1_IUT $TE_PCI_DEVICE_TST1_IUT \
+    TE_ENV_TST1_EF_DUT
