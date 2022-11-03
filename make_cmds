@@ -83,6 +83,11 @@ function process_ssh_cmd() {
     # See: https://github.com/tcsh-org/tcsh/blob/master/BUGS#L52
     local cmd="${@//$'\n'/ }"
 
+    if [[ ${#SSH_CMD} -eq 0 ]] ; then
+        echo "No SSH host to do the command" >&2
+        return 1
+    fi
+
     # Replace single quotes by '"'"' since /bin/bash already uses
     # it in the command parameters
     cmd="$(echo "${cmd}" | sed "s/'/\'\"\'\"\'/g")"
