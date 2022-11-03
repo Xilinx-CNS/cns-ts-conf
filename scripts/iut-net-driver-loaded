@@ -10,7 +10,7 @@ if test -z "${TE_ENV_IUT_NET_MODULE}" ; then
     return;
 fi
 
-TE_IUT_MODULES=$(process_ssh_cmd "
+TE_IUT_MODULES=$([[ ${#SSH_CMD} -eq 0 ]] || process_ssh_cmd "
     lsmod | cut -f1 -d' ' ;
 ")
 
