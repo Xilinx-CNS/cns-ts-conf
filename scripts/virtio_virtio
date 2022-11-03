@@ -84,7 +84,10 @@ export TE_PCI_VENDOR_TST1_IUT="1af4"
 export TE_PCI_DEVICE_TST1_IUT="1000"
 export TE_PCI_INSTANCE_TST1_IUT="0"
 export TE_ENV_TST_DPDK_DRIVER="${TE_ENV_TST_DPDK_DRIVER:-uio_pci_generic}"
-export TE_ENV_TST1_NET_DRIVER=virtio-pci
+# Do not set network driver for TST1 since reloading the driver
+# from dpdk-pmd-ts prologue enables corresponding TAP interface
+# offloads back and it breaks some tests.
+#export TE_ENV_TST1_NET_DRIVER=virtio-pci
 
 export TE_IP4_POOL=192.168.1
 export TE_IP6_POOL=fec0:1:1:
