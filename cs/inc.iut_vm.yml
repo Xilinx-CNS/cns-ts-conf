@@ -18,6 +18,13 @@
           - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/prealloc:"
             value: 1
 
+- cond:
+    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    then:
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/serial:"
+            value: "udp:${TE_LOG_LISTENER}:${TE_LOG_LISTENER_NETCONSOLE_PORT_IUT}"
+
 - set:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/cpu:/num:"
       value: "2"

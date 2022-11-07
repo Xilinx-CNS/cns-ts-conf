@@ -130,7 +130,7 @@
 # (for non-HWSIM hosts only)
 #
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != "" & ${HWSIM} = ""
+    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != "" & ${HWSIM} = "" & ${TE_VM2VM} = "" & ${TE_IUT_VM} = ""
     then:
       # Allocate UDP port to be used as netconsole local port
       - set:
@@ -150,7 +150,7 @@
 # (for non-HWSIM hosts only)
 #
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_TST1} != "" & ${HWSIM} = ""
+    if: ${TE_LOG_LISTENER_NETCONSOLE_TST1} != "" & ${HWSIM} = "" & ${TE_VM2VM} = ""
     then:
       # Allocate UDP port to be used as netconsole local port
       - set:
