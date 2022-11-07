@@ -109,6 +109,14 @@ export_kernel_version_num()
 get_ifnames_by_driver() {
     local host=$1 ; shift
     local driver=$1 ; shift
+
+    if [[ "$driver" == "virtio-pci" ]] ; then
+        # In the case of Virtio, PCI device is bound to virtio-pci driver,
+        # but network device is provided by the virtio_net driver which
+        # is provided by the module with exactly the same name.
+        driver="virtio_net"
+    fi
+
     local cmd="
         for f in /sys/class/net/*; do
             if grep -q DRIVER=${driver} \$f/device/uevent 2>/dev/null; then
@@ -122,7 +130,51 @@ get_ifnames_by_driver() {
 }
 
 #######################################
-# Export interface names of IUT/TST1.
+# Get interface names on host by vendor/pci IDs and instance number.
+# It is assumed that the driver is loaded.
+# Arguments:
+#   Host name
+#   Vendor Id
+#   Device Id
+#   First instance number
+#   Second instance number (may be empty)
+# Outputs:
+#   Writes interface names to stdout
+#######################################
+get_ifnames_by_vendor() {
+    local host=$1 ; shift
+    local vid=$1 ; shift
+    local did=$1 ; shift
+    local inst1_num=$1 ; shift
+    local inst2_num=$1
+
+    local to_find="PCI_ID=${vid}:${did}"
+    to_find="${to_find^^}"
+
+    # virtio-pci stores the 'net' directory inside 'virtioN'
+    local cmd="
+        for d in /sys/bus/pci/devices/*; do
+            if grep -q ${to_find} \$d/uevent 2>/dev/null; then
+                dirname="\${d}/net"
+                if ! test -d "\${dirname}" ; then
+                    dirname="\${d}/virtio*/net"
+                fi
+                ls \${dirname}
+            fi
+        done
+    "
+    local ifs=($($SSH $host "$cmd"))
+
+    echo "${ifs[$inst1_num]}"
+    [[ -z "$inst2_num" ]] || echo "${ifs[$inst2_num]}"
+}
+
+#######################################
+# Export interface names of IUT/TST1, if this has not already been done.
+# The function searches in PCI devices, if vendor/device IDs and instance
+# number are known. Otherwise, the search is performed by the driver name
+# (which may not work correctly if the driver is used not only for interfaces
+# between IUT and TST1).
 # Globals:
 #   TE_CHOOSE_HWPORT2_FIRST
 #   TE_ENV_IUT_NET_DRIVER
@@ -130,6 +182,8 @@ get_ifnames_by_driver() {
 #   TE_IUT
 #   TE_IUT_TST1
 #   TE_IUT_TST1_IUT
+#   TE_PCI_VENDOR_*
+#   TE_PCI_INSTANCE_*
 #   TE_TST1
 #   TE_TST1_IUT
 #   TE_TST1_IUT_IUT
@@ -137,6 +191,7 @@ get_ifnames_by_driver() {
 #   Writes interface names to stdout
 #######################################
 export_ifnames() {
+    local ifnames=
 
     if [[ "$TE_CHOOSE_HWPORT2_FIRST" == "1" ]] ; then
         if1_id=1
@@ -146,14 +201,31 @@ export_ifnames() {
         if2_id=1
     fi
 
-    local ifnames=( $(get_ifnames_by_driver "$TE_IUT" "$TE_ENV_IUT_NET_DRIVER") )
-    [[ -n "${TE_IUT_TST1}" ]] || export TE_IUT_TST1=${ifnames[$if1_id]}
-    [[ -n "${TE_IUT_TST1_IUT}" ]] || export TE_IUT_TST1_IUT=${ifnames[$if2_id]}
+    if [[ -z "${TE_IUT_TST1}${TE_IUT_TST1_IUT}" ]] ; then
+        if [[ -n "$TE_PCI_VENDOR_IUT_TST1" ]] ; then
+            ifnames=( $(get_ifnames_by_vendor "$TE_IUT" \
+                    "$TE_PCI_VENDOR_IUT_TST1" "$TE_PCI_DEVICE_IUT_TST1" \
+                    "$TE_PCI_INSTANCE_IUT_TST1" "$TE_PCI_INSTANCE_IUT_TST1a") )
+        else
+            ifnames=( $(get_ifnames_by_driver "$TE_IUT" \
+                    "$TE_ENV_IUT_NET_DRIVER") )
+        fi
+        export TE_IUT_TST1=${ifnames[$if1_id]}
+        export TE_IUT_TST1_IUT=${ifnames[$if2_id]}
+    fi
 
-    ifnames=( $(get_ifnames_by_driver "$TE_TST1" "$TE_ENV_TST1_NET_DRIVER") )
-    [[ -n "${TE_TST1_IUT}" ]] || export TE_TST1_IUT=${ifnames[$if1_id]}
-    [[ -n "${TE_TST1_IUT_IUT}" ]] || export TE_TST1_IUT_IUT=${ifnames[$if2_id]}
-
+    if [[ -z "${TE_TST1_IUT}${TE_TST1_IUT_IUT}" ]] ; then
+        if [[ -n "$TE_PCI_VENDOR_TST1_IUT" ]] ; then
+            ifnames=( $(get_ifnames_by_vendor "$TE_TST1" \
+                    "$TE_PCI_VENDOR_TST1_IUT" "$TE_PCI_DEVICE_TST1_IUT" \
+                    "$TE_PCI_INSTANCE_TST1_IUT" "$TE_PCI_INSTANCE_TST1a_IUT") )
+        else
+            ifnames=( $(get_ifnames_by_driver "$TE_TST1" \
+                    "$TE_ENV_TST1_NET_DRIVER") )
+        fi
+        export TE_TST1_IUT=${ifnames[$if1_id]}
+        export TE_TST1_IUT_IUT=${ifnames[$if2_id]}
+    fi
 
     echo TE_IUT_TST1=${TE_IUT_TST1}
     echo TE_IUT_TST1_IUT=${TE_IUT_TST1_IUT}
