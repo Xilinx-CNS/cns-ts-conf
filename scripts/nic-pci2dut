@@ -33,6 +33,6 @@ export_nic_model() {
 }
 
 export_nic_model $TE_PCI_VENDOR_IUT_TST1 $TE_PCI_DEVICE_IUT_TST1 \
-    TE_ENV_IUT_EF_DUT
+    TE_ENV_IUT_DUT
 export_nic_model $TE_PCI_VENDOR_TST1_IUT $TE_PCI_DEVICE_TST1_IUT \
-    TE_ENV_TST1_EF_DUT
+    TE_ENV_TST1_DUT

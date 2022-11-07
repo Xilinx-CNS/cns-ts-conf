@@ -1,10 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
 #
-# Determine and add DUT script according to TE_ENV_IUT_EF_DUT
-# and TE_ENV_TST1_EF_DUT variables.
+# Determine and add DUT script according to TE_ENV_IUT_DUT
+# and TE_ENV_TST1_DUT variables.
 
-case "$TE_ENV_IUT_EF_DUT" in
+case "$TE_ENV_IUT_DUT" in
     medford)
         TE_EXTRA_OPTS+=" --script=dut/medford"
         ;;
@@ -28,6 +28,6 @@ case "$TE_ENV_IUT_EF_DUT" in
         ;;
 esac
 
-case "$TE_ENV_TST1_EF_DUT" in
+case "$TE_ENV_TST1_DUT" in
     ef100) TE_EXTRA_OPTS+=" --script=dut/ef100_tst" ;;
 esac
