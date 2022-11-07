@@ -92,3 +92,19 @@ export TE_ENV_TST_DPDK_DRIVER="${TE_ENV_TST_DPDK_DRIVER:-uio_pci_generic}"
 export TE_IP4_POOL=192.168.1
 export TE_IP6_POOL=fec0:1:1:
 export TE_IP6_ALIEN=fec1:1:1::5555
+
+# Use hypervisor as a log listner by default
+if test -z "${TE_LOG_LISTENER}" -a -z "${TE_LOG_LISTENER_LOCALHOST}" ; then
+    test -z "${TE_HYPERVISOR}" \
+        || export TE_LOG_LISTENER="${TE_HYPERVISOR}"
+    test -z "${TE_HYPERVISOR_LOCALHOST}" \
+        || export TE_LOG_LISTENER_LOCALHOST="${TE_HYPERVISOR_LOCALHOST}"
+    test -z "${TE_HYPERVISOR_SSH_KEY}" \
+        || export TE_LOG_LISTENER_SSH_KEY="${TE_HYPERVISOR_SSH_KEY}"
+    test -z "${TE_HYPERVISOR_SSH_PORT}" \
+        || export TE_LOG_LISTENER_SSH_PORT="${TE_HYPERVISOR_SSH_PORT}"
+    test -z "${TE_HYPERVISOR_SSH_USER}" \
+        || export TE_LOG_LISTENER_SSH_USER="${TE_HYPERVISOR_SSH_USER}"
+fi
+export TE_LOG_LISTENER_NETCONSOLE_IUT=yes
+export TE_LOG_LISTENER_NETCONSOLE_TST1=yes
