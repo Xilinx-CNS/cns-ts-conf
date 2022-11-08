@@ -12,6 +12,16 @@ NIC_MODELS["1924:0a03"]="medford"
 # Solarflare Communications XtremeScale SFC9250 10/25/40/50/100G Ethernet Controller
 NIC_MODELS["1924:0b03"]="medford"
 
+# Mellanox Technologies MT27800 Family [ConnectX-5]
+NIC_MODELS["15b3:1017"]="mcx5"
+# Mellanox MT28908 Family [ConnectX-6]
+NIC_MODELS["15b3:101b"]="mcx6"
+
+# Intel Corporation Ethernet Controller X710 for 10GbE SFP+
+NIC_MODELS["8086:1572"]="x710"
+# Intel Corporation Device [8086:159b] (rev 02)
+NIC_MODELS["8086:159b"]="e810"
+
 #######################################
 # Export varibale with NIC model by the provided Vendor/Device IDs.
 # Globals:
