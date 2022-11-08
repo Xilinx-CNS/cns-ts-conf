@@ -31,3 +31,7 @@
       value: "/agent/interface/xdp"
     - oid: "/conf_delay:xdp/ta:"
       value: 500
+    - oid: "/conf_delay:promisc"
+      value: "/agent/interface/promisc"
+    - oid: "/conf_delay:promisc/ta:"
+      value: 1000
