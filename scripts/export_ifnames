@@ -4,4 +4,7 @@
 # Detect and export interface names used between IUT/TST1. Interface names
 # are exported only if the corresponding variables are not already defined.
 
-export_ifnames
+# Do not export interfaces in case of build only
+if [[ "$TE_TS_BUILD_ONLY" != "yes" ]] ; then
+    export_ifnames
+fi
