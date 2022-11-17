@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2022 OKTET Labs Ltd. All rights reserved.
+
+# VMs are not always configured to work properly without the default route
+# (which may be needed to access such resources as ldap, kerberos, nis or nfs).
+# Disable all such tests to avoid unpleasant results.
+TE_EXTRA_OPTS+=" --tester-req=!CHANGE_DEFAULT_ROUTE"
+
+# Do not run performance tests on VMs.
+TE_EXTRA_OPTS+=" --tester-req=!PERF"
+
+# Tests which consume a lot of memory usually invoke oom-killer on VMs.
+TE_EXTRA_OPTS+=" --tester-req=!MEMORY_HOG"

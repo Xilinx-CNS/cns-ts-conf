@@ -27,6 +27,10 @@ case "$TE_ENV_IUT_DUT" in
         TE_EXTRA_OPTS+=" --script=dut/x710"
         TE_EXTRA_OPTS+=" --script=dut/nonsf"
         ;;
+    virtio_net)
+        TE_EXTRA_OPTS+=" --script=dut/virtio_net"
+        TE_EXTRA_OPTS+=" --script=dut/nonsf"
+        ;;
     *)
         TE_EXTRA_OPTS+=" --script=dut/nonsf"
         ;;

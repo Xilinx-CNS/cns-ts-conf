@@ -22,6 +22,9 @@ NIC_MODELS["8086:1572"]="x710"
 # Intel Corporation Device [8086:159b] (rev 02)
 NIC_MODELS["8086:159b"]="e810"
 
+# Red Hat, Inc. Virtio network device
+NIC_MODELS["1af4:1000"]="virtio_net"
+
 #######################################
 # Export varibale with NIC model by the provided Vendor/Device IDs.
 # Globals:
