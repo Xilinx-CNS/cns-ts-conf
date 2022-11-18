@@ -8,6 +8,13 @@ if [[ -z "$TE_TST2" ]] ; then
     TE_EXTRA_OPTS+=" --opts=opts/one_tester"
 else
     TE_EXTRA_OPTS+=" --opts=opts/two_testers"
+    # The test suite can run tests where the IUT NIC being tested
+    # is connected to both TST1 and TST2 hosts.
+    # The tester requirement ENV-2PEERS-IUT is responsible for this.
+    if [[ "$TE_PCI_VENDOR_IUT_TST1" != "$TE_PCI_VENDOR_IUT_TST2" \
+            || "$TE_PCI_DEVICE_IUT_TST1" != "$TE_PCI_DEVICE_IUT_TST2" ]] ; then
+        TE_EXTRA_OPTS+=" --tester-req=!ENV-2PEERS-IUT"
+    fi
 fi
 
 # The remaining 'opts/*' files are added from 'scripts/iut_os',
