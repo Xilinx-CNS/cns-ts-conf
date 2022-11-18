@@ -197,6 +197,23 @@ if test \( -n "${TE_IUT}" -o "${TE_IUT_BUILD}" = local \) -a -z "${TE_IUT_TA_TYP
                     TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux-5:$SECOND_NUMBER"
                     TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=linux:5"
                     ;;
+                # Last 5.0 kernel is 5.19, so for 6.X linux-5 is equal
+                # to X + 20.
+                # Last 4.0 kernel is 4.20, so for 5.X linux-4 is equal
+                # to X + 21 (for linux-6 is X + 21 + 20).
+                # Last 3.0 kernel is 3.19, so for 4.X linux-3 is equal
+                # to X + 20 (for linux-6 is X + 20 + 21 + 20).
+                # Last 2.6.* kernel is 2.6.39, so for 3.X linux-2.6 is
+                # equal to linux-3 + 40 (for linux-6: X + 40 + 20 + 21 + 20).
+                6.* )
+                    SECOND_NUMBER=$(echo ${kernel_version} | sed "s/6\.\([0-9]*\)[.-].*/\1/")
+                    TE_EXTRA_OPTS+=" --trc-tag=linux-2.6:$((SECOND_NUMBER + 40 + 20 + 21 + 20))"
+                    TE_EXTRA_OPTS+=" --trc-tag=linux-3:$((SECOND_NUMBER + 20 + 21 + 20))"
+                    TE_EXTRA_OPTS+=" --trc-tag=linux-4:$((SECOND_NUMBER + 21 + 20))"
+                    TE_EXTRA_OPTS+=" --trc-tag=linux-5:$((SECOND_NUMBER + 20))"
+                    TE_EXTRA_OPTS+=" --trc-tag=linux-6:$SECOND_NUMBER"
+                    TE_EXTRA_OPTS+=" --trc-tag=linux:6"
+                    ;;
                 * )
                     # the kernel is not 2.6 or 3
                     ;;
