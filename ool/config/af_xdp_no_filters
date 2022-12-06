@@ -4,6 +4,43 @@
 # single queue mode only.
 # Set combined channels to 1 on tested interfaces before registering them.
 
+#######################################
+# Checks the combined channels number is equal one on the aim interface.
+# Arguments:
+#   host       - host name
+#   interface  - name of interface registered in Onload
+# Outputs:
+#   Writes a message to stderr if combined channels number is not equal one
+#######################################
+check_combined_channels_num() {
+    local host="$1" ; shift
+    local interface="$1" ; shift
+    local combined
+
+    combined="$(set -o pipefail ; \
+             ${SSH} "${host}" "/sbin/ethtool -l "${interface}"" | \
+             awk '/Current hardware settings/ {seen = 1} seen {print}' | \
+             awk '/Combined/{print $2}')"
+
+    if (( $? != 0 )); then
+        echo -e "WARNING: unable to retrieve combined channels number" \
+                "on ${host}'s ${interface}.\nEnsure that the interface is" \
+                "registered with only one combined queue."
+        return 0
+    fi
+
+    if [[ "${combined}" != "1" ]] ; then
+        echo "ERROR: inappropriate combined channels number on" \
+             "${host}'s ${interface} (${combined} instead of 1)." >&2
+        exit 1
+    fi
+}
+
+check_combined_channels_num "${TE_IUT}" "${TE_ORIG_IUT_TST1}"
+if [[ -n "${TE_ORIG_IUT_TST1_IUT}" ]]; then
+    check_combined_channels_num "${TE_IUT}" "${TE_ORIG_IUT_TST1_IUT}"
+fi
+
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/af_xdp_common"
 
 # Multiple stacks are not supported with single queue mode as
