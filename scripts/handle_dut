@@ -39,3 +39,8 @@ esac
 case "$TE_ENV_TST1_DUT" in
     ef100) TE_EXTRA_OPTS+=" --script=dut/ef100_tst" ;;
 esac
+
+if [[ -z "$TE_IUT_TST1_IUT" ]] ; then
+    # Disable tests that require two links on DUT
+    TE_EXTRA_OPTS+=" --tester-req=!ENV-2LINKS-IUT"
+fi
