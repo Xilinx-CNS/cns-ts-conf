@@ -61,7 +61,11 @@ else
     fi
 fi
 if test "x${SFC_ONLOAD_LOCAL}" != "xyes" ; then
-    ssh ${te_iut_host} "sudo rm /tmp/libte-iut.so"
+    ssh ${te_iut_host} "rm /tmp/libte-iut.so"
+
+    if [[ $? != 0 ]] ; then
+        fail "Unable to delete $LIB_PATH on ${te_iut_host} via ssh"
+    fi
 fi
 
 if test "$EF_IUT_EF10" = "true" ; then
