@@ -37,7 +37,7 @@ export ONLOAD_EF_DEFS
 #######################################
 find_ef_default() {
     name="$1"
-    echo $ONLOAD_EF_DEFS | sed "s/.*${name}[^.]*default: \([0-9]*\) .*/\1/"
+    echo $ONLOAD_EF_DEFS | sed -n "s/.*${name}[^.]*default: \([0-9]*\) .*/\1/p"
 }
 
 # Determining whether Onload was compiled with NDEBUG=1.
