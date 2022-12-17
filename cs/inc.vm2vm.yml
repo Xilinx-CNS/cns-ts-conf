@@ -219,6 +219,10 @@
       value: 1
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_TST1_IUT_TAP}/status:"
       value: 1
+    # Do not move this line above. Some time is requred to provide a node for
+    # the bridge on the sysfs system.
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/sys:/net:/ipv6:/conf:${TE_IUT_TST1_BR}/disable_ipv6:"
+      value: 1
 
 - add:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_TST1_BR}/port:${TE_IUT_TST1_TAP}"
