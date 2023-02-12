@@ -80,7 +80,6 @@
       value: "ta_rpcs"
 
 - include:
-    - inc.core_pattern.yml
     - inc.drivers.yml
     - inc.misc.yml
     - inc.net_cfg_pci_fns.yml
