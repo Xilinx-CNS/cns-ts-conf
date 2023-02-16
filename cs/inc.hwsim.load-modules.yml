@@ -22,13 +22,13 @@
     if: ${XLNX_EFCT_DIR} != ""
     then:
       - add:
-        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_xilinx_efct"
-          value: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct"
-        - oid: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct"
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_efct"
+          value: "/agent:${TE_IUT_TA_NAME}/module:efct"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:efct"
       - set:
-        - oid: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct/filename:"
-          value: "${XLNX_EFCT_DIR}/xilinx_efct.ko"
-        - oid: "/agent:${TE_IUT_TA_NAME}/module:xilinx_efct/loaded:"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:efct/filename:"
+          value: "${XLNX_EFCT_DIR}/efct.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:efct/loaded:"
           value: 1
 
 - cond:
