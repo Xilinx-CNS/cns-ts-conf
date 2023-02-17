@@ -4,5 +4,6 @@
 --trc-tag=max_rx_queues:1
 --trc-tag=max_tx_queues:1
 --trc-tag=qemu-virtio-net
+--trc-tag=peer-qemu-virtio-net
 
 --tester-req=!PERF
