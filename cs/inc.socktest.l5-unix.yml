@@ -350,7 +350,7 @@
 
     # AF_XDP
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_AF_XDP_ZEROCOPY"
-      value: "${EF_AF_XDP_ZEROCOPY}"
+      value: "${EF_AF_XDP_ZEROCOPY:-0}"
 
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_AF_XDP_TX_KICK_START"
       value: "${EF_AF_XDP_TX_KICK_START}"
