@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2023 Xilinx, Inc. All rights reserved.
+export EF_WODA_SINGLE_INTERFACE=1
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=oo_single_if"

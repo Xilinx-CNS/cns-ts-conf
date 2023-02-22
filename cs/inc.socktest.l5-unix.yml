@@ -177,6 +177,9 @@
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TX_PUSH"
       value: "${EF_TX_PUSH}"
 
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_WODA_SINGLE_INTERFACE"
+      value: "${EF_WODA_SINGLE_INTERFACE}"
+
     # lock buzz
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_STACK_LOCK_BUZZ"
       value: "${EF_STACK_LOCK_BUZZ}"
