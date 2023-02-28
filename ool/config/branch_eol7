@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2023 Xilinx, Inc. All rights reserved.
+. ${SF_TS_CONFDIR}/scripts/check_branch_reqs
+
+# Avoid ONLOAD7.1 requirement when possible, use the targeted requirements
+# below
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD7.1"
+
+# Don't test unsupported IPv6 socket options.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IPV6_UNICAST_HOPS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IPV6_RECVHOPLIMIT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IPV6_RECVTCLASS"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IPV6_MTU"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IPV6_MTU_DISCOVER"
+
+# Don't test IP_TOS too big value. It works the wrong way in oel7.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP_TOS_TOO_BIG"
+
+# Don't test route hoplimit support. It's not implemented in oel7.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!RT_HOPLIMIT"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=branch_eol7"
+
+# onload_zc_recv() now works with TCP, but not on older branches
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!(ONLOAD_ZC_RECV&SOCK_STREAM)"
+
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_SEND_USER_BUF"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD_ZC_HLRX"
+
+# See scripts/check_branch_reqs
+bnb_check $TESTER_OPTS
+onload_zc_release_os_inline_disable
+zf_one_repo_check $TESTER_OPTS
