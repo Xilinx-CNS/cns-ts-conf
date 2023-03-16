@@ -13,7 +13,7 @@
     then:
       - add:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:allocate_stack"
-            value: "Failed to allocate stack"
+            value: "allocate_stack"
 
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:allocate_stack/pattern:1"
             value: "Failed to allocate stack"
