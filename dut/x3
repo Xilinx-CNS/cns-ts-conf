@@ -38,6 +38,12 @@ try_add_req "!JUMBO_FRAME" "!JUMBO_FRAME" "X3/ST-2622"
 # Disable overlapped receive API
 try_add_req "!PFTF_RECV" "X3-966"
 
+# ON-14601: scalable filters are not supported
+try_add_req "!USE_SCALABLE" "!USE_SCALABLE" "X3/ON-14601"
+try_add_req "!SCALABLE" "!SCALABLE" "X3/ON-14601"
+try_add_req "!RSS_SCALABLE" "!RSS_SCALABLE" "X3/ON-14601"
+try_add_req "!SCALABLE_FILTERS_ENABLE_WORKER" "!SCALABLE_FILTERS_ENABLE_WORKER" "X3/ON-14601"
+
 # List of X3 specific trc tags
 declare -A VER_TAGS
 VER_TAGS[fw]='MC Firmware version is'
