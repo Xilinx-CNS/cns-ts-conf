@@ -95,6 +95,9 @@
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_PACKET_BUFFER_MODE"
       value: "${EF_PACKET_BUFFER_MODE}"
 
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_USE_HUGE_PAGES"
+      value: "${EF_USE_HUGE_PAGES}"
+
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_COMPOUND_PAGES_MODE"
       value: "${EF_COMPOUND_PAGES_MODE}"
 
