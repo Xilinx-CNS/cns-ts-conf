@@ -6,6 +6,13 @@
     - oid: "/local:/dpdk:/reuse_rpcs:"
       value: "${TE_ENV_REUSE_PCO}"
 
+- cond:
+    if: ${TE_ENV_REUSE_PCO} != ""
+    then:
+      - add:
+        - oid: "/local:${TE_IUT_TA_NAME}/rpcserver:iut_rpcs"
+        - oid: "/local:${TE_TST1_TA_NAME}/rpcserver:tst_rpcs"
+
 - set:
     - oid: "/local:${TE_IUT_TA_NAME}/mem_channels:"
       value: "${TE_IUT_MEM_CHANNELS}"
