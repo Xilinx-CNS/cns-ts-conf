@@ -87,7 +87,6 @@
 - include:
     - inc.conf_delay.yml
     - inc.net_pool.yml
-    - inc.core_pattern.yml
     - inc.socktest.common.yml
 
 - add:
@@ -131,15 +130,6 @@
     - if: ${TE_LOG_LISTENER_TA_NAME} != ""
       oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/rpcprovider:"
       value: "${SF_TS_TST_RPCPROVIDER}"
-
-    # Change core_pattern according to SF_TS_TMPDIR value
-    - if: ${TE_IUT_TA_NAME} != ""
-      oid: "/agent:${TE_IUT_TA_NAME}/sys:/core_pattern:"
-      value: "${SF_TS_TMPDIR:-/tmp}/core.te.%h-%p-%t"
-
-    - if: ${TE_TST1_TA_NAME} != ""
-      oid: "/agent:${TE_TST1_TA_NAME}/sys:/core_pattern:"
-      value: "${SF_TS_TMPDIR:-/tmp}/core.te.%h-%p-%t"
 
     - oid: "/local:/iut_errno_change_no_check:"
       value: "${TE_ERRNO_CHANGE_NO_CHECK:-0}"
