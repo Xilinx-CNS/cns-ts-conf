@@ -22,13 +22,13 @@
     if: ${XLNX_EFCT_DIR} != ""
     then:
       - add:
-        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_efct"
-          value: "/agent:${TE_IUT_TA_NAME}/module:efct"
-        - oid: "/agent:${TE_IUT_TA_NAME}/module:efct"
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module_${TE_ENV_IUT_NET_DRIVER}"
+          value: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_DRIVER}"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_DRIVER}"
       - set:
-        - oid: "/agent:${TE_IUT_TA_NAME}/module:efct/filename:"
-          value: "${XLNX_EFCT_DIR}/efct.ko"
-        - oid: "/agent:${TE_IUT_TA_NAME}/module:efct/loaded:"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_DRIVER}/filename:"
+          value: "${XLNX_EFCT_DIR}/${TE_ENV_IUT_NET_DRIVER}.ko"
+        - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_DRIVER}/loaded:"
           value: 1
 
 - cond:
