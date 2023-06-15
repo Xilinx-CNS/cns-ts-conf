@@ -1,0 +1,23 @@
+# Copyright (C) 2023 OKTET Ltd.
+---
+
+#
+# Add 'segfault' event to iut parser
+#
+- add:
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:segfault"
+      value: "segfault"
+
+    - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:segfault/pattern:1"
+      value: "segfault at"
+
+    - oid: "/local:/tester:/event:segfault"
+
+    - oid: "/local:/tester:/event:segfault/handler:internal_handler"
+
+- set:
+    - oid: "/local:/tester:/event:segfault/handler:internal_handler/internal:"
+      value: "1"
+
+    - oid: "/local:/tester:/event:segfault/handler:internal_handler/signal:"
+      value: "SIGUSR2"

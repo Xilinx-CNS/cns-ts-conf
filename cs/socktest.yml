@@ -51,6 +51,7 @@
           # difficult to see the real problems.
           #- inc.log_event_allocate_stack.yml
           - inc.log_event_assert.yml
+          - inc.log_event_segfault.yml
       - cond:
           # ON-13603: disable temporarily "x flush outstanding after" for X3 NICs
           if: ${EF_IUT_X3} = ""
