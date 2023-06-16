@@ -10,6 +10,11 @@ TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --trc-tag=x3"
 export EF_IUT_ZF_ALTS=true
 TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --script=dut/ef10"
 
+# ST-2641: maximum amount of allowed zombie stacks, optimal number was
+# found by running tests. Prevents tests from failing with "failed to allocate
+# stack" problem.
+export SF_V5_MAX_ALLOWED_ZOMBIE_STACKS=8
+
 # ON-13666: timestamping isn't supported on X3
 try_add_ool "no_rx_ts" "no_rx_ts" "X3/ON-13666: timestamping isn't supported"
 
