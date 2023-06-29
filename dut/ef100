@@ -13,7 +13,7 @@ TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --script=dut/ef10"
 # ST-2641: maximum amount of allowed zombie stacks, optimal number was
 # found by running tests. Prevents tests from failing with "failed to allocate
 # stack" problem.
-export SF_V5_MAX_ALLOWED_ZOMBIE_STACKS=8
+export SF_V5_MAX_ALLOWED_ZOMBIE_STACKS=5
 
 # ON-13318: no PIO
 try_add_ool "nopio" "nopio" "ef100/ON-13318"
