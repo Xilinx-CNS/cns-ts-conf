@@ -69,10 +69,10 @@ if test "x${SFC_ONLOAD_LOCAL}" != "xyes" ; then
 fi
 
 if test "$EF_IUT_EF10" = "true" ; then
-    export IUT_TS_TX_TCP=0
+    export IUT_TS_TX_TCP=1
     export IUT_TS_RX_TCP=1
     export IUT_TS_SYS_ZERO=0
-    export IUT_TS_TX_SW=1
+    export IUT_TS_TX_SW=0
     export IUT_TS_TX_HW=1
     export IUT_TS_TX_SW_UDP=0
     export IUT_TS_TX_SCHED=0
