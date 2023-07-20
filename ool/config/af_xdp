@@ -2,5 +2,8 @@
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --script=ool/af_xdp_common"
 
+# ST-2715: Maximum amount of allowed zombie stacks.
+export SF_V5_MAX_ALLOWED_ZOMBIE_STACKS=6;
+
 # IPv6 filtering is not supported. ON-12200
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
