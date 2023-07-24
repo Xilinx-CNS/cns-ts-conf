@@ -77,7 +77,7 @@ if test "$EF_IUT_EF10" = "true" ; then
     export IUT_TS_TX_SW_UDP=0
     export IUT_TS_TX_SCHED=0
     export IUT_TS_TX_ACK=0
-    export IUT_TS_OPT_CMSG=0
+    export IUT_TS_OPT_CMSG=1
 fi
 
 # Get initial cplane server parameters to extend the list.
