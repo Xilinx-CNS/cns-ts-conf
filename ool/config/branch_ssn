@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# (c) Copyright 2023 OKTET Labs Ltd. All rights reserved.
+
+# SSN does not support templated sends
+TE_EXTRA_OPTS+=" --tester-req=!SF_TEMPLATE_SEND"
