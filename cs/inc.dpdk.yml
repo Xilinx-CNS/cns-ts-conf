@@ -118,10 +118,10 @@
       - add:
           - if: ${TE_PCI_INSTANCE_IUT_TST1} != ""
             oid: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}/slave:${TE_PCI_INSTANCE_IUT_TST1}"
-            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1}"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1}${TE_PCI_FN_NETDEV_IUT_TST1:+/netdev:${TE_PCI_FN_NETDEV_IUT_TST1}}"
           - if: ${TE_PCI_INSTANCE_IUT_TST1a} != ""
             oid: "/local:${TE_IUT_TA_NAME}/dpdk:/vdev:${TE_ENV_RTE_VDEV_NAME}/slave:${TE_PCI_INSTANCE_IUT_TST1a}"
-            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1a}"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1a}${TE_PCI_FN_NETDEV_IUT_TST1a:+/netdev:${TE_PCI_FN_NETDEV_IUT_TST1a}}"
 
       - set:
           - if: ${TE_PCI_INSTANCE_IUT_TST1} != ""
