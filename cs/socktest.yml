@@ -46,10 +46,7 @@
           - cm_serial.yml
           - inc.log_listener.yml
           - inc.log_event_call_trace.yml
-          # Bug 12903: this pattern causes a lot of unnecessary errors,
-          # in general, they are expected, and because of this it is
-          # difficult to see the real problems.
-          #- inc.log_event_allocate_stack.yml
+          - inc.log_event_allocate_stack.yml
           - inc.log_event_assert.yml
           - inc.log_event_segfault.yml
       - cond:
