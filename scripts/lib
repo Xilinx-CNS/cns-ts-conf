@@ -156,10 +156,11 @@ get_ifnames_by_vendor() {
         for d in /sys/bus/pci/devices/*; do
             if grep -q ${to_find} \$d/uevent 2>/dev/null; then
                 dirname="\${d}/net"
-                if ! test -d "\${dirname}" ; then
-                    dirname="\${d}/virtio*/net"
+                altdir="\${d}/virtio*"
+                if ! test -d "\${dirname}" && test -d "\$altdir" ; then
+                    dirname="\${altdir}/net"
                 fi
-                ls \${dirname}
+                ls \${dirname} || echo 'WARN: is the net driver loaded?' >&2
             fi
         done
     "
