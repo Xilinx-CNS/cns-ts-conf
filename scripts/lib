@@ -130,6 +130,47 @@ get_ifnames_by_driver() {
 }
 
 #######################################
+# Get interface name on host by vendor/pci IDs and instance number.
+# It is assumed that the driver is loaded.
+# Arguments:
+#   Host name
+#   Vendor Id
+#   Device Id
+#   Instance number
+# Outputs:
+#   Writes interface name to stdout
+#######################################
+get_iface_by_vendor() {
+    local host=$1 ; shift
+    local vid=$1 ; shift
+    local did=$1 ; shift
+    local inst_num=$1 ; shift
+
+    local to_find="PCI_ID=${vid}:${did}"
+    to_find="${to_find^^}"
+
+    # virtio-pci stores the 'net' directory inside 'virtioN'
+    local cmd="
+        num=0
+        for d in /sys/bus/pci/devices/*; do
+            if grep -q ${to_find} \$d/uevent 2>/dev/null; then
+                dirname="\${d}/net"
+                altdir="\${d}/virtio*"
+                if ! test -d "\${dirname}" && test -d "\$altdir" ; then
+                    dirname="\${altdir}/net"
+                fi
+                if test \$num -eq $inst_num ; then
+                    ls \${dirname} || echo 'WARN: is the net driver loaded?' >&2
+                    break
+                fi
+                num=$((num + 1))
+            fi
+        done
+    "
+    $SSH $host "$cmd"
+}
+
+#######################################
 # Get interface names on host by vendor/pci IDs and instance number.
 # It is assumed that the driver is loaded.
 # Arguments:
@@ -148,26 +189,8 @@ get_ifnames_by_vendor() {
     local inst1_num=$1 ; shift
     local inst2_num=$1
 
-    local to_find="PCI_ID=${vid}:${did}"
-    to_find="${to_find^^}"
-
-    # virtio-pci stores the 'net' directory inside 'virtioN'
-    local cmd="
-        for d in /sys/bus/pci/devices/*; do
-            if grep -q ${to_find} \$d/uevent 2>/dev/null; then
-                dirname="\${d}/net"
-                altdir="\${d}/virtio*"
-                if ! test -d "\${dirname}" && test -d "\$altdir" ; then
-                    dirname="\${altdir}/net"
-                fi
-                ls \${dirname} || echo 'WARN: is the net driver loaded?' >&2
-            fi
-        done
-    "
-    local ifs=($($SSH $host "$cmd"))
-
-    echo "${ifs[$inst1_num]}"
-    [[ -z "$inst2_num" ]] || echo "${ifs[$inst2_num]}"
+    get_iface_by_vendor "$host" "$vid" "$did" "$inst1_num"
+    [[ -z "$inst2_num" ]] || get_iface_by_vendor "$host" "$vid" "$did" "$inst2_num"
 }
 
 #######################################
