@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+#
+# Note: the script uses functions and variables declared in the make_cmds file,
+# therefore, the make_cmds file must be sourced before using the functions from
+# this script.
+
 export TE_LOG_LISTENER_LOG_LEVEL=WARN
 SOCKAPI_TS_IF_ALIAS_DONE=false
-
-[[ -n "$SSH" ]] || SSH="ssh -qxTn -o BatchMode=yes -o StrictHostKeyChecking=no"
 
 get_random_vlan()
 {
@@ -124,7 +127,8 @@ get_ifnames_by_driver() {
             fi;
         done
     "
-    local ifs=($($SSH $host "$cmd"))
+    make_cmds_for_host $host
+    local ifs=($(process_ssh_cmd "$cmd"))
 
     echo "${ifs[@]}"
 }
@@ -151,23 +155,24 @@ get_iface_by_vendor() {
 
     # virtio-pci stores the 'net' directory inside 'virtioN'
     local cmd="
-        num=0
+        num=0;
         for d in /sys/bus/pci/devices/*; do
             if grep -q ${to_find} \$d/uevent 2>/dev/null; then
-                dirname="\${d}/net"
-                altdir="\${d}/virtio*"
+                dirname="\${d}/net";
+                altdir="\${d}/virtio*";
                 if ! test -d "\${dirname}" && test -d "\$altdir" ; then
-                    dirname="\${altdir}/net"
-                fi
+                    dirname="\${altdir}/net";
+                fi;
                 if test \$num -eq $inst_num ; then
-                    ls \${dirname} || echo 'WARN: is the net driver loaded?' >&2
-                    break
-                fi
-                num=$((num + 1))
-            fi
+                    ls \${dirname} || echo 'WARN: is the net driver loaded?' >&2;
+                    break;
+                fi;
+                num=$((num + 1));
+            fi;
         done
     "
-    $SSH $host "$cmd"
+    make_cmds_for_host $host
+    process_ssh_cmd "$cmd"
 }
 
 #######################################
@@ -269,7 +274,8 @@ export_iut_fw_version() {
     local host="$1"
     local ifname="$2"
 
-    fw_version=$(${SSH} ${host} "sudo /sbin/ethtool -i $ifname 2>/dev/null | grep \"firmware-version\" | sed \"s/.*: //\"")
+    make_cmds_for_host $host
+    fw_version=$(process_ssh_cmd "sudo /sbin/ethtool -i $ifname 2>/dev/null | grep \"firmware-version\" | sed \"s/.*: //\"")
 
     export IUT_FW_VERSION="$fw_version"
 }
