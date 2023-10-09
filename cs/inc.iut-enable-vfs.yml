@@ -33,7 +33,7 @@
           - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/loaded:"
             value: 0
 
-# The sfc module depends on sfc_driverlink and virtual_bus modules.
+# The sfc module depends on the sfc_driverlink module.
 # The vdpa module may be required depending on the host
 - cond:
     if: ${TE_ENV_IUT_NET_MODULE} = "sfc"
@@ -42,9 +42,6 @@
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink"
             value: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
 
-          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:virtual_bus"
-            value: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus"
-
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:vdpa"
             value: "/agent:${TE_IUT_TA_NAME}/module:vdpa"
 
@@ -52,15 +49,11 @@
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink/shared:"
             value: 0
 
-          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:virtual_bus/shared:"
-            value: 0
-
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:vdpa/shared:"
             value: 0
 
       - add:
           - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
-          - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus"
           - oid: "/agent:${TE_IUT_TA_NAME}/module:vdpa"
 
       - set:
@@ -71,22 +64,10 @@
             oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
             value: 0
 
-          - if: ${TE_IUT_MOD_VIRTUAL_BUS_LOADED} = 1
-            oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/unload_holders:"
-            value: 1
-          - if: ${TE_IUT_MOD_VIRTUAL_BUS_LOADED} = 1
-            oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/loaded:"
-            value: 0
-
       - set:
           - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/filename:"
             value: "${TE_IUT_TA_DIR}/sfc_driverlink.ko"
           - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
-            value: 1
-
-          - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/filename:"
-            value: "${TE_IUT_TA_DIR}/virtual_bus.ko"
-          - oid: "/agent:${TE_IUT_TA_NAME}/module:virtual_bus/loaded:"
             value: 1
 
           - if: ${TE_IUT_MOD_VDPA_REQUIRED} = 1
