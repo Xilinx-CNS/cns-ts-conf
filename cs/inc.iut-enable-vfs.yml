@@ -38,6 +38,10 @@
 - cond:
     if: ${TE_ENV_IUT_NET_MODULE} = "sfc"
     then:
+      - get:
+          - oid: "/agent:${TE_IUT_TA_NAME}/lib_mod_dir:"
+            value: "TE_IUT_MOD_DIR"
+
       - add:
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink"
             value: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
@@ -66,7 +70,7 @@
 
       - set:
           - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/filename:"
-            value: "${TE_IUT_TA_DIR}/sfc_driverlink.ko"
+            value: "${TE_IUT_MOD_DIR}/sfc_driverlink.ko"
           - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
             value: 1
 
@@ -76,7 +80,7 @@
 
 - set:
     - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/filename:"
-      value: "${TE_IUT_TA_DIR}/${TE_ENV_IUT_NET_MODULE}.ko"
+      value: "${TE_IUT_MOD_DIR}/${TE_ENV_IUT_NET_MODULE}.ko"
 
     - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/loaded:"
       value: 1
