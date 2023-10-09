@@ -35,3 +35,6 @@ TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!NO_AF_XDP"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!JUMBO_FRAME"
 
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=af_xdp"
+
+# ON-12484: multicast package is almost broken with af_xdp.
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTICAST"

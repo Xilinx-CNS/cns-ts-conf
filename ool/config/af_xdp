@@ -7,6 +7,3 @@ export SF_V5_MAX_ALLOWED_ZOMBIE_STACKS=6;
 
 # IPv6 filtering is not supported. ON-12200
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!IP6_ONLOAD"
-
-# ON-12484: multicast package is almost broken with af_xdp.
-TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!MULTICAST"
