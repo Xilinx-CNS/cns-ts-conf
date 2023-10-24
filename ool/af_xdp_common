@@ -6,6 +6,9 @@
 # AF_XDP doesn't work with enabled huge pages. ON-12249.
 export EF_USE_HUGE_PAGES=0
 
+# Stacks are limited by combined channels amount: ON-12099.
+export SOCKTS_MAX_STACKS_LIMITED=yes
+
 # Do not test BPF with AF_XDP.
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!BPF"
 unset EF_XDP_MODE

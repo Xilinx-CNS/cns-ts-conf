@@ -19,6 +19,9 @@
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:SOCKTS_ZC_REG_BUF"
       value: "${SOCKTS_ZC_REG_BUF}"
 
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:SOCKTS_MAX_STACKS"
+      value: "${SOCKTS_MAX_STACKS}"
+
     # v5 generic
     # Yes, we always load environment
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_LOAD_ENV"
