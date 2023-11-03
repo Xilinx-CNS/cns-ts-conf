@@ -30,9 +30,9 @@
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mgmt_net_device:"
       value: "e1000e"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/cpu:/num:"
-      value: 2
+      value: "${TE_IUT_VM_CPU_NUM:-2}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/size:"
-      value: 2048
+      value: "${TE_IUT_VM_MEM_SIZE:-2048}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root/file:"
       value: "${TE_IUT_VM_DRIVE:-${TE_VM_DRIVE}}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/drive:root/snapshot:"
@@ -80,9 +80,9 @@
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mgmt_net_device:"
       value: "e1000e"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/cpu:/num:"
-      value: 2
+      value: "${TE_TST1_VM_CPU_NUM:-2}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/mem:/size:"
-      value: 2048
+      value: "${TE_TST1_VM_MEM_SIZE:-2048}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/drive:root/file:"
       value: "${TE_IUT_VM_DRIVE:-${TE_VM_DRIVE}}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/drive:root/snapshot:"
