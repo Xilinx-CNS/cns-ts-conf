@@ -1,6 +1,7 @@
 ---
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
+# (c) Copyright 2023 OKTET Labs Ltd.
 
 # Start IUT VM
 - add:
@@ -43,6 +44,16 @@
       value: "${TE_IUT_TST1_TAP}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/mac_addr:"
       value: "52:54:00:01:02:03"
+
+- add:
+    - if: ${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/netdev_opt:queues"
+      value: "${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES}"
+    - if: ${TE_IUT_TST1_TAP_DEVICE_OPT_MQ} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/device_opt:mq"
+      value: "${TE_IUT_TST1_TAP_DEVICE_OPT_MQ}"
+
+- set:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/status:"
       value: 1
 
@@ -93,6 +104,16 @@
       value: "${TE_TST1_IUT_TAP}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/mac_addr:"
       value: "52:54:00:01:02:04"
+
+- add:
+    - if: ${TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/netdev_opt:queues"
+      value: "${TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES}"
+    - if: ${TE_TST1_IUT_TAP_DEVICE_OPT_MQ} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/device_opt:mq"
+      value: "${TE_TST1_IUT_TAP_DEVICE_OPT_MQ}"
+
+- set:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/status:"
       value: 1
 
