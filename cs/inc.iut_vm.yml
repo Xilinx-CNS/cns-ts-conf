@@ -27,6 +27,8 @@
             value: "udp:${TE_LOG_LISTENER}:${TE_LOG_LISTENER_NETCONSOLE_PORT_IUT}"
 
 - set:
+    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mgmt_net_device:"
+      value: "${TE_IUT_VM_MGMT_NET_DEV}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/cpu:/num:"
       value: "${TE_IUT_VM_CPU_NUM:-2}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/mem:/size:"
@@ -38,8 +40,11 @@
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/type:"
       value: "tap"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/type_spec:"
-      value: "${TE_HYPERVISOR_IUT}"
+      value: "${TE_HYPERVISOR_IUT:-${TE_IUT_TST1_TAP}}"
 - add:
+    - if: ${TE_IUT_TST1_TAP_NETDEV_OPT_VHOST} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/netdev_opt:vhost"
+      value: "${TE_IUT_TST1_TAP_NETDEV_OPT_VHOST}"
     - if: ${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES} != ""
       oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/netdev_opt:queues"
       value: "${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES}"
@@ -87,3 +92,30 @@
 - set:
     - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/status:"
       value: "1"
+
+- cond:
+    if: ${TE_IUT_VM_BR} != ""
+    then:
+        # Add bridge agent startup to be sure that tap interface is already in place
+      - add:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/rsrc:${TE_IUT_VM_BR}"
+            value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_VM_BR}"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/rsrc:${TE_IUT_TST1_TAP}"
+            value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/rsrc:${TE_IUT_TST1}"
+            value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1}"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_VM_BR}"
+
+      - set:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_VM_BR}/status:"
+            value: 1
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}/status:"
+            value: 1
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1}/status:"
+            value: 1
+
+      - add:
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_VM_BR}/port:${TE_IUT_TST1_TAP}"
+            value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1_TAP}"
+          - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/bridge:${TE_IUT_VM_BR}/port:${TE_IUT_TST1}"
+            value: "/agent:${TE_HYPERVISOR_TA_NAME}/interface:${TE_IUT_TST1}"
