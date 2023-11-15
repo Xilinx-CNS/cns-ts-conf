@@ -58,7 +58,7 @@
 
 - add:
     - oid: "/rcf:/agent:${TE_IUT_TA_NAME}"
-      value: "${TE_HYPERVISOR_TA_TYPE}"
+      value: "${TE_IUT_TA_TYPE}"
 
 - set:
     - oid: "/rcf:/agent:${TE_IUT_TA_NAME}/vm:"
