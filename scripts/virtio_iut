@@ -1,0 +1,107 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2023 OKTET Labs Ltd.
+#
+# Helper script to setup environment to run of dynamically
+# started IUT as VM over TE_IUT host. Should usually be used
+# together with the --cfg=<CFG> option - it is assumed that
+# the environment variables for CFG are defined.
+#
+
+function myfail() {
+    echo "ERROR: $@" >&2
+    exit 1
+}
+
+export TE_IUT_VM=true
+export TE_IUT_VM_MGMT_NET_DEV="e1000e"
+export TE_HYPERVISOR="$TE_IUT"
+
+# VM image path is required
+if [[ -z "${TE_VM_DRIVE}" ]] ; then
+    # Check fallback based on VM images directory name VM name
+    if [[ -z "${TE_VM_DRIVE_DIR}" || -z "${TE_VM_NAME}" ]] ; then
+        myfail "TE_VM_DRIVE is not specified"
+    fi
+    : ${TE_VM_DRIVE:=${TE_VM_DRIVE_DIR}/${TE_VM_NAME}.qcow2}
+fi
+export TE_VM_DRIVE
+
+TE_VM_BUILD_HOST_VAR=TE_TA_${TE_VM_NAME}_BUILD_HOST
+: ${TE_VM_BUILD_HOST:=${!TE_VM_BUILD_HOST_VAR}}
+if [[ -n "${TE_VM_BUILD_HOST}" ]] ; then
+    export TE_IUT_BUILD_HOST=${TE_VM_BUILD_HOST}
+else
+    myfail "Cannot detect TE_VM_BUILD_HOST"
+fi
+
+: ${TE_VM_SSH_USER:=root}
+export TE_IUT_SSH_USER=${TE_VM_SSH_USER}
+export TE_IUT_SSH_KEY="${TE_VM_SSH_KEY}"
+export TE_IUT_SUDO=false
+
+: ${TE_ID:=$(id -u)}
+export TE_IUT_TST1_TAP=tap_iut_${TE_ID}
+export TE_IUT_VM_BR=br_iut2nic_${TE_ID}
+
+# Detect ifname on Hypervisor to be used with IUT-as-VM
+source "${SF_TS_CONFDIR}/make_cmds"
+source "${SF_TS_CONFDIR}/scripts/lib"
+if [[ -z "${TE_IUT_TST1}${TE_IUT_TST1_IUT}" ]] ; then
+    if [[ -n "$TE_PCI_VENDOR_IUT_TST1" ]] ; then
+        ifnames=( $(get_ifnames_by_vendor "$TE_IUT" \
+                "$TE_PCI_VENDOR_IUT_TST1" "$TE_PCI_DEVICE_IUT_TST1" \
+                "$TE_PCI_INSTANCE_IUT_TST1" "$TE_PCI_FN_NETDEV_IUT_TST1" \
+                "$TE_PCI_INSTANCE_IUT_TST1a" "$TE_PCI_FN_NETDEV_IUT_TST1a") )
+    else
+        ifnames=( $(get_ifnames_by_driver "$TE_IUT" \
+                "$TE_ENV_IUT_NET_DRIVER") )
+    fi
+    export TE_IUT_TST1=${ifnames[$if1_id]}
+    # Only one interface is interested in VM for now
+    # export TE_IUT_TST1_IUT=${ifnames[$if2_id]}
+fi
+
+# Set the number of CPUs and combined channels on VM
+make_cmds_for_host $TE_IUT
+hv_cpus="$(process_ssh_cmd nproc)" \
+    || myfail "failed to get number of CPUs on $TE_IUT"
+# Keep two cores for hypervisor
+vm_cpus=$((hv_cpus - 2))
+[[ -n "$TE_IUT_VM_CPU_NUM" ]] || export TE_IUT_VM_CPU_NUM=${vm_cpus}
+[[ -n "$TE_IUT_TST1_TAP_NETDEV_OPT_VHOST" ]] \
+    || export TE_IUT_TST1_TAP_NETDEV_OPT_VHOST="on"
+[[ -n "$TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES" ]] \
+    || export TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES="${vm_cpus}"
+[[ -n "$TE_IUT_TST1_TAP_DEVICE_OPT_MQ" ]] \
+    || export TE_IUT_TST1_TAP_DEVICE_OPT_MQ="on"
+
+export TE_PCI_VENDOR_IUT_TST1="1af4"
+export TE_PCI_DEVICE_IUT_TST1="1000"
+export TE_PCI_INSTANCE_IUT_TST1="0"
+export TE_ENV_IUT_NET_DRIVER=virtio-pci
+
+unset TE_IUT
+unset TE_IUT_REBOOTABLE
+unset TE_PCI_INSTANCE_IUT_TST1a
+unset TE_PCI_INSTANCE_TST1a_IUT
+unset TE_PCI_FN_NETDEV_IUT_TST1
+unset TE_PCI_FN_NETDEV_IUT_TST1a
+
+export TE_IP4_POOL=192.168.1
+export TE_IP6_POOL=fec0:1:1:
+export TE_IP6_ALIEN=fec1:1:1::5555
+
+# Use hypervisor as a log listener by default
+if [[ -z "${TE_LOG_LISTENER}" ]] && [[ -z "${TE_LOG_LISTENER_LOCALHOST}" ]] ; then
+    [[ -z "${TE_HYPERVISOR}" ]] \
+        || export TE_LOG_LISTENER="${TE_HYPERVISOR}"
+    [[ -z "${TE_HYPERVISOR_LOCALHOST}" ]] \
+        || export TE_LOG_LISTENER_LOCALHOST="${TE_HYPERVISOR_LOCALHOST}"
+    [[ -z "${TE_HYPERVISOR_SSH_KEY}" ]] \
+        || export TE_LOG_LISTENER_SSH_KEY="${TE_HYPERVISOR_SSH_KEY}"
+    [[ -z "${TE_HYPERVISOR_SSH_PORT}" ]] \
+        || export TE_LOG_LISTENER_SSH_PORT="${TE_HYPERVISOR_SSH_PORT}"
+    [[ -z "${TE_HYPERVISOR_SSH_USER}" ]] \
+        || export TE_LOG_LISTENER_SSH_USER="${TE_HYPERVISOR_SSH_USER}"
+fi
+export TE_LOG_LISTENER_NETCONSOLE_IUT=yes
