@@ -34,7 +34,7 @@ meson_setup() {
     disable_drivers+=",bus/ifpga,bus/fslmc,bus/vmbus"
     disable_drivers+=",mempool/cnxk"
     disable_drivers+=",net/ark,net/atlantic,net/avp,net/axgbe"
-    disable_drivers+=",net/bnx2x,net/bnxt,net/cxgbe,net/ena,net/enetc,net/enic"
+    disable_drivers+=",net/bnx2x,net/bnxt,net/ena,net/enetc,net/enic"
     disable_drivers+=",net/fm10k,net/hinic,net/hns3,net/iavf"
     disable_drivers+=",net/ionic,net/liquidio,net/mlx4,net/netvsc,net/nfp"
     disable_drivers+=",net/ngbe,net/pfe,net/qede,net/softnic,net/thunderx"
