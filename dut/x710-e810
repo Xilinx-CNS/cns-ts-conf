@@ -4,12 +4,3 @@
 # OL-Redmine-Id 11976: i40e does not support different types of filters
 # simultaneously, so we always set only 3-tuples.
 export SFC_RESOURCE_ENABLE_AF_XDP_5TUPLE_FILTERS=0
-
-# Set oof_shared_keep_thresh=0 to keep using a wild
-# filter for passively accepted TCP sockets.
-# See bug 11976 and README_AF_XDP.md in Onload tree.
-export ONLOAD_OOF_SHARED_KEEP_THRESH=0
-
-# Disable tests which use 5-tuple filters
-# See bug 11976 and README_AF_XDP.md in Onload tree.
-TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SO_REUSEADDR"
