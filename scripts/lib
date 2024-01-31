@@ -51,10 +51,13 @@ header2num()
 {
     local host=$1
 
+    make_cmds_for_host $host
     # Obtain a decimal value from the string "#define LINUX_VERSION_CODE xxxxx"
-    local ver=$(ssh $host cat /usr/include/linux/version.h | \
-                grep LINUX_VERSION_CODE | \
-                cut -d ' ' -f 3)
+    local cmd="
+        cat /usr/include/linux/version.h | \
+            grep LINUX_VERSION_CODE | cut -d ' ' -f 3
+    "
+    local ver=$(process_ssh_cmd "$cmd")
 
     local num1=$((ver >> 16))
     local num2=$((ver >> 8 & 0xFF))
@@ -93,7 +96,8 @@ export_kernel_version_num()
 
     test -n "${host}" || host="${!ta_build_host}"
     if test -n "$host" ; then
-        local ver=$(ssh $host uname -r | sed "s/\([0-9]\+[.][0-9]\+\)[.].*$/\1/")
+        make_cmds_for_host $host
+        local ver=$(process_ssh_cmd uname -r | sed "s/\([0-9]\+[.][0-9]\+\)[.].*$/\1/")
         local ver_maj=${ver%%.*}
         local ver_min=${ver##*.}
         export ${1}_KERNEL_VERSION_NUM=$(($ver_maj * 100 + $ver_min))
