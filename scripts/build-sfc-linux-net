@@ -29,7 +29,7 @@ else
     # This is driver from sfc-linux-net repository
 
     # Unfortunately parallel build looks unstable
-    make ${MAKE_ARGS}
+    make CONFIG_SFC_EF100=y ${MAKE_ARGS}
 fi
 
 if [ $? -eq 0 ] ; then
