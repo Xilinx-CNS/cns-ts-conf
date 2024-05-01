@@ -15,6 +15,9 @@ TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --script=dut/ef10"
 # stack" problem.
 export SF_V5_MAX_ALLOWED_ZOMBIE_STACKS=8
 
+# Maximum number of Onload stacks supported by X3
+export SOCKTS_MAX_STACKS=15
+
 # ON-13666: timestamping isn't supported on X3
 try_add_ool "no_rx_ts" "no_rx_ts" "X3/ON-13666: timestamping isn't supported"
 
