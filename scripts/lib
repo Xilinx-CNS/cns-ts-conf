@@ -45,19 +45,21 @@ use_interface_name_aliases()
 # and convert major and minor numbers of it to a single value, e.g.:
 # 4.19.118 -> 419
 # 4.9.210  -> 409
+# Note: if an error occurs (for example, if there is no linux/version.h file),
+# the function outputs an error message to stderr, but does not stop working:
+# the result is '0'.
 #
-# @param $1 Host name
+# @param $1 TA name (TE_IUT, TE_TST1, TE_TST2, TE_TST3)
 header2num()
 {
-    local host=$1
+    local ta="$1"
 
-    make_cmds_for_host $host
     # Obtain a decimal value from the string "#define LINUX_VERSION_CODE xxxxx"
     local cmd="
         cat /usr/include/linux/version.h | \
             grep LINUX_VERSION_CODE | cut -d ' ' -f 3
     "
-    local ver=$(process_ssh_cmd "$cmd")
+    local ver="$(te_ta_process_cmd "${ta}" "${cmd}")"
 
     local num1=$((ver >> 16))
     local num2=$((ver >> 8 & 0xFF))
@@ -73,13 +75,7 @@ header2num()
 #
 export_headers_num()
 {
-    local host="${!1}"
-    local ta_build_host="${1}_BUILD_HOST"
-
-    test -n "${host}" || host="${!ta_build_host}"
-    if test -n "$host" ; then
-        export ${1}_HEADERS_NUM="$(header2num $host)"
-    fi
+    export ${1}_HEADERS_NUM="$(header2num "${1}")"
 }
 
 #
@@ -91,17 +87,14 @@ export_headers_num()
 #
 export_kernel_version_num()
 {
-    local host="${!1}"
-    local ta_build_host="${1}_BUILD_HOST"
+    local ta="$1"
 
-    test -n "${host}" || host="${!ta_build_host}"
-    if test -n "$host" ; then
-        make_cmds_for_host $host
-        local ver=$(process_ssh_cmd uname -r | sed "s/\([0-9]\+[.][0-9]\+\)[.].*$/\1/")
-        local ver_maj=${ver%%.*}
-        local ver_min=${ver##*.}
-        export ${1}_KERNEL_VERSION_NUM=$(($ver_maj * 100 + $ver_min))
-    fi
+    local cmd="uname -r | sed \"s/\([0-9]\+[.][0-9]\+\)[.].*$/\1/\""
+    local ver="$(te_ta_process_cmd "${ta}" "${cmd}")"
+
+    local ver_maj=${ver%%.*}
+    local ver_min=${ver##*.}
+    export ${1}_KERNEL_VERSION_NUM=$(($ver_maj * 100 + $ver_min))
 }
 
 #######################################
