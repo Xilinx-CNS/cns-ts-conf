@@ -3,7 +3,7 @@
 #
 # Note: the script uses functions and variables declared in the make_cmds file,
 # therefore, the make_cmds file must be sourced before using the functions from
-# this script.
+# this script. The same applies to the te_ta_sha_helper script from TE.
 
 export TE_LOG_LISTENER_LOG_LEVEL=WARN
 SOCKAPI_TS_IF_ALIAS_DONE=false
