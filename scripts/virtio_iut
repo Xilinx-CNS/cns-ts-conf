@@ -104,4 +104,4 @@ if [[ -z "${TE_LOG_LISTENER}" ]] && [[ -z "${TE_LOG_LISTENER_LOCALHOST}" ]] ; th
     [[ -z "${TE_HYPERVISOR_SSH_USER}" ]] \
         || export TE_LOG_LISTENER_SSH_USER="${TE_HYPERVISOR_SSH_USER}"
 fi
-export TE_LOG_LISTENER_NETCONSOLE_IUT=yes
+export TE_LOG_LISTENER_IUT=netconsole

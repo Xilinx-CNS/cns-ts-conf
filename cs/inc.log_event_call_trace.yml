@@ -4,12 +4,12 @@
 #
 # Add 'Call Trace' event to both iut and tst1 parsers
 #
-# Note: see description for HWSIM and TE_LOG_LISTENER_NETCONSOLE_* variables
+# Note: see description for TE_LOG_LISTENER_* variables
 # in the cs/inc.log_listener.yml file
 #
 
 - cond:
-    if: ${HWSIM} = "" | ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    if: ${TE_LOG_LISTENER_IUT} != ""
     then:
       - add:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:call_trace"
@@ -19,7 +19,7 @@
             value: "Call Trace"
 
 - cond:
-    if: ${HWSIM} = "" | ${TE_LOG_LISTENER_NETCONSOLE_TST1} != ""
+    if: ${TE_LOG_LISTENER_TST1} != ""
     then:
       - add:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:tst1/event:call_trace"

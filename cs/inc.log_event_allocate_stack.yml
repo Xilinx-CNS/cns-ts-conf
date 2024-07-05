@@ -4,12 +4,12 @@
 #
 # Add 'Failed to allocate stack' event to iut parsers
 #
-# Note: see description for HWSIM and TE_LOG_LISTENER_NETCONSOLE_* variables
+# Note: see description for TE_LOG_LISTENER_* variables
 # in the cs/inc.log_listener.yml file
 #
 
 - cond:
-    if: ${HWSIM} = "" | ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    if: ${TE_LOG_LISTENER_IUT} != ""
     then:
       - add:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/event:allocate_stack"

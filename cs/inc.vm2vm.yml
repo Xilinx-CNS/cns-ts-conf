@@ -21,7 +21,7 @@
             value: 1
 
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    if: ${TE_LOG_LISTENER_IUT} = netconsole
     then:
       - set:
           - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/serial:"
@@ -81,7 +81,7 @@
             value: 1
 
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_TST1} != ""
+    if: ${TE_LOG_LISTENER_TST1} != netconsole
     then:
       - set:
           - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/serial:"
