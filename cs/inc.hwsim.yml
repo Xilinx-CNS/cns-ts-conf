@@ -132,7 +132,7 @@
             value: "${CMOD_KERNEL_CMDLINE}"
 
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    if: ${TE_LOG_LISTENER_IUT} = netconsole
     then:
       - get:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/port:"

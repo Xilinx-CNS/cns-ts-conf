@@ -6,9 +6,9 @@
 #
 # Key control variables:
 #   TE_LOG_LISTENER                     Host to run log listener TA on
-#   TE_LOG_LISTENER_NETCONSOLE_IUT      Use netconsole for IUT (if not empty)
+#   TE_LOG_LISTENER_IUT                 Use specified way for IUT
 #   TE_IUT                              TA with Implementation Under Testing
-#   TE_LOG_LISTENER_NETCONSOLE_TST1     Use netconsole for TST1 (if not empty)
+#   TE_LOG_LISTENER_TST1                Use specified way for TST1
 #   TE_TST1                             TA with TST1
 #   HWSIM                               With HWSIM, only netconsole can be used
 #
@@ -23,7 +23,7 @@
 # IUT serial console via either netconsole or conserver
 #
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != ""
+    if: ${TE_LOG_LISTENER_IUT} = netconsole
     then:
       # netconsole
       - add:
@@ -43,7 +43,7 @@
             value: "${TE_LOG_LISTENER_NETCONSOLE_PORT_IUT}"
     else:
       - cond:
-          if: ${HWSIM} = ""
+          if: ${TE_LOG_LISTENER_IUT} = conserver
           then:
             # conserver: console name must be equal to TE_IUT name
             - add:
@@ -54,7 +54,7 @@
                   value: "${TE_LOG_LISTENER_CONSERVER_PORT:-3109}"
 
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != "" | ${HWSIM} = ""
+    if: ${TE_LOG_LISTENER_IUT} != ""
     then:
       - set:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/interval:"
@@ -76,7 +76,7 @@
 # TST1 serial console via either netconsole or conserver
 #
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_TST1} != ""
+    if: ${TE_LOG_LISTENER_TST1} = netconsole
     then:
       # netconsole
       - add:
@@ -96,7 +96,7 @@
             value: "${TE_LOG_LISTENER_NETCONSOLE_PORT_TST1}"
     else:
       - cond:
-          if: ${HWSIM} = ""
+          if: ${TE_LOG_LISTENER_TST1} = conserver
           then:
             # conserver: console name must be equal to TE_TST1 name
             - add:
@@ -107,7 +107,7 @@
                   value: "${TE_LOG_LISTENER_CONSERVER_PORT:-3109}"
 
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_TST1} != "" | ${HWSIM} = ""
+    if: ${TE_LOG_LISTENER_TST1} != ""
     then:
       - set:
           - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:tst1/interval:"
@@ -130,7 +130,7 @@
 # (for non-HWSIM hosts only)
 #
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_IUT} != "" & ${HWSIM} = "" & ${TE_VM2VM} = "" & ${TE_IUT_VM} = ""
+    if: ${TE_LOG_LISTENER_IUT} = netconsole & ${HWSIM} = "" & ${TE_VM2VM} = "" & ${TE_IUT_VM} = ""
     then:
       # Allocate UDP port to be used as netconsole local port
       - set:
@@ -150,7 +150,7 @@
 # (for non-HWSIM hosts only)
 #
 - cond:
-    if: ${TE_LOG_LISTENER_NETCONSOLE_TST1} != "" & ${HWSIM} = "" & ${TE_VM2VM} = ""
+    if: ${TE_LOG_LISTENER_TST1} = netconsole & ${HWSIM} = "" & ${TE_VM2VM} = ""
     then:
       # Allocate UDP port to be used as netconsole local port
       - set:
