@@ -4,10 +4,6 @@
 # Helper script to setup environment to run on a pair of dynamically
 # started VMs using --cfg=virtio_virtio run.sh option (if supported).
 #
-# Required environment:
-#   - TE_VM_DRIVE - path to VM image or TE_VM_DRIVE_DIR (VM images
-#                   localtion) plus TE_VM_NAME (VM name without .qcow2)
-#
 # Most likely you need to define:
 #   - TE_HYPERVISOR - host to create QEMU virtual machines on
 #                     (localhost by default)
@@ -20,25 +16,9 @@
 #                     it must work without password)
 #
 
-# VM image patsh is required
-if [[ -z "${TE_VM_DRIVE}" ]] ; then
-    # Check fallback based on VM images directory name VM name
-    if [[ -z "${TE_VM_DRIVE_DIR}" || -z "${TE_VM_NAME}" ]] ; then
-        echo "TE_VM_DRIVE is not specified" >&2
-        exit 1
-    fi
-    : ${TE_VM_DRIVE:=${TE_VM_DRIVE_DIR}/${TE_VM_NAME}.qcow2}
-fi
-
 : ${TE_ID:=$(id -u)}
 
-TE_VM_BUILD_HOST_VAR=TE_TA_${TE_VM_NAME}_BUILD_HOST
-: ${TE_VM_BUILD_HOST:=${!TE_VM_BUILD_HOST_VAR}}
-
-: ${TE_VM_SSH_USER:=root}
-
 export TE_VM2VM=true
-export TE_VM_DRIVE
 
 export TE_IUT_RTE_MACHINE=corei7
 export TE_TST1_RTE_MACHINE=corei7

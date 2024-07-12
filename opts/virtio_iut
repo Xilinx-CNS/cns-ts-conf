@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (C) 2023 OKTET Labs Ltd.
 
+--script=scripts/vms
 --script=scripts/virtio_iut
 --script=scripts/fix-ssh-keys-perm

@@ -1,3 +1,4 @@
+--script=scripts/vms
 --script=scripts/virtio_virtio
 --script=scripts/fix-ssh-keys-perm
 
