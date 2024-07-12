@@ -34,3 +34,5 @@ export TE_VM_BUILD_HOST
 
 : ${TE_VM_SSH_USER:=root}
 export TE_VM_SSH_USER
+: ${TE_VM_SUDO:=false}
+export TE_VM_SUDO
