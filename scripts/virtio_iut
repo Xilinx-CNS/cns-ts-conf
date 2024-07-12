@@ -16,25 +16,6 @@ export TE_IUT_VM=true
 export TE_IUT_VM_MGMT_NET_DEV="e1000e"
 export TE_HYPERVISOR="$TE_IUT"
 
-# VM image path is required
-if [[ -z "${TE_VM_DRIVE}" ]] ; then
-    # Check fallback based on VM images directory name VM name
-    if [[ -z "${TE_VM_DRIVE_DIR}" || -z "${TE_VM_NAME}" ]] ; then
-        myfail "TE_VM_DRIVE is not specified"
-    fi
-    : ${TE_VM_DRIVE:=${TE_VM_DRIVE_DIR}/${TE_VM_NAME}.qcow2}
-fi
-export TE_VM_DRIVE
-
-TE_VM_BUILD_HOST_VAR=TE_TA_${TE_VM_NAME}_BUILD_HOST
-: ${TE_VM_BUILD_HOST:=${!TE_VM_BUILD_HOST_VAR}}
-if [[ -n "${TE_VM_BUILD_HOST}" ]] ; then
-    export TE_IUT_BUILD_HOST=${TE_VM_BUILD_HOST}
-else
-    myfail "Cannot detect TE_VM_BUILD_HOST"
-fi
-
-: ${TE_VM_SSH_USER:=root}
 export TE_IUT_SSH_USER=${TE_VM_SSH_USER}
 export TE_IUT_SSH_KEY="${TE_VM_SSH_KEY}"
 export TE_IUT_SUDO=false
