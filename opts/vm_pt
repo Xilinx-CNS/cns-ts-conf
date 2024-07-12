@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2024 OKTET Labs Ltd.
+#
+# Options to use IUT host as a hypervisor and run VM on it to be used as
+# IUT with network device PCI function passed to it.
+
+--script=scripts/vms
+--script=scripts/vm_pt
+--script=scripts/fix-ssh-keys-perm

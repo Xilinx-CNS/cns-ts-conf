@@ -1,0 +1,53 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2024 OKTET Labs Ltd.
+#
+# Helper script to setup environment to run dynamically started IUT as VM on
+# TE_IUT host. Should usually be used together with the --cfg=<CFG> option -
+# it is assumed that the environment variables for CFG are defined.
+#
+
+export TE_IUT_VM=true
+export TE_IUT_VM_MGMT_NET_DEV="e1000e"
+export TE_IUT_VM_PCI_PT=true
+
+#######################################
+# Helper to add or change (if third argument is true) role (TE_IUT,
+# TE_TST1, TE_HYPERVISOR, ...) of the host.
+# Arguments:
+#   Existing role, e.g. TE_IUT (mandatory)
+#   A new role of the host, e.g. TE_LOG_LISTENER (mandatory)
+#   true if existing role should be removed and corresponding variables
+#   undefined (optional)
+#######################################
+function add_host_role() {
+    local old_role="$1"; shift
+    local new_role="$1"; shift
+    local unset_old="$1"
+    local old_var
+    local new_var
+
+    : ${unset_old:=false}
+
+    if [[ -n "${!old_role}" ]] ; then
+        export "${new_role}"="${!old_role}"
+        ${unset_old} && unset "${old_role}"
+    fi
+    for var in TA_TYPE LOCALHOST REBOOTABLE PORT SSH_KEY SSH_PORT SSH_PROXY \
+               SSH_USER SUDO VG LD_PRELOAD CORE_WATCHER CORE_PATTERN \
+               BUILD_HOST BUILD_SSH_KEY BUILD_SSH_PORT BUILD_SSH_PROXY \
+               BUILD_SSH_USER ; do
+        old_var="${old_role}_${var}"
+        new_var="${new_role}_${var}"
+        if [[ -n "${!old_var}" ]] ; then
+            export ${new_var}="${!old_var}"
+            ${unset_old} && unset ${old_var}
+        else
+            unset ${new_var}
+        fi
+    done
+}
+
+# Change IUT host role to be a hypervisor
+add_host_role TE_IUT TE_HYPERVISOR true
+# Use VM as an IUT
+add_host_role TE_VM TE_IUT
