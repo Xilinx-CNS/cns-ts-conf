@@ -35,3 +35,11 @@
       value: "/agent/interface/promisc"
     - oid: "/conf_delay:promisc/ta:"
       value: 1000
+    - oid: "/conf_delay:allmulti"
+      value: "/agent/interface/allmulti"
+    - oid: "/conf_delay:allmulti/ta:"
+      value: 1000
+    - oid: "/conf_delay:mcast_link_addr"
+      value: "/agent/interface/mcast_link_addr"
+    - oid: "/conf_delay:mcast_link_addr/ta:"
+      value: 1000
