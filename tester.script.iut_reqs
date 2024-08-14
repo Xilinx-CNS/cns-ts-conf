@@ -185,6 +185,9 @@ if test -n "${TE_IUT}" -a -n "${TE_IUT_TA_TYPE}" ; then
             if test $kernel_num -lt $(kernel_ver_str2num 4.0) ; then
                 TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SOF_TIMESTAMPING_OPT_TSONLY"
             fi
+            if test $kernel_num -lt $(kernel_ver_str2num 5.15) ; then
+                TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!EPOLL_PWAIT2"
+            fi
 
             check_ipv6_mpath $kernel_num
 
