@@ -171,7 +171,7 @@ get_iface_by_vendor() {
                        || echo 'WARN: is the net driver loaded on ${host}?' >&2;
                     break;
                 fi;
-                num=$((num + 1));
+                num=\$((num + 1));
             fi;
         done
     "
