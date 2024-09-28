@@ -252,6 +252,16 @@ export_ifnames() {
         export TE_IUT_TST1_IUT=${ifnames[$if2_id]}
     fi
 
+    if [[ -z "${TE_IUT_TST2}" ]] ; then
+        if [[ -n "$TE_PCI_VENDOR_IUT_TST2" ]] ; then
+            ifnames=( $(get_ifnames_by_vendor "TE_IUT" \
+                    "$TE_PCI_VENDOR_IUT_TST2" "$TE_PCI_DEVICE_IUT_TST2" \
+                    "$TE_PCI_INSTANCE_IUT_TST2" "$TE_PCI_FN_NETDEV_IUT_TST2" \
+                    "" "") )
+            export TE_IUT_TST2=${ifnames[$if1_id]}
+        fi
+    fi
+
     if [[ -z "${TE_TST1_IUT}${TE_TST1_IUT_IUT}" ]] ; then
         if [[ -n "$TE_PCI_VENDOR_TST1_IUT" ]] ; then
             ifnames=( $(get_ifnames_by_vendor "TE_TST1" \
@@ -266,10 +276,23 @@ export_ifnames() {
         export TE_TST1_IUT_IUT=${ifnames[$if2_id]}
     fi
 
+    if [[ -z "${TE_TST2_IUT}" ]] ; then
+        if [[ -n "$TE_PCI_VENDOR_TST2_IUT" ]] ; then
+            ifnames=( $(get_ifnames_by_vendor "TE_TST2" \
+                    "$TE_PCI_VENDOR_TST2_IUT" "$TE_PCI_DEVICE_TST2_IUT" \
+                    "$TE_PCI_INSTANCE_TST2_IUT" "$TE_PCI_FN_NETDEV_TST2_IUT" \
+                    "" "") )
+            export TE_TST2_IUT=${ifnames[$if1_id]}
+        fi
+    fi
+
     echo TE_IUT_TST1=${TE_IUT_TST1}
-    echo TE_IUT_TST1_IUT=${TE_IUT_TST1_IUT}
+    [[ -z "$TE_IUT_TST2" ]] || echo TE_IUT_TST2="${TE_IUT_TST2}"
+    [[ -z "${TE_IUT_TST1_IUT}" ]] || echo TE_IUT_TST1_IUT=${TE_IUT_TST1_IUT}
+
     echo TE_TST1_IUT=${TE_TST1_IUT}
-    echo TE_TST1_IUT_IUT=${TE_TST1_IUT_IUT}
+    [[ -z "$TE_TST2_IUT" ]] || echo TE_TST2_IUT="${TE_TST2_IUT}"
+    [[ -z "${TE_TST1_IUT_IUT}" ]] || echo TE_TST1_IUT_IUT=${TE_TST1_IUT_IUT}
 }
 
 #######################################
