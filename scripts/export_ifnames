@@ -6,6 +6,6 @@
 
 # Do not export interfaces in case of build only
 if [[ "$TE_TS_BUILD_ONLY" != "yes" ]] ; then
-    source "${SF_TS_CONFDIR}/make_cmds"
+    source "${TE_BASE}/engine/builder/te_ta_ssh_helper"
     export_ifnames
 fi
