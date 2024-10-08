@@ -57,6 +57,7 @@ TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PSELECT"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!POLL"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!PPOLL"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_PWAIT"
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_PWAIT2"
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!SF_WODA"
 
 # Exclude environments:
