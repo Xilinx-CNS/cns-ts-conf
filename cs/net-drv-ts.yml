@@ -3,6 +3,7 @@
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
 - include:
     - cm_bridge.yml
+    - cm_tunnel.yml
     - cm_base.yml
     - cm_sniffer.yml
     - cm_sys.yml
