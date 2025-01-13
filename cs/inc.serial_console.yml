@@ -1,0 +1,29 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2025 OKTET Labs Ltd.
+#
+# Serial console reader/writer control. As a rule, the file should be used
+# together with inc.log_listener.yml file.
+# With this file, tests can not only read, but also write to the console
+# using serial console TE TAPI.
+#
+
+#
+# IUT serial console via conserver
+#
+- cond:
+    if: ${TE_LOG_LISTENER_IUT} = conserver
+    then:
+      - add:
+        - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/console:${TE_IUT_TA_NAME}"
+          value: "${TE_IUT}"
+
+#
+# TST1 serial console via conserver
+#
+- cond:
+    if: ${TE_LOG_LISTENER_TST1} = conserver
+    then:
+      - add:
+        - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/console:${TE_TST1_TA_NAME}"
+          value: "${TE_TST1}"
