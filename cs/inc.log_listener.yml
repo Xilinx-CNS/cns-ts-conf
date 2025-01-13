@@ -52,9 +52,6 @@
             - set:
                 - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/port:"
                   value: "${TE_LOG_LISTENER_CONSERVER_PORT:-3109}"
-            - add:
-                - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/console:${TE_IUT_TA_NAME}"
-                  value: "${TE_IUT}"
 
 - cond:
     if: ${TE_LOG_LISTENER_IUT} != ""
@@ -108,9 +105,6 @@
             - set:
                 - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:tst1/port:"
                   value: "${TE_LOG_LISTENER_CONSERVER_PORT:-3109}"
-            - add:
-                - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/console:${TE_TST1_TA_NAME}"
-                  value: "${TE_TST1}"
 
 - cond:
     if: ${TE_LOG_LISTENER_TST1} != ""
