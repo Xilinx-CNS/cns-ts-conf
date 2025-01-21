@@ -204,9 +204,21 @@
           value: "--isa-opts"
         - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:121"
           value: "${HWSIM_ISA_OPTS}"
-- add:
-    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:140"
-      value: "${MCFW_ELF}"
+- cond:
+    if: ${MCFW_ELF} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:140"
+          value: "${MCFW_ELF}"
+
+- cond:
+    if: ${MC_BOOTROM_ELF} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:160"
+          value: "--bootrom"
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/arg:161"
+          value: "${MC_BOOTROM_ELF}"
 
 - set:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim/exe:"
