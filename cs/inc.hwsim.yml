@@ -173,6 +173,13 @@
         - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:FC_BUILD_DIR"
           value: "${FC_BUILD_DIR}"
 
+- cond:
+    if: ${HWSIM_LOOPBACK_VAR_NAME} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:${HWSIM_LOOPBACK_VAR_NAME}"
+          value: "${HWSIM_LOOPBACK_VAR_VAL}"
+
 - add:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim"
 - cond:
