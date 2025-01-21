@@ -93,7 +93,7 @@
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/qemu:"
       value: "${CMOD_QEMU_EXE}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/machine:"
-      value: "q35,max-ram-below-4g=128M,kernel-irqchip=split"
+      value: "q35,max-ram-below-4g=1G,kernel-irqchip=split"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/cpu:/model:"
       value: "host"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/cpu:/num:"
