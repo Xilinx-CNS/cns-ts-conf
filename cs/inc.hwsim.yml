@@ -130,6 +130,12 @@
             value: "${CMOD_KERNEL}"
           - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/kernel:/cmdline:"
             value: "${CMOD_KERNEL_CMDLINE}"
+      - cond:
+          if: ${CMOD_KERNEL_INITRD} != ""
+          then:
+            - set:
+                - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/kernel:/initrd:"
+                  value: "${CMOD_KERNEL_INITRD}"
 
 - cond:
     if: ${TE_LOG_LISTENER_IUT} = netconsole
