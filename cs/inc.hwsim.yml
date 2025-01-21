@@ -158,8 +158,13 @@
 - add:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:NEED_QEMU"
       value: 1
-    - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:SDNET_INSTALL"
-      value: "${CMOD_SDNET_INSTALL:-/proj/smartnic/xir/tools/sdnet/2018.3_P3}"
+
+- cond:
+    if: ${HWSIM_NEED_SDNET} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/env:SDNET_INSTALL"
+          value: "${CMOD_SDNET_INSTALL:-/proj/smartnic/xir/tools/sdnet/2018.3_P3}"
 
 - add:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:hwsim"
