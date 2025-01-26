@@ -6,3 +6,6 @@
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!ONLOAD8.1"
 
 TE_EXTRA_OPTS="$TE_EXTRA_OPTS --trc-tag=branch_onload8.1"
+
+# ON-16286: There is no epoll_pwait2() suppport in onload-8.1
+TE_EXTRA_OPTS="$TE_EXTRA_OPTS --tester-req=!EPOLL_PWAIT2"
