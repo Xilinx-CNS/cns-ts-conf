@@ -1,0 +1,16 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2025 Advanced Micro Devices, Inc.
+
+- cond:
+    if: ${TE_PREVENT_NETDRV_AUTOBIND} = 1 & ${TE_PCI_INSTANCE_OTHER_IUT_TST1} != ""
+    then:
+      - add:
+          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:pci_fn:${TE_PCI_VENDOR_IUT_TST1}:${TE_PCI_DEVICE_IUT_TST1}:${TE_PCI_INSTANCE_OTHER_IUT_TST1}"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_OTHER_IUT_TST1}"
+      - get:
+          - oid: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_OTHER_IUT_TST1}"
+            value: TE_PCI_OID_IUT_TST1
+      - set:
+          - oid: "${TE_PCI_OID_IUT_TST1}/driver:"
+            value: "uio_pci_generic"

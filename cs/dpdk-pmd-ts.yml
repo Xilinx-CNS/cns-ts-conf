@@ -63,6 +63,7 @@
     - inc.net_cfg_pci_fns.yml
     - inc.dpdk.yml
     - inc.misc.yml
+    - inc.prevent_netdrv_autobind.yml
 
 - cond:
     if: ${TE_IUT_SETUP_VFS} = 1
