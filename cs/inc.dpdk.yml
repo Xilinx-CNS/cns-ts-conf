@@ -94,6 +94,14 @@
 
 - cond:
     if: |
+        (0x${TE_PCI_VENDOR_IUT_TST1} = 0x1924) &
+        (0x${TE_PCI_DEVICE_IUT_TST1} = 0x0c03)
+    then:
+      - add:
+          - "/local:/dpdk:/iut_loopback_mode:1"
+
+- cond:
+    if: |
         (0x${TE_PCI_VENDOR_IUT_TST1} = 0x10ee &
         0x${TE_PCI_DEVICE_IUT_TST1} = 0x0100)
     then:
