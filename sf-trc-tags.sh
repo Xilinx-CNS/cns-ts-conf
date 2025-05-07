@@ -243,6 +243,24 @@ else
     cmdclient_transport="tlp=${pci_dbsf}"
 fi
 
+# Check if device arguments override the FW variant
+IFS=,
+for arg in ${TE_IUT_DEV_ARGS:-${TE_DPDK_DEV_ARGS}} ; do
+    case "${arg}" in
+        fw_variant=full-feature)
+            rx_dpcpu_expected="full-featured"
+            tx_dpcpu_expected="full-featured"
+            do_cmdclient "drv_detach;drv_attach full_featured;quit"
+            ;;
+        fw_variant=ultra-low-latency)
+            rx_dpcpu_expected="low-latency"
+            tx_dpcpu_expected="low-latency"
+            do_cmdclient "drv_detach;drv_attach low_latency;quit"
+            ;;
+    esac
+done
+unset IFS
+
 out_version="$(do_cmdclient "version;quit")"
 out_caps="$(do_cmdclient "getcaps;quit")"
 
@@ -284,6 +302,11 @@ test -z "${rx_dpcpu}" -o "${rx_dpcpu}" = "<unknown>" ||
 tx_dpcpu="$(echo "${out_caps}" | grep 'TX DPCPU' | sed 's/.*=> //' | tr ' ' -)"
 test -z "${tx_dpcpu}" -o "${tx_dpcpu}" = "<unknown>" ||
     tags+=("tx-${tx_dpcpu}")
+
+if test -n "${rx_dpcpu_expected}" -a "${rx_dpcpu}" != "${rx_dpcpu_expected}" -o \
+        -n "${tx_dpcpu_expected}" -a "${tx_dpcpu}" != "${tx_dpcpu_expected}"; then
+    echo "Failed to set the FW variant specified in devargs" >&2
+fi
 
 # Add tags based on firmware capabilities.
 echo "${out_caps}" | grep -q '^ *Supports TX VLAN insertion *: *no$' &&
