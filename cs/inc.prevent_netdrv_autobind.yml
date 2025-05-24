@@ -13,4 +13,4 @@
             value: TE_PCI_OID_IUT_TST1
       - set:
           - oid: "${TE_PCI_OID_IUT_TST1}/driver:"
-            value: "uio_pci_generic"
+            value: "${TE_PCI_STUB_DRIVER_IUT_TST1:-uio_pci_generic}"
