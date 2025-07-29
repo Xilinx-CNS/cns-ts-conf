@@ -71,7 +71,8 @@ if test -n "${TE_IUT}" -a -n "${TE_IUT_TA_TYPE}" ; then
                                        sed 's/\s*([0-9a-fx]*)$//g'") 
             if test -n ${libc_path} ; then
                 for i in accept4 pipe2 dup2 dup3 epoll_create1 \
-                         epoll_pwait ppoll pselect recvmmsg sendmmsg ; do
+                         epoll_pwait ppoll pselect recvmmsg sendmmsg \
+                         epoll_pwait2 ; do
                     if test -z "$(ssh ${TE_IUT} \
                                   nm -D ${libc_path} \| grep $i)" ; then
                         req_name=$(echo $i | tr '[:lower:]' '[:upper:]')
@@ -184,9 +185,6 @@ if test -n "${TE_IUT}" -a -n "${TE_IUT_TA_TYPE}" ; then
             fi
             if test $kernel_num -lt $(kernel_ver_str2num 4.0) ; then
                 TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!SOF_TIMESTAMPING_OPT_TSONLY"
-            fi
-            if test $kernel_num -lt $(kernel_ver_str2num 5.15) ; then
-                TE_EXTRA_OPTS="${TE_EXTRA_OPTS} --tester-req=!EPOLL_PWAIT2"
             fi
 
             check_ipv6_mpath $kernel_num
