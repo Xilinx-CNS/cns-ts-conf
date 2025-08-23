@@ -211,8 +211,8 @@ function do_cmdclient()
         XNCMDCLIENT="${MY_TMP_DIR}"/xncmdclient
     fi
 
-    "${SSH_CMD[@]}" "${SUDO_CMD[@]}" "${XNCMDCLIENT}" -q -c \'${cmds}\' \
-        ${cmdclient_transport} 2>/dev/null &&
+    "${SSH_CMD[@]}" "${SUDO_CMD[@]}" "${XNCMDCLIENT}" --force-enable-mmap \
+        -q -c \'${cmds}\' ${cmdclient_transport} 2>/dev/null &&
         ret=0 ||
         { ret=1; echo "Command '${cmds}' failed" >&2; }
 
