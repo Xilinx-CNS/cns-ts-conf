@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2025 Advanced Micro Devices, Inc.
+export EF_SHRUB_CONTROLLER=43
+
+TE_EXTRA_OPTS="--trc-tag=shrub_controller"
+

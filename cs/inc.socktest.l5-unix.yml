@@ -78,6 +78,9 @@
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_INTERFACE_BLACKLIST"
       value: "${EF_INTERFACE_BLACKLIST}"
 
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SHRUB_CONTROLLER"
+      value: "${EF_SHRUB_CONTROLLER}"
+
     # sockets
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FDTABLE_SIZE"
       value: "${EF_FDTABLE_SIZE}"
