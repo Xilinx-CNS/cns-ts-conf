@@ -36,6 +36,7 @@
     - cm_aggregation.yml
     - cm_l4_port.yml
     - cm_keys.yml
+    - cm_process.yml
 
 - cond:
     if: ${TE_LOG_LISTENER} != ""
@@ -70,7 +71,6 @@
     if: ${HWSIM} != ""
     then:
       - include:
-          - cm_process.yml
           - cm_vm.yml
           - cm_rcf.yml
           - inc.hwsim.yml
