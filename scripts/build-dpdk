@@ -43,9 +43,6 @@ meson_setup() {
     ${RTE_MLX5_PMD:-false} || disable_drivers+=",common/mlx5"
     meson_opts+=(-Ddisable_drivers="${disable_drivers}")
 
-    # Disable kernel modules build since it requires extra rights to install
-    meson_opts+=(-Denable_kmods=false)
-
     # Want faster build, so disable unit tests
     meson_opts+=(-Dtests=false)
 
