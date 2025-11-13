@@ -73,6 +73,86 @@
     - oid: "/local:${TE_HYPERVISOR_TA_NAME}"
     - oid: "/volatile:"
 
+- register:
+    - oid: "/local/phy"
+      access: read_only
+      type: none
+      d: |
+         Root object of the local PHY configuration tree.
+           Name: none
+           Value: none
+
+    - oid: "/local/phy/autoneg"
+      access: read_write
+      type: string
+      d: |
+         Network interface autonegotiation state control.
+           Name: none
+           Value: off     - to disable autonegotiation
+                  on      - to enable autonegotiation
+                  unknown - to leave state as is
+
+    - oid: "/local/phy/duplex"
+      access: read_write
+      type: string
+      d: |
+         Network interface duplex control.
+           Name: none
+           Value: half    - to set half duplex state
+                  full    - to set full duplex state
+                  unknown - to leave duplex state as is
+
+    - oid: "/local/phy/speed"
+      access: read_write
+      type: string
+      d: |
+         Network interface speed control.
+           Name: none
+           Value: 10/100/1000/... - to set PHY speed (in Mbit/sec)
+                  unknown         - to leave speed as is
+
+- cond:
+    if: ${NET_DRV_TS_IUT_PHY_AUTONEG} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_IUT_TA_NAME}/phy:/autoneg:"
+          value: "${NET_DRV_TS_IUT_PHY_AUTONEG}"
+
+- cond:
+    if: ${NET_DRV_TS_IUT_PHY_DUPLEX} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_IUT_TA_NAME}/phy:/duplex:"
+          value: "${NET_DRV_TS_IUT_PHY_DUPLEX}"
+
+- cond:
+    if: ${NET_DRV_TS_IUT_PHY_SPEED} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_IUT_TA_NAME}/phy:/speed:"
+          value: "${NET_DRV_TS_IUT_PHY_SPEED}"
+
+- cond:
+    if: ${NET_DRV_TS_TST1_PHY_AUTONEG} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_TST1_TA_NAME}/phy:/autoneg:"
+          value: "${NET_DRV_TS_TST1_PHY_AUTONEG}"
+
+- cond:
+    if: ${NET_DRV_TS_TST1_PHY_DUPLEX} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_TST1_TA_NAME}/phy:/duplex:"
+          value: "${NET_DRV_TS_TST1_PHY_DUPLEX}"
+
+- cond:
+    if: ${NET_DRV_TS_TST1_PHY_SPEED} != ""
+    then:
+      - set:
+        - oid: "/local:${TE_TST1_TA_NAME}/phy:/speed:"
+          value: "${NET_DRV_TS_TST1_PHY_SPEED}"
+
 - set:
     - oid: "/agent:${TE_IUT_TA_NAME}/rpcprovider:"
       value: "ta_rpcs"
