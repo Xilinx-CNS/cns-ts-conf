@@ -46,12 +46,18 @@
       value: "52:54:00:01:02:03"
 
 - add:
+    - if: ${TE_IUT_TST1_TAP_NETDEV_OPT_VHOST} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/netdev_opt:vhost"
+      value: "${TE_IUT_TST1_TAP_NETDEV_OPT_VHOST}"
     - if: ${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES} != ""
       oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/netdev_opt:queues"
       value: "${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES}"
     - if: ${TE_IUT_TST1_TAP_DEVICE_OPT_MQ} != ""
       oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/device_opt:mq"
       value: "${TE_IUT_TST1_TAP_DEVICE_OPT_MQ}"
+    - if: ${TE_IUT_TST1_TAP_DEVICE_OPT_VECTORS} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/net:iut_tst1/device_opt:vectors"
+      value: "${TE_IUT_TST1_TAP_DEVICE_OPT_VECTORS}"
 
 - set:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:iut_vm/status:"
@@ -106,12 +112,18 @@
       value: "52:54:00:01:02:04"
 
 - add:
+    - if: ${TE_TST1_IUT_TAP_NETDEV_OPT_VHOST} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/netdev_opt:vhost"
+      value: "${TE_TST1_IUT_TAP_NETDEV_OPT_VHOST}"
     - if: ${TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES} != ""
       oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/netdev_opt:queues"
       value: "${TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES}"
     - if: ${TE_TST1_IUT_TAP_DEVICE_OPT_MQ} != ""
       oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/device_opt:mq"
       value: "${TE_TST1_IUT_TAP_DEVICE_OPT_MQ}"
+    - if: ${TE_TST1_IUT_TAP_DEVICE_OPT_VECTORS} != ""
+      oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/net:iut_tst1/device_opt:vectors"
+      value: "${TE_TST1_IUT_TAP_DEVICE_OPT_VECTORS}"
 
 - set:
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:tst_vm/status:"
