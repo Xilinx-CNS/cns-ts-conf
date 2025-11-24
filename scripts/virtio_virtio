@@ -69,6 +69,30 @@ export TE_ENV_TST_DPDK_DRIVER="${TE_ENV_TST_DPDK_DRIVER:-uio_pci_generic}"
 # offloads back and it breaks some tests.
 #export TE_ENV_TST1_NET_DRIVER=virtio-pci
 
+iut_queues=${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES:-${TE_VM2VM_QUEUES}}
+if [[ -n "${iut_queues}" ]] && [[ "${iut_queues}" -gt 1 ]] ; then
+    [[ -n "${TE_IUT_TST1_TAP_NETDEV_OPT_VHOST}" ]] \
+        || export TE_IUT_TST1_TAP_NETDEV_OPT_VHOST="on"
+    [[ -n "${TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES}" ]] \
+        || export TE_IUT_TST1_TAP_NETDEV_OPT_QUEUES="${iut_queues}"
+    [[ -n "${TE_IUT_TST1_TAP_DEVICE_OPT_MQ}" ]] \
+        || export TE_IUT_TST1_TAP_DEVICE_OPT_MQ="on"
+    [[ -n "${TE_IUT_TST1_TAP_DEVICE_OPT_VECTORS}" ]] \
+        || export TE_IUT_TST1_TAP_DEVICE_OPT_VECTORS="$((${iut_queues} * 2))"
+fi
+
+tst1_queues=${TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES:-${TE_VM2VM_QUEUES}}
+if [[ -n "${tst1_queues}" ]] && [[ "${tst1_queues}" -gt 1 ]] ; then
+    [[ -n "${TE_TST1_IUT_TAP_NETDEV_OPT_VHOST}" ]] \
+        || export TE_TST1_IUT_TAP_NETDEV_OPT_VHOST="on"
+    [[ -n "${TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES}" ]] \
+        || export TE_TST1_IUT_TAP_NETDEV_OPT_QUEUES="${tst1_queues}"
+    [[ -n "${TE_TST1_IUT_TAP_DEVICE_OPT_MQ}" ]] \
+        || export TE_TST1_IUT_TAP_DEVICE_OPT_MQ="on"
+    [[ -n "${TE_TST1_IUT_TAP_DEVICE_OPT_VECTORS}" ]] \
+        || export TE_TST1_IUT_TAP_DEVICE_OPT_VECTORS="$((${tst1_queues} * 2))"
+fi
+
 export TE_IP4_POOL=192.168.1
 export TE_IP6_POOL=fec0:1:1:
 export TE_IP6_ALIEN=fec1:1:1::5555
