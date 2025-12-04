@@ -70,10 +70,11 @@
       value: "${TE_TST1_LINK_SPEEDS:-${TE_DPDK_LINK_SPEEDS}}"
 
 - add:
+    - oid: "/local:${TE_IUT_TA_NAME}/dpdk:/offloads:"
     - if: |
         ${TE_ENV_RTE_VERSION} >= 18080000 &
         ${TE_ENV_SFC_DP_TX} = ef10_simple
-      oid: "/local:/dpdk:/offloads:/dev:/tx:/fixed:MBUF_FAST_FREE"
+      oid: "/local:${TE_IUT_TA_NAME}/dpdk:/offloads:/dev:/tx:/fixed:MBUF_FAST_FREE"
 
 - set:
     - oid: "/local:/dpdk:/peer_max_mtu:"
