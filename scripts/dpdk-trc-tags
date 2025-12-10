@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
-TE_EXTRA_OPTS="$(${SF_TS_CONFDIR}/dpdk-trc-tags.sh -d -V "${TE_PCI_VENDOR_IUT_TST1}" -D "${TE_PCI_DEVICE_IUT_TST1}" -F "${TE_PCI_INSTANCE_IUT_TST1:-${TE_PCI_INSTANCE_IUT_TST1a}}")"
+TE_EXTRA_OPTS="$(${SF_TS_CONFDIR}/dpdk-trc-tags.sh -d -V "${TE_PCI_VENDOR_IUT_TST1}" -D "${TE_PCI_DEVICE_IUT_TST1}" -F "${TE_PCI_INSTANCE_IUT_TST1:-${TE_PCI_INSTANCE_IUT_TST1a:-${TE_PCI_INSTANCE_IUT_TST1b:-${TE_PCI_INSTANCE_IUT_TST1c}}}}")"
 
 dpdk_ver_num=${TE_EXTRA_OPTS##*dpdk:}
 dpdk_ver_num=${dpdk_ver_num%% *}

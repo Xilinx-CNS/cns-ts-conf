@@ -95,3 +95,87 @@
             - set:
                 - oid: "/net:net1a/node:B/type:"
                   value: "${TE_TST1_IS_IUT:-0}"
+
+- cond:
+    if: ${TE_PCI_INSTANCE_IUT_TST1b} != ""
+    then:
+      - add:
+          - oid: "/net:net1b"
+          - oid: "/net:net1b/node:A"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1b}${TE_PCI_FN_NETDEV_IUT_TST1b:+/netdev:${TE_PCI_FN_NETDEV_IUT_TST1b}}"
+      - set:
+          - oid: "/net:net1b/node:A/type:"
+            value: "1"
+    else:
+      - cond:
+          if: ${TE_IUT_TST1b} != ""
+          then:
+            - add:
+                - oid: "/net:net1b"
+                - oid: "/net:net1b/node:A"
+                  value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_TST1b}"
+            - set:
+                - oid: "/net:net1b/node:A/type:"
+                  value: "1"
+
+- cond:
+    if: ${TE_PCI_INSTANCE_TST1b_IUT} != ""
+    then:
+      - add:
+          - oid: "/net:net1b/node:B"
+            value: "/agent:${TE_TST1_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_TST1_IUT}/device:${TE_PCI_DEVICE_TST1_IUT}/instance:${TE_PCI_INSTANCE_TST1b_IUT}${TE_PCI_FN_NETDEV_TST1b_IUT:+/netdev:${TE_PCI_FN_NETDEV_TST1b_IUT}}"
+      - set:
+          - oid: "/net:net1b/node:B/type:"
+            value: "${TE_TST1_IS_IUT:-0}"
+    else:
+      - cond:
+          if: ${TE_TST1b_IUT} != ""
+          then:
+            - add:
+                - oid: "/net:net1b/node:B"
+                  value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1b_IUT}"
+            - set:
+                - oid: "/net:net1b/node:B/type:"
+                  value: "${TE_TST1_IS_IUT:-0}"
+
+- cond:
+    if: ${TE_PCI_INSTANCE_IUT_TST1c} != ""
+    then:
+      - add:
+          - oid: "/net:net1c"
+          - oid: "/net:net1c/node:A"
+            value: "/agent:${TE_IUT_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_IUT_TST1}/device:${TE_PCI_DEVICE_IUT_TST1}/instance:${TE_PCI_INSTANCE_IUT_TST1c}${TE_PCI_FN_NETDEV_IUT_TST1c:+/netdev:${TE_PCI_FN_NETDEV_IUT_TST1c}}"
+      - set:
+          - oid: "/net:net1c/node:A/type:"
+            value: "1"
+    else:
+      - cond:
+          if: ${TE_IUT_TST1c} != ""
+          then:
+            - add:
+                - oid: "/net:net1c"
+                - oid: "/net:net1c/node:A"
+                  value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_TST1c}"
+            - set:
+                - oid: "/net:net1c/node:A/type:"
+                  value: "1"
+
+- cond:
+    if: ${TE_PCI_INSTANCE_TST1c_IUT} != ""
+    then:
+      - add:
+          - oid: "/net:net1c/node:B"
+            value: "/agent:${TE_TST1_TA_NAME}/hardware:/pci:/vendor:${TE_PCI_VENDOR_TST1_IUT}/device:${TE_PCI_DEVICE_TST1_IUT}/instance:${TE_PCI_INSTANCE_TST1c_IUT}${TE_PCI_FN_NETDEV_TST1c_IUT:+/netdev:${TE_PCI_FN_NETDEV_TST1c_IUT}}"
+      - set:
+          - oid: "/net:net1c/node:B/type:"
+            value: "${TE_TST1_IS_IUT:-0}"
+    else:
+      - cond:
+          if: ${TE_TST1c_IUT} != ""
+          then:
+            - add:
+                - oid: "/net:net1c/node:B"
+                  value: "/agent:${TE_TST1_TA_NAME}/interface:${TE_TST1c_IUT}"
+            - set:
+                - oid: "/net:net1c/node:B/type:"
+                  value: "${TE_TST1_IS_IUT:-0}"
