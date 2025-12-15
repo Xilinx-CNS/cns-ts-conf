@@ -2,12 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 # (c) Copyright 2006 - 2022 Xilinx, Inc. All rights reserved.
 - include:
+    - cm_rcf.yml
     - cm_bridge.yml
     - cm_tunnel.yml
     - cm_base.yml
     - cm_sniffer.yml
     - cm_sys.yml
     - cm_net.yml
+    - cm_namespace.yml
     - cm_local.yml
     - cm_volatile.yml
     - cm_module.yml
@@ -40,7 +42,6 @@
     then:
       - include:
           - cm_vm.yml
-          - cm_rcf.yml
           - inc.iut_vm.yml
 
 - cond:
