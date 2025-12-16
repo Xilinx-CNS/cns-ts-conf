@@ -14,6 +14,7 @@
     - cm_rcf.yml
     - cm_local.yml
     - cm_local_dpdk.yml
+    - cm_local_module.yml
     - cm_volatile.yml
     - cm_module.yml
     - cm_l4_port.yml
@@ -64,6 +65,7 @@
     - inc.dpdk.yml
     - inc.misc.yml
     - inc.prevent_netdrv_autobind.yml
+    - inc.local_module.yml
 
 - cond:
     if: ${TE_IUT_SETUP_VFS} = 1
