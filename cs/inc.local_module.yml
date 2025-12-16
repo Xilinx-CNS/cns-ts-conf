@@ -1,0 +1,15 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2025 OKTET Labs Ltd. All rights reserved.
+
+- add:
+
+  - oid: "/local:${TE_IUT_TA_NAME}/module:vfio-pci"
+  - if: ${TE_IUT_MODULE_VFIO_PCI_DISABLE_IDLE_D3} != ""
+    oid: "/local:${TE_IUT_TA_NAME}/module:vfio-pci/parameter:disable_idle_d3"
+    value: "${TE_IUT_MODULE_VFIO_PCI_DISABLE_IDLE_D3}"
+
+  - oid: "/local:${TE_TST1_TA_NAME}/module:vfio-pci"
+  - if: ${TE_TST1_MODULE_VFIO_PCI_DISABLE_IDLE_D3} != ""
+    oid: "/local:${TE_IUT_TA_NAME}/module:vfio-pci/parameter:disable_idle_d3"
+    value: "${TE_TST1_MODULE_VFIO_PCI_DISABLE_IDLE_D3}"
