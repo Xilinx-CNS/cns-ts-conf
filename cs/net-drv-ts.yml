@@ -11,6 +11,7 @@
     - cm_net.yml
     - cm_namespace.yml
     - cm_local.yml
+    - cm_local_module.yml
     - cm_volatile.yml
     - cm_module.yml
     - cm_system.yml
