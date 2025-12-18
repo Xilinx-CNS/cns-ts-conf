@@ -50,7 +50,6 @@
     then:
       - include:
           - cm_vm.yml
-          - cm_rcf.yml
           - inc.vm2vm.yml
 
 - cond:
@@ -59,7 +58,6 @@
       - include:
           - cm_process.yml
           - cm_vm.yml
-          - cm_rcf.yml
           - inc.hwsim.yml
 
 - cond:
