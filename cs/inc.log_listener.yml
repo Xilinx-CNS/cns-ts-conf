@@ -17,6 +17,10 @@
 #   TE_LOG_LISTENER_PARSER_INTERVAL     Log messages batching interval
 #   TE_LOG_LISTENER_CONSERVER_PORT      Conserver port to connect to
 #                                       (if conserver is used)
+#   TE_LOG_LISTENER_CONSOLE_NAME_IUT    Name of the IUT serial console on the conserver
+#                                       (if conserver is used)
+#   TE_LOG_LISTENER_CONSOLE_NAME_TST1   Name of the TST1 serial console on the conserver
+#                                       (if conserver is used)
 #
 
 #
@@ -45,10 +49,10 @@
       - cond:
           if: ${TE_LOG_LISTENER_IUT} = conserver
           then:
-            # conserver: console name must be equal to TE_IUT name
+            # conserver: console name must be set explicitly or equal to TE_IUT name
             - add:
                 - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut"
-                  value: "${TE_IUT}"
+                  value: "${TE_LOG_LISTENER_CONSOLE_NAME_IUT:-${TE_IUT}}"
             - set:
                 - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:iut/port:"
                   value: "${TE_LOG_LISTENER_CONSERVER_PORT:-3109}"
@@ -98,10 +102,10 @@
       - cond:
           if: ${TE_LOG_LISTENER_TST1} = conserver
           then:
-            # conserver: console name must be equal to TE_TST1 name
+            # conserver: console name must be set explicitly or equal to TE_TST1 name
             - add:
                 - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:tst1"
-                  value: "${TE_TST1}"
+                  value: "${TE_LOG_LISTENER_CONSOLE_NAME_TST1:-${TE_TST1}}"
             - set:
                 - oid: "/agent:${TE_LOG_LISTENER_TA_NAME}/parser:tst1/port:"
                   value: "${TE_LOG_LISTENER_CONSERVER_PORT:-3109}"
