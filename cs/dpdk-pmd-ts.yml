@@ -18,6 +18,7 @@
     - cm_volatile.yml
     - cm_module.yml
     - cm_l4_port.yml
+    - cm_mem.yml
 
 - include:
     - inc.conf_delay.yml
@@ -66,6 +67,7 @@
     - inc.misc.yml
     - inc.prevent_netdrv_autobind.yml
     - inc.local_module.yml
+    - inc.hugepages.yml
 
 - cond:
     if: ${TE_IUT_SETUP_VFS} = 1
