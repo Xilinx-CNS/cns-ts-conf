@@ -1,0 +1,75 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (C) 2026 OKTET Labs Ltd. All rights reserved.
+
+- cond:
+    if: ${TE_IUT_HUGEPAGES_1G_NUM} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:hugepage-1048576"
+          value: /agent:${TE_IUT_TA_NAME}/mem:/hugepages:1048576
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/mem:/hugepages:1048576"
+          value: "${TE_IUT_HUGEPAGES_1G_NUM}"
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:mountpoint-1g"
+          value: /agent:${TE_IUT_TA_NAME}/mem:/hugepages:1048576/mountpoint:$dev$hugepages-1G
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/mem:/hugepages:1048576/mountpoint:$dev$hugepages-1G"
+
+- cond:
+    if: ${TE_IUT_HUGEPAGES_2K_NUM} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:hugepage-2048"
+          value: /agent:${TE_IUT_TA_NAME}/mem:/hugepages:2048
+
+      - set:
+        - oid: "/agent:${TE_IUT_TA_NAME}/mem:/hugepages:2048"
+          value: "${TE_IUT_HUGEPAGES_2K_NUM}"
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:mountpoint-2m"
+          value: /agent:${TE_IUT_TA_NAME}/mem:/hugepages:2048/mountpoint:$dev$hugepages-2M
+
+      - add:
+        - oid: "/agent:${TE_IUT_TA_NAME}/mem:/hugepages:2048/mountpoint:$dev$hugepages-2M"
+
+- cond:
+    if: ${TE_TST1_HUGEPAGES_1G_NUM} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:hugepage-1048576"
+          value: /agent:${TE_TST1_TA_NAME}/mem:/hugepages:1048576
+
+      - set:
+        - oid: "/agent:${TE_TST1_TA_NAME}/mem:/hugepages:1048576"
+          value: "${TE_TST1_HUGEPAGES_1G_NUM}"
+
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:mountpoint-1g"
+          value: /agent:${TE_TST1_TA_NAME}/mem:/hugepages:1048576/mountpoint:$dev$hugepages-1G
+
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/mem:/hugepages:1048576/mountpoint:$dev$hugepages-1G"
+
+- cond:
+    if: ${TE_TST1_HUGEPAGES_2K_NUM} != ""
+    then:
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:hugepage-2048"
+          value: /agent:${TE_TST1_TA_NAME}/mem:/hugepages:2048
+
+      - set:
+        - oid: "/agent:${TE_TST1_TA_NAME}/mem:/hugepages:2048"
+          value: "${TE_TST1_HUGEPAGES_2K_NUM}"
+
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/rsrc:mountpoint-2m"
+          value: /agent:${TE_TST1_TA_NAME}/mem:/hugepages:2048/mountpoint:$dev$hugepages-2M
+
+      - add:
+        - oid: "/agent:${TE_TST1_TA_NAME}/mem:/hugepages:2048/mountpoint:$dev$hugepages-2M"
