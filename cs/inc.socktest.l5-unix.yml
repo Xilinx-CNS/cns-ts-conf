@@ -81,6 +81,12 @@
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_SHRUB_CONTROLLER"
       value: "${EF_SHRUB_CONTROLLER}"
 
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_TX_DATAPATH"
+      value: "${EF_TX_DATAPATH}"
+
+    - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_RX_DATAPATH"
+      value: "${EF_RX_DATAPATH}"
+
     # sockets
     - oid: "/local:${TE_IUT_TA_NAME_NS}/env:EF_FDTABLE_SIZE"
       value: "${EF_FDTABLE_SIZE}"
