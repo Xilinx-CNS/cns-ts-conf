@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Advanced Micro Devices, Inc.
+export EF_TX_DATAPATH=enterprise
+
+TE_EXTRA_OPTS="--trc-tag=tx_dp_enterprise"

@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2026 Advanced Micro Devices, Inc.
+export EF_RX_DATAPATH=express
+
+TE_EXTRA_OPTS="--trc-tag=rx_dp_express"
