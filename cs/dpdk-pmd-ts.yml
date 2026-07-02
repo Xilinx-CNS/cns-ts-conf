@@ -47,6 +47,11 @@
     then:
       - include: inc.hwsim.yml
 
+- cond:
+    if: ${SIMNOW} != ""
+    then:
+      - include: inc.simnow.yml
+
 - add:
     - oid: "/local:${TE_IUT_TA_NAME}"
     - oid: "/local:${TE_TST1_TA_NAME}"
