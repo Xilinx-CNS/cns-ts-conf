@@ -90,9 +90,13 @@
     - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:${TE_IUT_PF_NET_IF}"
       value: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}"
 
+- get:
+    - oid: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}/max_mtu:"
+      value: "TE_IUT_PF_NET_MAX_MTU"
+
 - set:
     - oid: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}/mtu:"
-      value: 9216
+      value: ${TE_IUT_PF_NET_MAX_MTU}
 
     - oid: "/agent:${TE_IUT_TA_NAME}/interface:${TE_IUT_PF_NET_IF}/status:"
       value: 1
