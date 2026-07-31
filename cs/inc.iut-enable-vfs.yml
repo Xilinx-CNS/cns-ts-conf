@@ -33,7 +33,6 @@
           - oid: "/agent:${TE_IUT_TA_NAME}/module:${TE_ENV_IUT_NET_MODULE}/loaded:"
             value: 0
 
-# The sfc module depends on the sfc_driverlink module.
 # The vdpa module may be required depending on the host
 - cond:
     if: ${TE_ENV_IUT_NET_MODULE} = "sfc"
@@ -43,37 +42,17 @@
             value: "TE_IUT_MOD_DIR"
 
       - add:
-          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink"
-            value: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
-
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:vdpa"
             value: "/agent:${TE_IUT_TA_NAME}/module:vdpa"
 
       - set:
-          - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:sfc_driverlink/shared:"
-            value: 0
-
           - oid: "/agent:${TE_IUT_TA_NAME}/rsrc:module:vdpa/shared:"
             value: 0
 
       - add:
-          - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink"
           - oid: "/agent:${TE_IUT_TA_NAME}/module:vdpa"
 
       - set:
-          - if: ${TE_IUT_MOD_SFC_DRIVERLINK_LOADED} = 1
-            oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/unload_holders:"
-            value: 1
-          - if: ${TE_IUT_MOD_SFC_DRIVERLINK_LOADED} = 1
-            oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
-            value: 0
-
-      - set:
-          - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/filename:"
-            value: "${TE_IUT_MOD_DIR}/sfc_driverlink.ko"
-          - oid: "/agent:${TE_IUT_TA_NAME}/module:sfc_driverlink/loaded:"
-            value: 1
-
           - if: ${TE_IUT_MOD_VDPA_REQUIRED} = 1
             oid: "/agent:${TE_IUT_TA_NAME}/module:vdpa/loaded:"
             value: 1
