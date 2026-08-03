@@ -70,6 +70,12 @@
           - inc.simnow.yml
 
 - cond:
+    if: ${TE_CS_EXTRA_SETUP} != ""
+    then:
+      - include:
+          - "${TE_CS_EXTRA_SETUP}"
+
+- cond:
     if: ${TE_ENV_SFPTPD} != ""
     then:
       - add:
