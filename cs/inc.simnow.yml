@@ -84,7 +84,7 @@
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:simnow/exe:"
       value: "${SIMNOW_EXE}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:simnow/sleep:"
-      value: 2000
+      value: "${SIMNOW_START_TIME:-5000}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/process:simnow/status:"
       value: 1
 
