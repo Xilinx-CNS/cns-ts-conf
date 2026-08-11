@@ -108,9 +108,9 @@
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/cpu:/model:"
       value: "host"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/cpu:/num:"
-      value: 2
+      value: "${TE_IUT_VM_CPU_NUM:-2}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/mem:/size:"
-      value: 2048
+      value: "${TE_IUT_VM_MEM_SIZE:-2048}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/drive:root/file:"
       value: "${SIMNOW_ROOT:-/local/virtual/x86_64_centos7.qcow2}"
     - oid: "/agent:${TE_HYPERVISOR_TA_NAME}/vm:vm_iut/drive:root/cdrom:"
