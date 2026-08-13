@@ -23,6 +23,9 @@ case "$TE_ENV_IUT_DUT" in
     x3)
         TE_EXTRA_OPTS+=" --script=dut/x3"
         ;;
+    x4)
+        TE_EXTRA_OPTS+=" --script=dut/x4"
+        ;;
     x710|e810)
         TE_EXTRA_OPTS+=" --script=dut/x710-e810"
         TE_EXTRA_OPTS+=" --script=dut/nonsf"
