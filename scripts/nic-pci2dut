@@ -11,6 +11,8 @@ NIC_MODELS["1924:0903"]="ef10"
 NIC_MODELS["1924:0a03"]="medford"
 # Solarflare Communications XtremeScale SFC9250 10/25/40/50/100G Ethernet Controller
 NIC_MODELS["1924:0b03"]="medford"
+# Solarflare Communications NS9480 PLUS 1/10/25/40/50/100G Ethernet Controller
+NIC_MODELS["1924:0c03"]="x4"
 
 # Mellanox Technologies MT27800 Family [ConnectX-5]
 NIC_MODELS["15b3:1017"]="mcx5"
