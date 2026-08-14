@@ -25,14 +25,25 @@ if [ -f ./scripts/onload ] ; then
     ./scripts/mmakebuildtree --driver && \
         drv_dir=$(./scripts/mmaketool --driverbuild) && \
         make -C ./build/${drv_dir} ${MAKE_ARGS}
+    BUILD_RC=$?
 else
     # This is driver from sfc-linux-net repository
 
     # Unfortunately parallel build looks unstable
     make ${MAKE_ARGS}
+    BUILD_RC=$?
+
+    # If we set KPATH, we are likely building for a different kernel
+    # This means the install path needs to be adjusted
+    if [[ "${BUILD_RC}" == 0 && "${MAKE_ARGS}" == *"KPATH="* ]]; then
+        VERMAGIC=$(modinfo -F vermagic ./drivers/net/ethernet/sfc/sfc.ko | cut -f1 -d' ')
+        if [ -n "${VERMAGIC}" ]; then
+            LIB_MOD_DIR="lib/modules/${VERMAGIC}"
+        fi
+    fi
 fi
 
-if [ $? -eq 0 ] ; then
+if [ "${BUILD_RC}" -eq 0 ] ; then
     for ta_type in ${TE_TA_TYPES} ; do
         DST="${TE_AGENTS_INST}/${ta_type}/${LIB_MOD_DIR}"
         mkdir -p "$DST"
