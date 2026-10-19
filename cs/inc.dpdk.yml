@@ -148,7 +148,15 @@
     - oid: "/local:/dpdk:/tso_cutoff_barrier:"
       value: "${TE_ENV_DPDK_TSO_CUTOFF_BARRIER:-0}"
 
-- set:
-    - if: 0x${TE_PCI_VENDOR_IUT_TST1} = 0x1924
-      oid: "/local:/dpdk:/tso_ip_id_inc_algo:"
-      value: "mod15"
+
+- cond:
+    if: ${TE_DPDK_TSO_IP_ID_INC_ALGO} != ""
+    then:
+      - set:
+          - oid: "/local:/dpdk:/tso_ip_id_inc_algo:"
+            value: "${TE_DPDK_TSO_IP_ID_INC_ALGO}"
+    else:
+      - set:
+          - if: 0x${TE_PCI_VENDOR_IUT_TST1} = 0x1924
+            oid: "/local:/dpdk:/tso_ip_id_inc_algo:"
+            value: "mod15"
